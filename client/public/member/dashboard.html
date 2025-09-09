@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Member Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: Inter, sans-serif; }
+    .sidebar { width: 220px; }
+    .main { flex: 1; padding: 16px; }
+    .sidebar button { text-align: left; width: 100%; }
+  </style>
+</head>
+<body class="flex min-h-screen bg-gray-100">
+  <!-- Sidebar -->
+  <div class="sidebar bg-white p-4 shadow-lg flex flex-col gap-2">
+    <h2 class="text-xl font-bold mb-4">Member Panel</h2>
+    
+    <div id="member-info" class="mb-4 p-2 bg-gray-100 rounded text-sm text-gray-700">
+      👤 Loading...
+    </div>
+
+    <button onclick="loadPage('profile.html')">Profile</button>
+    <button onclick="loadPage('my-events.html')">My Events</button>
+    <button onclick="loadPage('notifications.html')">Notifications</button>
+
+    <button onclick="logout()" class="mt-auto text-red-600 font-semibold">Logout</button>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main bg-white shadow-lg rounded-lg p-4" id="main-content">
+    <h3>Welcome Member</h3>
+    <p>Select an option from the sidebar.</p>
+  </div>
+
+<script>
+const token = localStorage.getItem('token');
+if (!token) {
+  alert('Bạn chưa đăng nhập');
+  window.location.href = '/login.html';
+}
+
+async function verifyToken() {
+  try {
+    const res = await fetch('http://localhost:4000/member/dashboard', {
+      headers: { "Authorization": "Bearer " + token }
+    });
+    if (!res.ok) throw new Error("Token không hợp lệ hoặc đã hết hạn");
+
+    const data = await res.json();
+    document.getElementById("member-info").textContent = 
+      `👤 ${data.user.fullName || data.user.email} (${data.user.role})`;
+
+    // load mặc định Notifications
+    loadPage('notifications.html');
+  } catch (err) {
+    alert(err.message);
+    localStorage.removeItem('token');
+    window.location.href = '/login.html';
+  }
+}
+
+async function loadPage(fileName) {
+  const res = await fetch(fileName);
+  const html = await res.text();
+  document.getElementById('main-content').innerHTML = html;
+}
+
+function logout() {
+  localStorage.removeItem('token');
+  window.location.href = '/login.html';
+}
+
+verifyToken();
+</script>
+</body>
+</html>

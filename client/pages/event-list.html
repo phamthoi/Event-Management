@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Event List - Admin</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="p-6 bg-gray-100 min-h-screen">
+
+<h1 class="text-2xl font-bold mb-4">Event List</h1>
+
+<!-- Filter -->
+<div class="mb-4 flex flex-wrap gap-2">
+  <input type="text" id="filterName" placeholder="Event name" class="border px-3 py-1 rounded">
+  <input type="text" id="filterLocation" placeholder="Location" class="border px-3 py-1 rounded">
+  <select id="filterStatus" class="border px-3 py-1 rounded">
+    <option value="">Status</option>
+    <option value="DRAFT">DRAFT</option>
+    <option value="REGISTRATION">REGISTRATION</option>
+    <option value="READY">READY</option>
+    <option value="ONGOING">ONGOING</option>
+    <option value="COMPLETED">COMPLETED</option>
+    <option value="CANCELLED">CANCELLED</option>
+  </select>
+  <input type="date" id="filterStart" class="border px-3 py-1 rounded">
+  <input type="date" id="filterEnd" class="border px-3 py-1 rounded">
+  <button id="applyFilter" class="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700">Filter</button>
+</div>
+
+<!-- Table event -->
+<table class="w-full border-collapse border border-gray-300" id="eventTable">
+  <thead>
+    <tr class="bg-gray-200">
+      <th class="border px-3 py-2">#</th>
+      <th class="border px-3 py-2">Name</th>
+      <th class="border px-3 py-2">Location</th>
+      <th class="border px-3 py-2">Time</th>
+      <th class="border px-3 py-2">Deposit (VND)</th>
+      <th class="border px-3 py-2">Status</th>
+      <th class="border px-3 py-2">Actions</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<div id="msg" class="mt-2 text-red-500"></div>
+
+<script>
+function initEventList(){
+  const API_BASE = "http://localhost:4000"; // chỉnh theo backend
+  const token = localStorage.getItem("token");
+  const eventTable = document.getElementById("eventTable").querySelector("tbody");
+  const msg = document.getElementById("msg");
+
+  // 🔹 Check token
+  if (!token) {
+    alert("You are not logged in");
+    window.location.href = "/login.html"; 
+  }
+
+  // 🔹 Load events
+  async function loadEvents(applyFilter = false) {
+    const params = new URLSearchParams();
+
+    // Nếu applyFilter = true → gửi filter params
+    if (applyFilter) {
+      const name = document.getElementById("filterName").value;
+      const location = document.getElementById("filterLocation").value;
+      const status = document.getElementById("filterStatus").value;
+      const startDate = document.getElementById("filterStart").value;
+      const endDate = document.getElementById("filterEnd").value;
+
+      if (name) params.append("name", name);
+      if (location) params.append("location", location);
+      if (status) params.append("status", status);
+      if (startDate) params.append("startDate", startDate);
+      if (endDate) params.append("endDate", endDate);
+    }
+
+    try {
+      const res = await fetch(`${API_BASE}/admin/events/list?` + params.toString(), {
+        headers: { "Authorization": "Bearer " + token }
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        msg.textContent = data.message || "Error loading events";
+        return;
+      }
+
+      eventTable.innerHTML = "";
+      if (!data.events || data.events.length === 0) {
+        eventTable.innerHTML = `<tr><td colspan="7" class="text-center p-3 text-gray-500">No events</td></tr>`;
+        return;
+      }
+
+      data.events.forEach((ev, idx) => {
+        const startStr = ev.startAt ? new Date(ev.startAt).toLocaleString() : "-";
+        const endStr = ev.endAt ? new Date(ev.endAt).toLocaleString() : "-";
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td class="border px-3 py-2">${idx + 1}</td>
+          <td class="border px-3 py-2">${ev.title}</td>
+          <td class="border px-3 py-2">${ev.location || "-"}</td>
+          <td class="border px-3 py-2">${startStr} - ${endStr}</td>
+          <td class="border px-3 py-2">${ev.deposit != null ? ev.deposit.toLocaleString() : "0"}</td> 
+          <td class="border px-3 py-2">${ev.status}</td>
+          <td class="border px-3 py-2">
+            <a href="/pages/edit-event.html?id=${ev.id}" class="text-blue-600 hover:underline mr-2">Update</a>
+            <a href="#" onclick="deleteEvent(${ev.id})" class="text-blue-600 hover:underline">Delete</a>
+            </td>
+        `;
+        eventTable.appendChild(tr);
+      });
+
+    } catch (err) {
+      msg.textContent = "Error: " + err.message;
+    }
+  }
+
+
+  // logic for updateEvent function
+  window.updateEvent = function(eventId) {
+    // redirect sang trang edit
+    window.location.href = `/pages/edit-event.html?id=${eventId}`;
+  }
+
+  // logic for deleteEvent function 
+  window.deleteEvent = async function(eventId) {
+    if (!confirm("Bạn có chắc muốn xóa event này?")) return;
+
+    try {
+      const res = await fetch(`${API_BASE}/admin/events/${eventId}`, {
+        method: "DELETE",
+        headers: { "Authorization": "Bearer " + token }
+      });
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.message || "Delete failed");
+
+      alert("Event deleted successfully");
+      loadEvents(false); // reload danh sách
+    } catch (err) {
+      alert("Error: " + err.message);
+   }
+  }
+
+  // 🔹 Event filter
+  document.getElementById("applyFilter").addEventListener("click", () => loadEvents(true));
+
+  // 🔹 Load mặc định khi mở trang (hiển thị tất cả event)
+  loadEvents(false);
+}
+
+</script>
+</body>
+</html>

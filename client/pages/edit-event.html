@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Edit Event - Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+  <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
+    <h2 class="text-2xl font-bold mb-6 text-center">Edit Event</h2>
+    <form id="editEventForm" class="space-y-6">
+      <div>
+        <label for="title" class="block text-sm font-medium text-gray-700 mb-1">Event name</label>
+        <input type="text" id="title" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+      </div>
+      <div>
+        <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+        <textarea id="description" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" rows="3"></textarea>
+      </div>
+      <div>
+        <label for="location" class="block text-sm font-medium text-gray-700 mb-1">Location</label>
+        <input type="text" id="location" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label for="minAttendees" class="block text-sm font-medium text-gray-700 mb-1">Min attendees</label>
+          <input type="number" id="minAttendees" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+        <div>
+          <label for="maxAttendees" class="block text-sm font-medium text-gray-700 mb-1">Max attendees</label>
+          <input type="number" id="maxAttendees" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label for="startAt" class="block text-sm font-medium text-gray-700 mb-1">Event start time</label>
+          <input type="datetime-local" id="startAt" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+        <div>
+          <label for="endAt" class="block text-sm font-medium text-gray-700 mb-1">Event end time</label>
+          <input type="datetime-local" id="endAt" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label for="registrationStartAt" class="block text-sm font-medium text-gray-700 mb-1">Registration start</label>
+          <input type="datetime-local" id="registrationStartAt" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+        <div>
+          <label for="registrationEndAt" class="block text-sm font-medium text-gray-700 mb-1">Registration end</label>
+          <input type="datetime-local" id="registrationEndAt" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+      </div>
+      <div>
+        <label for="deposit" class="block text-sm font-medium text-gray-700 mb-1">Deposit (VND)</label>
+        <input type="number" id="deposit" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" step="0.01" min="0">
+      </div>
+      <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 font-semibold transition">Update Event</button>
+    </form>
+    <div id="msg" class="mt-2 text-sm"></div>
+    <div class="mt-4 text-center">
+      <a href="#" onclick="history.back(); return false;" class="text-blue-600 hover:underline">← Back to Event List</a>
+    </div>
+  </div>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const eventId = params.get("id");
+const token = localStorage.getItem("token");
+const msg = document.getElementById("msg");
+
+if (!token) {
+  alert("You are not logged in");
+  window.location.href = "/public/login.html";
+}
+
+// Load event cũ
+async function loadEvent() {
+  try {
+    const res = await fetch(`http://localhost:4000/admin/events/${eventId}`, {
+      headers: { "Authorization": "Bearer " + token }
+    });
+    const data = await res.json();
+    if (!data.success) throw new Error(data.message || "Cannot load event");
+
+    const e = data.event;
+    document.getElementById("title").value = e.title;
+    document.getElementById("description").value = e.description || "";
+    document.getElementById("location").value = e.location || "";
+    document.getElementById("minAttendees").value = e.minAttendees || "";
+    document.getElementById("maxAttendees").value = e.maxAttendees || "";
+    document.getElementById("deposit").value = e.deposit || "";
+    document.getElementById("startAt").value = e.startAt ? new Date(e.startAt).toISOString().slice(0,16) : "";
+    document.getElementById("endAt").value = e.endAt ? new Date(e.endAt).toISOString().slice(0,16) : "";
+    document.getElementById("registrationStartAt").value = e.registrationStartAt ? new Date(e.registrationStartAt).toISOString().slice(0,16) : "";
+    document.getElementById("registrationEndAt").value = e.registrationEndAt ? new Date(e.registrationEndAt).toISOString().slice(0,16) : "";
+
+  } catch (err) {
+    msg.textContent = "❌ " + err.message;
+    msg.classList.add("text-red-500");
+  }
+}
+
+// Submit update
+document.getElementById("editEventForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  msg.textContent = "";
+  msg.classList.remove("text-green-500", "text-red-500");
+
+  try {
+    const payload = {
+      title: document.getElementById("title").value,
+      description: document.getElementById("description").value,
+      location: document.getElementById("location").value,
+      minAttendees: parseInt(document.getElementById("minAttendees").value) || null,
+      maxAttendees: parseInt(document.getElementById("maxAttendees").value) || null,
+      deposit: parseFloat(document.getElementById("deposit").value) || 0,
+      startAt: document.getElementById("startAt").value || null,
+      endAt: document.getElementById("endAt").value || null,
+      registrationStartAt: document.getElementById("registrationStartAt").value || null,
+      registrationEndAt: document.getElementById("registrationEndAt").value || null
+    };
+
+    const res = await fetch(`http://localhost:4000/admin/edit-event/${eventId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const data = await res.json();
+    if (!data.success) throw new Error(data.message || "Failed to update event");
+
+    msg.textContent = "✅ Event updated successfully!";
+    msg.classList.add("text-green-500");
+
+  } catch (err) {
+    msg.textContent = "❌ " + err.message;
+    msg.classList.add("text-red-500");
+  }
+});
+
+loadEvent();
+</script>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Send Notification - Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+  <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-lg">
+    <h2 class="text-2xl font-bold mb-6 text-center">Send Notification</h2>
+
+    <form id="sendNotificationForm" class="space-y-4">
+      <!-- Recipient -->
+      <select id="recipientId" class="w-full px-3 py-2 border rounded">
+        <option value="">-- Send to all members --</option>
+      </select>
+
+      <!-- Title -->
+      <input type="text" id="title" placeholder="Notification title" class="w-full px-3 py-2 border rounded" required>
+
+      <!-- Message -->
+      <textarea id="message" placeholder="Notification content" class="w-full px-3 py-2 border rounded" rows="3" required></textarea>
+
+      <!-- Type -->
+      <select id="type" class="w-full px-3 py-2 border rounded">
+        <option value="GENERAL">General</option>
+        <option value="EVENT">Event</option>
+        <option value="SYSTEM">System</option>
+      </select>
+
+      <!-- Submit -->
+      <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
+        Send Notification
+      </button>
+    </form>
+
+    <div id="msg" class="mt-4 text-center text-sm"></div>
+
+    <div class="mt-4 text-center">
+      <a href="dashboard.html" class="text-blue-600 hover:underline">← Back to Events</a>
+    </div>
+  </div>
+
+  <script>
+    function initSendNotification() {
+      // Hàm này để tương thích với loadPage
+    const token = localStorage.getItem("token");
+    const recipientSelect = document.getElementById("recipientId");
+    const msg = document.getElementById("msg");
+
+    // Load danh sách members để chọn
+    async function loadMembers() {
+      try {
+        const res = await fetch("http://localhost:4000/admin/members/list", {
+          headers: { Authorization: "Bearer " + token }
+        });
+        const data = await res.json();
+        if (res.ok && data.members) {
+          data.members.forEach(member => {
+            const opt = document.createElement("option");
+            opt.value = member.id;
+            opt.textContent = member.fullName || member.email;
+            recipientSelect.appendChild(opt);
+          });
+        }
+      } catch (err) {
+        console.error("Load members error:", err);
+      }
+    }
+    loadMembers();
+
+    // Gửi notification
+    document.getElementById("sendNotificationForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const title = document.getElementById("title").value;
+      const message = document.getElementById("message").value;
+      const type = document.getElementById("type").value;
+      const recipientId = recipientSelect.value || null;
+
+      msg.textContent = "";
+      msg.classList.remove("text-green-500", "text-red-500");
+
+      try {
+        const res = await fetch("http://localhost:4000/admin/notifications/send", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token
+          },
+          body: JSON.stringify({ title, message, type, recipientId })
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || "Send failed");
+
+        msg.textContent = "✅ Notification sent successfully!";
+        msg.classList.add("text-green-500");
+        e.target.reset();
+      } catch (err) {
+        msg.textContent = "❌ " + err.message;
+        msg.classList.add("text-red-500");
+      }
+    });
+}
+  </script>
+</body>
+</html>
