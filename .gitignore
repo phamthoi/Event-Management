@@ -152,9 +152,10 @@ server/node_modules/.bin/
 **/.prisma/
 server/package.json
 
-# Prisma generated files
-.prisma/client/
-**/prisma/client/
+# Prisma generated files - ignore toàn bộ
+.prisma/
+**/.prisma/
+server/.prisma/
 
 # Test files
 test-results/
