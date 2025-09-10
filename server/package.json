@@ -1,10 +1,11 @@
 {
     "name": "event-management",
     "version": "1.0.0",
-    "main": "src/server.js",
+    "main": "server.js",
     "type": "module",
     "scripts": {
-        "dev": "node src/server.js",
+        "dev": "node server.js",
+        "start": "node server.js",
         "prisma:migrate": "prisma migrate dev --name init",
         "prisma:generate": "prisma generate",
         "prisma:seed": "node prisma/seed.js"
