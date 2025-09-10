@@ -6,21 +6,21 @@ yarn-error.log*
 package-lock.json
 yarn.lock
 
-# Environment variables
-.env
+# Environment variables (keep .env for local development)
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
+.env.production
 
-# Database
+# Database files
 *.db
 *.sqlite
 *.sqlite3
 dev.db
+backup*.sql
 
-# Prisma
-prisma/migrations/
+# Prisma (allow migrations for project setup)
 .prisma/
 
 # Logs
@@ -144,9 +144,22 @@ out/
 *.bak
 *.old
 
+# Node.js binary files
+.bin/
+node_modules/.bin/
+server/node_modules/.bin/
+**/node_modules/.bin/
+**/.prisma/
+server/package.json
+
+# Prisma generated files
+.prisma/client/
+**/prisma/client/
+
 # Test files
 test-results/
 coverage/
+test-connection.js
 
 # Docker
 Dockerfile.prod
@@ -160,3 +173,37 @@ docker-compose.override.yml
 
 # Local development
 .local
+
+# IDE and system files
+.vscode/settings.json
+.idea/
+*.iml
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+
+# Thêm các mục này để ignore các file đang hiện trong Git status
+# Prisma binary files
+server/node_modules/.bin/mime
+server/node_modules/.bin/mime.cmd
+server/node_modules/.bin/mime.ps1
+server/node_modules/.bin/prisma
+server/node_modules/.bin/prisma.cmd
+server/node_modules/.bin/prisma.ps1
+server/node_modules/.bin/semver
+server/node_modules/.bin/semver.cmd
+server/node_modules/.bin/semver.ps1
+
+# Prisma client files
+server/.prisma/client/
+server/node_modules/.prisma/
+
+# Package files
+server/package.json
+
+# Modified HTML files (nếu không cần track changes)
+client/pages/event-list.html
