@@ -43,26 +43,33 @@
   <tbody></tbody>
 </table>
 
+<!-- Pagination -->
+<div id="pagination" class="mt-4 flex gap-2 items-center"></div>
+
 <div id="msg" class="mt-2 text-red-500"></div>
 
 <script>
 function initEventList(){
-  const API_BASE = "http://localhost:4000"; // chỉnh theo backend
+  const API_BASE = "http://localhost:4000"; 
   const token = localStorage.getItem("token");
   const eventTable = document.getElementById("eventTable").querySelector("tbody");
   const msg = document.getElementById("msg");
+  const pagination = document.getElementById("pagination");
 
-  // 🔹 Check token
+  let currentPage = 1;
+  const limit = 5; // số dòng mỗi trang
+
   if (!token) {
     alert("You are not logged in");
     window.location.href = "/login.html"; 
   }
 
   // 🔹 Load events
-  async function loadEvents(applyFilter = false) {
+  async function loadEvents(applyFilter = false, page = 1) {
     const params = new URLSearchParams();
+    params.append("page", page);
+    params.append("limit", limit);
 
-    // Nếu applyFilter = true → gửi filter params
     if (applyFilter) {
       const name = document.getElementById("filterName").value;
       const location = document.getElementById("filterLocation").value;
@@ -92,6 +99,7 @@ function initEventList(){
       eventTable.innerHTML = "";
       if (!data.events || data.events.length === 0) {
         eventTable.innerHTML = `<tr><td colspan="7" class="text-center p-3 text-gray-500">No events</td></tr>`;
+        pagination.innerHTML = "";
         return;
       }
 
@@ -99,35 +107,71 @@ function initEventList(){
         const startStr = ev.startAt ? new Date(ev.startAt).toLocaleString() : "-";
         const endStr = ev.endAt ? new Date(ev.endAt).toLocaleString() : "-";
 
+        const depositStr = ev.deposit != null
+          ? `${Number(ev.deposit).toLocaleString("vi-VN")}`
+          : "0 VND";
+
         const tr = document.createElement("tr");
         tr.innerHTML = `
-          <td class="border px-3 py-2">${idx + 1}</td>
+          <td class="border px-3 py-2">${(page - 1) * limit + idx + 1}</td>
           <td class="border px-3 py-2">${ev.title}</td>
           <td class="border px-3 py-2">${ev.location || "-"}</td>
           <td class="border px-3 py-2">${startStr} - ${endStr}</td>
-          <td class="border px-3 py-2">${ev.deposit != null ? ev.deposit.toLocaleString() : "0"}</td> 
+          <td class="border px-3 py-2 text-right">${depositStr}</td> 
           <td class="border px-3 py-2">${ev.status}</td>
           <td class="border px-3 py-2">
             <a href="/pages/edit-event.html?id=${ev.id}" class="text-blue-600 hover:underline mr-2">Update</a>
             <a href="#" onclick="deleteEvent(${ev.id})" class="text-blue-600 hover:underline">Delete</a>
-            </td>
+          </td>
         `;
         eventTable.appendChild(tr);
       });
+
+      // 🔹 Render pagination
+      currentPage = data.page;
+      renderPagination(data.total, data.page, data.limit);
 
     } catch (err) {
       msg.textContent = "Error: " + err.message;
     }
   }
 
+  function renderPagination(total, page, limit) {
+    const totalPages = Math.ceil(total / limit);
+    pagination.innerHTML = "";
 
-  // logic for updateEvent function
-  window.updateEvent = function(eventId) {
-    // redirect sang trang edit
-    window.location.href = `/pages/edit-event.html?id=${eventId}`;
+    if (totalPages <= 1) return;
+
+    // Prev
+    if (page > 1) {
+      const prevBtn = document.createElement("button");
+      prevBtn.textContent = "Prev";
+      prevBtn.className = "px-3 py-1 border rounded bg-gray-200 hover:bg-gray-300";
+      prevBtn.onclick = () => loadEvents(true, page - 1);
+      pagination.appendChild(prevBtn);
+    }
+
+    // Numbers
+    for (let i = 1; i <= totalPages; i++) {
+      const btn = document.createElement("button");
+      btn.textContent = i;
+      btn.className =
+        "px-3 py-1 border rounded " +
+        (i === page ? "bg-blue-600 text-white" : "bg-gray-200 hover:bg-gray-300");
+      btn.onclick = () => loadEvents(true, i);
+      pagination.appendChild(btn);
+    }
+
+    // Next
+    if (page < totalPages) {
+      const nextBtn = document.createElement("button");
+      nextBtn.textContent = "Next";
+      nextBtn.className = "px-3 py-1 border rounded bg-gray-200 hover:bg-gray-300";
+      nextBtn.onclick = () => loadEvents(true, page + 1);
+      pagination.appendChild(nextBtn);
+    }
   }
 
-  // logic for deleteEvent function 
   window.deleteEvent = async function(eventId) {
     if (!confirm("Bạn có chắc muốn xóa event này?")) return;
 
@@ -141,19 +185,17 @@ function initEventList(){
       if (!res.ok) throw new Error(data.message || "Delete failed");
 
       alert("Event deleted successfully");
-      loadEvents(false); // reload danh sách
+      loadEvents(false, currentPage); 
     } catch (err) {
       alert("Error: " + err.message);
    }
   }
 
-  // 🔹 Event filter
-  document.getElementById("applyFilter").addEventListener("click", () => loadEvents(true));
+  document.getElementById("applyFilter").addEventListener("click", () => loadEvents(true, 1));
 
-  // 🔹 Load mặc định khi mở trang (hiển thị tất cả event)
-  loadEvents(false);
+  loadEvents(false, 1);
 }
-
 </script>
+
 </body>
 </html>

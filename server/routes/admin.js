@@ -27,7 +27,7 @@ router.get("/members/list", authMiddleware, async (req, res) => {
 
     const members = await prisma.user.findMany({
       where,
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: "desc" }, 
       skip: (parseInt(page) - 1) * parseInt(limit),
       take: parseInt(limit),
       select:{
@@ -212,7 +212,7 @@ router.get("/events/list", authMiddleware, async (req, res) => {
 
     const events = await prisma.event.findMany({
       where,
-      orderBy: { startAt: "desc" },
+      orderBy: { createdAt: "desc" },
       skip: (parseInt(page) - 1) * parseInt(limit),
       take: parseInt(limit),
       select: {

@@ -28,7 +28,7 @@
       <th class="border px-3 py-2">#</th>
       <th class="border px-3 py-2">Email</th>
       <th class="border px-3 py-2">Full Name</th>
-      <th class="border px-3 py-2">Phone</th> <!-- ✅ thêm -->
+      <th class="border px-3 py-2">Phone</th>
       <th class="border px-3 py-2">Status</th>
       <th class="border px-3 py-2">Active</th>
     </tr>
@@ -36,14 +36,27 @@
   <tbody></tbody>
 </table>
 
+<!-- Pagination -->
+<div class="flex justify-between items-center mt-4">
+  <button id="prevPage" class="bg-gray-300 px-3 py-1 rounded hover:bg-gray-400">Previous</button>
+  <span id="pageInfo">Page 1</span>
+  <button id="nextPage" class="bg-gray-300 px-3 py-1 rounded hover:bg-gray-400">Next</button>
+</div>
+
 <div id="msg" class="mt-2 text-red-500"></div>
 
 <script>
-
 function initMemberList() {
   const API_BASE = "http://localhost:4000"; 
   const token = localStorage.getItem("token");
   const msg = document.getElementById("msg");
+  const memberTable = document.getElementById("memberTable").querySelector("tbody");
+  const pageInfo = document.getElementById("pageInfo");
+  const prevBtn = document.getElementById("prevPage");
+  const nextBtn = document.getElementById("nextPage");
+
+  let currentPage = 1;
+  const limit = 5; // số member mỗi trang
 
   if (!token) {
     alert("Bạn chưa đăng nhập");
@@ -51,11 +64,12 @@ function initMemberList() {
     return;
   }
 
-  const memberTable = document.getElementById("memberTable").querySelector("tbody");
-
   // 🔹 Load danh sách member
   async function loadMembers(applyFilter = false) {
     const params = new URLSearchParams();
+    params.append("page", currentPage);
+    params.append("limit", limit);
+
     if (applyFilter) {
       const email = document.getElementById("filterEmail").value;
       const fullName = document.getElementById("filterFullName").value;
@@ -77,35 +91,38 @@ function initMemberList() {
 
       memberTable.innerHTML = "";
       if (!data.members || data.members.length === 0) {
-        memberTable.innerHTML = `<tr><td colspan="5" class="text-center p-3 text-gray-500">Không có member nào</td></tr>`;
-        return;
+        memberTable.innerHTML = `<tr><td colspan="6" class="text-center p-3 text-gray-500">Không có member nào</td></tr>`;
+      } else {
+        data.members.forEach((member, idx) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td class="border px-3 py-2">${(currentPage - 1) * limit + idx + 1}</td>
+            <td class="border px-3 py-2">${member.email}</td>
+            <td class="border px-3 py-2">${member.fullName || "-"}</td>
+            <td class="py-2 px-4">${member.phoneNumber || "-"}</td>
+            <td class="border px-3 py-2 ${member.isActive ? "text-green-600" : "text-red-600"}">
+              ${member.isActive ? "Active" : "Locked"}
+            </td>
+            <td class="border px-3 py-2 space-x-2">
+              <button class="view-btn bg-gray-300 px-2 py-1 rounded hover:bg-gray-400">View</button>
+              <button class="lock-btn bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600">
+                ${member.isActive ? "Lock" : "Unlock"}
+              </button>
+              <button class="reset-btn bg-yellow-400 px-2 py-1 rounded hover:bg-yellow-500">Reset PW</button>
+            </td>
+          `;
+          memberTable.appendChild(tr);
+
+          tr.querySelector(".view-btn").addEventListener("click", () => viewMember(member.id));
+          tr.querySelector(".lock-btn").addEventListener("click", () => toggleLock(member.id, member.isActive));
+          tr.querySelector(".reset-btn").addEventListener("click", () => resetPassword(member.id));
+        });
       }
 
-      data.members.forEach((member, idx) => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td class="border px-3 py-2">${idx + 1}</td>
-          <td class="border px-3 py-2">${member.email}</td>
-          <td class="border px-3 py-2">${member.fullName || "-"}</td>
-          <td class="py-2 px-4">${member.phoneNumber || "-"}</td> <!-- ✅ thêm -->
-          <td class="border px-3 py-2 ${member.isActive ? "text-green-600" : "text-red-600"}">
-            ${member.isActive ? "Active" : "Locked"}
-          </td>
-          <td class="border px-3 py-2 space-x-2">
-            <button class="view-btn bg-gray-300 px-2 py-1 rounded hover:bg-gray-400">View</button>
-            <button class="lock-btn bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600">
-              ${member.isActive ? "Lock" : "Unlock"}
-            </button>
-            <button class="reset-btn bg-yellow-400 px-2 py-1 rounded hover:bg-yellow-500">Reset PW</button>
-          </td>
-        `;
-        memberTable.appendChild(tr);
-
-        // ✅ Gắn sự kiện cho từng nút
-        tr.querySelector(".view-btn").addEventListener("click", () => viewMember(member.id));
-        tr.querySelector(".lock-btn").addEventListener("click", () => toggleLock(member.id, member.isActive));
-        tr.querySelector(".reset-btn").addEventListener("click", () => resetPassword(member.id));
-      });
+      // cập nhật số trang
+      pageInfo.textContent = `Page ${currentPage}`;
+      prevBtn.disabled = currentPage === 1;
+      nextBtn.disabled = !data.hasMore; // backend trả về hasMore để biết còn trang sau không
     } catch (err) {
       msg.textContent = "Lỗi: " + err.message;
     }
@@ -124,7 +141,7 @@ function initMemberList() {
       });
       const data = await res.json();
       alert(data.message);
-      loadMembers(); // reload danh sách
+      loadMembers();
     } catch (err) {
       alert("Lỗi: " + err.message);
     }
@@ -144,18 +161,33 @@ function initMemberList() {
     }
   }
 
-  // 🔹 Event filter
-  document.getElementById("applyFilter").addEventListener("click", () => loadMembers(true));
+  // 🔹 Pagination
+  prevBtn.addEventListener("click", () => {
+    if (currentPage > 1) {
+      currentPage--;
+      loadMembers();
+    }
+  });
 
-  // 🔹 Gán các hàm ra global để onclick hoạt động nếu cần
+  nextBtn.addEventListener("click", () => {
+    currentPage++;
+    loadMembers();
+  });
+
+  // 🔹 Filter
+  document.getElementById("applyFilter").addEventListener("click", () => {
+    currentPage = 1; // reset về trang 1
+    loadMembers(true);
+  });
+
+  // 🔹 Gán global
   window.viewMember = viewMember;
   window.toggleLock = toggleLock;
   window.resetPassword = resetPassword;
 
-  // 🔹 Load danh sách lần đầu
+  // 🔹 Load lần đầu
   loadMembers(false);
 }
-
 </script>
 
 </body>
