@@ -1,20 +1,34 @@
-import React from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
+import DashboardLayout from "../components/DashboardLayout";
 
-function Dashboard() {
+import EventList from "./events/EventList";
+import CreateEvent from "./events/CreateEvent";
+import Attendance from "./events/Attendance";
+import MemberList from "./members/MemberList";
+import CreateMember from "./members/CreateMember";
+import SendNotification from "./notifications/SendNotification";
+
+function DashboardPage() {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    return <Navigate to="/login" />;
+  }
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-blue-600 text-white py-4 px-8 flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Admin Dashboard</h1>
-        <span className="font-semibold">Welcome, Admin!</span>
-      </header>
-      <main className="p-8">
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-bold mb-4">Dashboard Content</h2>
-          <p className="text-gray-700">This is your dashboard. Add widgets, charts, or management features here.</p>
-        </div>
-      </main>
-    </div>
+    <DashboardLayout>
+      <Routes>
+        <Route index element={<p>Welcome to Admin Dashboard</p>} />
+        <Route path="events/create" element={<CreateEvent />} />
+        <Route path="events/list" element={<EventList />} />
+        <Route path="events/attendance" element={<Attendance />} />
+
+        <Route path="members/create" element={<CreateMember />} />
+        <Route path="members/list" element={<MemberList />} />
+
+        <Route path="notifications/send" element={<SendNotification />} />
+      </Routes>
+    </DashboardLayout>
   );
 }
 
-export default Dashboard;
+export default DashboardPage;
