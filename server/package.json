@@ -1,26 +1,26 @@
 {
-    "name": "event-management",
-    "version": "1.0.0",
-    "main": "server.js",
-    "type": "module",
-    "scripts": {
-        "dev": "node server.js",
-        "start": "node server.js",
-        "prisma:migrate": "prisma migrate dev --name init",
-        "prisma:generate": "prisma generate",
-        "prisma:seed": "node prisma/seed.js"
-    },
-    "dependencies": {
-        "@prisma/client": "^5.22.0",
-        "bcryptjs": "^2.4.3",
-        "body-parser": "^1.20.3",
-        "cors": "^2.8.5",
-        "date-fns-tz": "^3.2.0",
-        "dotenv": "^16.3.1",
-        "express": "^4.21.2",
-        "inquirer": "^9.0.0",
-        "jsonwebtoken": "^9.0.2",
-        "prisma": "^5.0.0",
-        "slugify": "^1.6.6"
-    }
+  "name": "event-management-server",
+  "version": "1.0.0",
+  "description": "Backend API server for Event Management System",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["event", "management", "api", "express"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "@prisma/client": "^5.0.0",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.0",
+    "dotenv": "^16.0.3"
+  },
+  "devDependencies": {
+    "prisma": "^5.0.0"
+  }
 }

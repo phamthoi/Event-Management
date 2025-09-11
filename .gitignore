@@ -1,120 +1,69 @@
-# Dependencies
+# ===== DEPENDENCIES =====
 node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 package-lock.json
 yarn.lock
+pnpm-lock.yaml
 
-# Environment variables (keep .env for local development)
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-.env.production
+# ===== ENVIRONMENT & CONFIG =====
+.env*
+!.env.example
+config/local.json
 
-# Database files
+# ===== DATABASE =====
 *.db
-*.sqlite
-*.sqlite3
-dev.db
-backup*.sql
+*.sqlite*
+database.db
+prisma/dev.db
+*.sql.backup
 
-# Prisma (allow migrations for project setup)
-.prisma/
-
-# Logs
-logs
+# ===== LOGS =====
+logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
-yarn-error.log*
+pnpm-debug.log*
 lerna-debug.log*
 
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
-
-# Coverage directory used by tools like istanbul
-coverage/
-*.lcov
-
-# nyc test coverage
-.nyc_output
-
-# Grunt intermediate storage
-.grunt
-
-# Bower dependency directory
-bower_components
-
-# node-waf configuration
-.lock-wscript
-
-# Compiled binary addons
-build/Release
-
-# Dependency directories
-node_modules/
-jspm_packages/
-
-# TypeScript cache
+# ===== BUILD OUTPUTS =====
+build/
+dist/
+out/
+.next/
+.nuxt/
+.cache/
+.parcel-cache/
 *.tsbuildinfo
 
-# Optional npm cache directory
-.npm
+# ===== COVERAGE & TESTING =====
+coverage/
+.nyc_output/
+*.lcov
+test-results/
+__tests__/coverage/
 
-# Optional eslint cache
+# ===== CACHE & TEMP =====
+.npm/
 .eslintcache
-
-# Microbundle cache
 .rpt2_cache/
-.rts2_cache_cjs/
-.rts2_cache_es/
-.rts2_cache_umd/
-
-# Optional REPL history
-.node_repl_history
-
-# Output of 'npm pack'
-*.tgz
-
-# Yarn Integrity file
-.yarn-integrity
-
-# parcel-bundler cache
-.cache
-.parcel-cache
-
-# Next.js build output
-.next
-
-# Nuxt.js build / generate output
-.nuxt
-dist
-
-# Gatsby files
-.cache/
-public
-
-# Storybook build outputs
-.out
-.storybook-out
-
-# Temporary folders
+.rts2_cache*/
 tmp/
 temp/
+*.tmp
 
-# Editor directories and files
+# ===== EDITOR & IDE =====
 .vscode/
+!.vscode/extensions.json
 .idea/
 *.swp
 *.swo
 *~
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 
-# OS generated files
+# ===== OS GENERATED =====
 .DS_Store
 .DS_Store?
 ._*
@@ -122,89 +71,31 @@ temp/
 .Trashes
 ehthumbs.db
 Thumbs.db
+desktop.ini
 
-# Upload directories
-uploads/
-static/uploads/
-public/uploads/
+# ===== RUNTIME =====
+pids/
+*.pid
+*.seed
+*.pid.lock
+.node_repl_history
 
-# Build directories
-build/
-dist/
-out/
+# ===== PACKAGE OUTPUTS =====
+*.tgz
+*.tar.gz
+.yarn-integrity
 
-# SSL certificates
-*.pem
-*.key
-*.crt
-*.csr
-
-# Backup files
-*.backup
-*.bak
-*.old
-
-# Node.js binary files
-.bin/
-node_modules/.bin/
-server/node_modules/.bin/
-**/node_modules/.bin/
-**/.prisma/
-server/package.json
-
-# Prisma generated files - ignore toàn bộ
+# ===== PRISMA =====
 .prisma/
-**/.prisma/
-server/.prisma/
 
-# Test files
-test-results/
-coverage/
-test-connection.js
-
-# Docker
+# ===== DOCKER =====
 Dockerfile.prod
 docker-compose.override.yml
+.dockerignore
 
-# Serverless
-.serverless/
-
-# AWS
-.aws/
-
-# Local development
-.local
-
-# IDE and system files
-.vscode/settings.json
-.idea/
-*.iml
-
-# macOS
-.DS_Store
-
-# Windows
-Thumbs.db
-ehthumbs.db
-
-# Thêm các mục này để ignore các file đang hiện trong Git status
-# Prisma binary files
-server/node_modules/.bin/mime
-server/node_modules/.bin/mime.cmd
-server/node_modules/.bin/mime.ps1
-server/node_modules/.bin/prisma
-server/node_modules/.bin/prisma.cmd
-server/node_modules/.bin/prisma.ps1
-server/node_modules/.bin/semver
-server/node_modules/.bin/semver.cmd
-server/node_modules/.bin/semver.ps1
-
-# Prisma client files
-server/.prisma/client/
-server/node_modules/.prisma/
-
-# Package files
-server/package.json
-
-# Modified HTML files (nếu không cần track changes)
-client/pages/event-list.html
+# ===== MISC =====
+.grunt/
+bower_components/
+jspm_packages/
+typings/
+.lock-wscript
