@@ -1,120 +1,69 @@
-# Dependencies
+# ===== DEPENDENCIES =====
 node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 package-lock.json
 yarn.lock
+pnpm-lock.yaml
 
-# Environment variables
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+# ===== ENVIRONMENT & CONFIG =====
+.env*
+!.env.example
+config/local.json
 
-# Database
+# ===== DATABASE =====
 *.db
-*.sqlite
-*.sqlite3
-dev.db
+*.sqlite*
+database.db
+prisma/dev.db
+*.sql.backup
 
-# Prisma
-prisma/migrations/
-.prisma/
-
-# Logs
-logs
+# ===== LOGS =====
+logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
-yarn-error.log*
+pnpm-debug.log*
 lerna-debug.log*
 
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
-
-# Coverage directory used by tools like istanbul
-coverage/
-*.lcov
-
-# nyc test coverage
-.nyc_output
-
-# Grunt intermediate storage
-.grunt
-
-# Bower dependency directory
-bower_components
-
-# node-waf configuration
-.lock-wscript
-
-# Compiled binary addons
-build/Release
-
-# Dependency directories
-node_modules/
-jspm_packages/
-
-# TypeScript cache
+# ===== BUILD OUTPUTS =====
+build/
+dist/
+out/
+.next/
+.nuxt/
+.cache/
+.parcel-cache/
 *.tsbuildinfo
 
-# Optional npm cache directory
-.npm
+# ===== COVERAGE & TESTING =====
+coverage/
+.nyc_output/
+*.lcov
+test-results/
+__tests__/coverage/
 
-# Optional eslint cache
+# ===== CACHE & TEMP =====
+.npm/
 .eslintcache
-
-# Microbundle cache
 .rpt2_cache/
-.rts2_cache_cjs/
-.rts2_cache_es/
-.rts2_cache_umd/
-
-# Optional REPL history
-.node_repl_history
-
-# Output of 'npm pack'
-*.tgz
-
-# Yarn Integrity file
-.yarn-integrity
-
-# parcel-bundler cache
-.cache
-.parcel-cache
-
-# Next.js build output
-.next
-
-# Nuxt.js build / generate output
-.nuxt
-dist
-
-# Gatsby files
-.cache/
-public
-
-# Storybook build outputs
-.out
-.storybook-out
-
-# Temporary folders
+.rts2_cache*/
 tmp/
 temp/
+*.tmp
 
-# Editor directories and files
+# ===== EDITOR & IDE =====
 .vscode/
+!.vscode/extensions.json
 .idea/
 *.swp
 *.swo
 *~
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 
-# OS generated files
+# ===== OS GENERATED =====
 .DS_Store
 .DS_Store?
 ._*
@@ -122,41 +71,31 @@ temp/
 .Trashes
 ehthumbs.db
 Thumbs.db
+desktop.ini
 
-# Upload directories
-uploads/
-static/uploads/
-public/uploads/
+# ===== RUNTIME =====
+pids/
+*.pid
+*.seed
+*.pid.lock
+.node_repl_history
 
-# Build directories
-build/
-dist/
-out/
+# ===== PACKAGE OUTPUTS =====
+*.tgz
+*.tar.gz
+.yarn-integrity
 
-# SSL certificates
-*.pem
-*.key
-*.crt
-*.csr
+# ===== PRISMA =====
+.prisma/
 
-# Backup files
-*.backup
-*.bak
-*.old
-
-# Test files
-test-results/
-coverage/
-
-# Docker
+# ===== DOCKER =====
 Dockerfile.prod
 docker-compose.override.yml
+.dockerignore
 
-# Serverless
-.serverless/
-
-# AWS
-.aws/
-
-# Local development
-.local
+# ===== MISC =====
+.grunt/
+bower_components/
+jspm_packages/
+typings/
+.lock-wscript
