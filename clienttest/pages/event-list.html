@@ -104,8 +104,9 @@ function initEventList(){
       }
 
       data.events.forEach((ev, idx) => {
-        const startStr = ev.startAt ? new Date(ev.startAt).toLocaleString() : "-";
         const endStr = ev.endAt ? new Date(ev.endAt).toLocaleString() : "-";
+        const startStr = ev.startAt ? new Date(ev.startAt).tolocaleString() : "-";
+        
 
         const depositStr = ev.deposit != null
           ? `${Number(ev.deposit).toLocaleString("vi-VN")}`
