@@ -9,9 +9,12 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.join(__dirname, '../.env') });
 
-import authRoutes from "./routes/auth.js";
-import adminRoutes from "./routes/admin.js";
-import memberRoutes from "./routes/member.js";
+import authRoutes from "./routes/auth.route.js";
+import adminRoutes from "./routes/Admin/admin.route.js";
+import memberRoutes from "./routes/Admin/member.route.js";
+
+import eventRoutes from "./routes/Admin/event.route.js";
+import notificationRoutes from "./routes/notification.route.js";
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -26,7 +29,12 @@ app.use(express.json());
 // API routes
 app.use("/auth", authRoutes); // login chung
 app.use("/admin", adminRoutes); // admin route (bảo vệ bằng role ADMIN)
-app.use("/member", memberRoutes); // member route (bảo vệ bằng role MEMBER)
+// app.use("/member", memberRoutes); // member route (bảo vệ bằng role MEMBER)
+// app.use("/membersManage", memberManageRoutes); // admin manage members 
+// app.use("/events", eventRoutes); // event routes
+// app.use("/notifications", notificationRoutes); // notification routes
+
+
 
 // Health check endpoint
 app.get("/", (req, res) => {
