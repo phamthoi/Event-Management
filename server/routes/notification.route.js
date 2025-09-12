@@ -4,9 +4,14 @@ import { NotificationController } from "../controllers/notification.controller.j
 
 const router = express.Router();
 
+
+//Phần ADMIN
 // POST /notifications/send - Gửi thông báo (chỉ admin)
 router.post("/send", authMiddleware, NotificationController.sendNotificationAdmin);
 
+
+
+//Phần chung admin và member
 // GET /notifications - Lấy danh sách thông báo của user hiện tại
 router.get("/", authMiddleware, NotificationController.getNotifications);
 

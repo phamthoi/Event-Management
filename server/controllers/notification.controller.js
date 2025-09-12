@@ -39,9 +39,9 @@ export class NotificationController {
   }
 
 
-  
 
-  // Thêm method xem thông báo
+
+  // method chung
   static async getNotifications(req, res) {
     try {
       const userId = req.user.id;
