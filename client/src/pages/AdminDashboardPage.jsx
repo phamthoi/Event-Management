@@ -3,7 +3,11 @@ import DashboardLayout from "../components/Dashboard/DashboardLayout";
 
 import EventList from "./events/EventListPage";
 import EventListPage from "./events/EventListPage";
-//import CreateEvent from "./events/CreateEvent";
+import CreateEventPage from "./events/CreateEventPage";
+import AttendancePage from "./events/AttendancePage";
+//import { CreateMember } from "../services/memberService";
+import CreateMemberPage from "./members/CreateMemberPage";
+import MemberListPage from "./members/MemberListPage";
 //import Attendance from "./events/Attendance";
 //import MemberList from "./members/MemberList";
 //import CreateMember from "./members/CreateMember";
@@ -34,11 +38,11 @@ function DashboardPage() {
     <DashboardLayout>
       <Routes>
         <Route index element={<p>Welcome to Admin Dashboard</p>} />
-        <Route path="events/create" element={<p>Create Event Page (Coming Soon)</p>} />
+        <Route path="events/create" element={< CreateEventPage />} />
         <Route path="events/list" element={<EventListPage />} />
-        <Route path="events/attendance" element={<p>Attendance Page (Coming Soon)</p>} />
-        <Route path="members/create" element={<p>Create Member Page (Coming Soon)</p>} />
-        <Route path="members/list" element={<p>Member List Page (Coming Soon)</p>} />
+        <Route path="events/attendance" element={<AttendancePage />} />
+        <Route path="members/create" element={<CreateMemberPage/>} />
+        <Route path="members/list" element={<MemberListPage />} />
         <Route path="notifications/send" element={<p>Send Notification Page (Coming Soon)</p>} />
       </Routes>
     </DashboardLayout>

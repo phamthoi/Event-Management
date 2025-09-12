@@ -1,3 +1,4 @@
+//client/src/pages/LoginPage.jsx
 import React, { useState } from "react";
 import LoginForm from "../components/Login/LoginForm";
 import ForgotPasswordForm from "../components/Login/ForgotPasswordForm";
@@ -8,13 +9,18 @@ const LoginPage = () => {
 
   // Demo login
   const handleLogin = (email, password) => {
-    if (email === "admin@example.com" && password === "123456") {
-      localStorage.setItem("token", "demo-token");
-      window.location.href = "/dashboard";
-    } else {
+    if (email === "admin@example.com" && password === "1234") {
+      localStorage.setItem("token", "demo-admin-token");
+      localStorage.setItem("role", "admin")
+      window.location.href = "/admin/dashboard";
+    } else if(email === "member@example.com" && password === "1234"){
+      localStorage.setItem("token", "demo-member-token");
+      localStorage.setItem("role", "member");
+      window.location.href="/member/dashboard";
+    }else{
       setError("Invalid credentials");
-    }
-  };
+  }      
+  }
 
   const handleForgot = () => {
     setError("");
