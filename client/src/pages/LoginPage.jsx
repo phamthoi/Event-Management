@@ -1,72 +1,53 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import api from "../services/axios";
-import LoginForm from "../components/LoginForm";
-import ForgotPasswordForm from "../components/ForgotPasswordForm";
+import React, { useState } from "react";
+import LoginForm from "../components/Login/LoginForm";
+import ForgotPasswordForm from "../components/Login/ForgotPasswordForm";
 
-function LoginPage() {
-  const navigate = useNavigate();
-  const [isForgot, setIsForgot] = useState(false);
+const LoginPage = () => {
+  const [showForgot, setShowForgot] = useState(false);
   const [error, setError] = useState("");
 
-  // Handle login
-  const handleLogin = async (email, password) => {
-    setError(""); //clear lỗi cũ
-    try {
-      const res = await api.post("/auth/login", { email, password });
-      if (res.data.token) {
-        localStorage.setItem("token", res.data.token);
-        navigate("/dashboard");
-      } else {
-        setError(res.data.message || "Login failed");
-      }
-    } catch (err) {
-      setError(err.response?.data?.message || "An error occurred");
+  // Demo login
+  const handleLogin = (email, password) => {
+    if (email === "admin@example.com" && password === "123456") {
+      localStorage.setItem("token", "demo-token");
+      window.location.href = "/dashboard";
+    } else {
+      setError("Invalid credentials");
     }
   };
 
-  // Send reset code
-  const handleSendCode = async (forgotEmail) => {
-    // TODO: call API to send reset code
-    alert("Code sent to " + forgotEmail);
+  const handleForgot = () => {
+    setError("");
+    setShowForgot(true);
   };
 
-  // Reset password
-  const handleResetPassword = async (forgotEmail, resetCode, newPassword) => {
-    // TODO: call API to reset password
-    alert("Password reset successfully");
-    setIsForgot(false);
+  const handleBackToLogin = () => {
+    setError("");
+    setShowForgot(false);
   };
 
-  return (
-    <div className="bg-gray-100 flex items-center justify-center min-h-screen">
-      <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
-        <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
-          Admin Login
-        </h1>
-        {!isForgot ? (
-          <LoginForm
-            onLogin={handleLogin}
-            onForgot={() => {
-              setError("");
-              setIsForgot(true);
-            }}
-            error={error}
-          />
-        ) : (
-          <ForgotPasswordForm
-            onSendCode={handleSendCode}
-            onResetPassword={handleResetPassword}
-            onBack={() => {
-              setError("");
-              setIsForgot(false);
-            }}
-            error={error}
-          />
-        )}
-      </div>
-    </div>
+  const handleSendCode = async (email) => {
+    alert(`Send reset code to ${email} (demo)`);
+  };
+
+  const handleResetPassword = async (email, code, newPassword) => {
+    alert(`Reset password for ${email} with code ${code} (demo)`);
+  };
+
+  return showForgot ? (
+    <ForgotPasswordForm
+      onSendCode={handleSendCode}
+      onResetPassword={handleResetPassword}
+      onBack={handleBackToLogin}
+      error={error}
+    />
+  ) : (
+    <LoginForm
+      onLogin={handleLogin}
+      onForgot={handleForgot}
+      error={error}
+    />
   );
-}
+};
 
 export default LoginPage;
