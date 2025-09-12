@@ -38,6 +38,9 @@ export class NotificationController {
     }
   }
 
+
+  
+
   // Thêm method xem thông báo
   static async getNotifications(req, res) {
     try {

@@ -17,7 +17,8 @@ import eventRoutes from "./routes/Admin/event.route.js";
 import notificationRoutes from "./routes/notification.route.js";
 
 const app = express();
-const PORT = process.env.PORT || 4000;
+// const PORT = process.env.PORT || 4000;
+const PORT = 4000;
 
 // Middleware cấu hình CORS - cho phép frontend từ port 3000
 app.use(cors({
