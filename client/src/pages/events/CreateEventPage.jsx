@@ -1,3 +1,4 @@
+//client/src/page/CreateEventPage.jsx
 import React from "react";
 import CreateEventForm from "../../components/Create/CreateEventForm";
 

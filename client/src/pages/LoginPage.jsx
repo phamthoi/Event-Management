@@ -12,11 +12,11 @@ const LoginPage = () => {
     if (email === "admin@example.com" && password === "1234") {
       localStorage.setItem("token", "demo-admin-token");
       localStorage.setItem("role", "admin")
-      window.location.href = "/admin/dashboard";
+      window.location.href = "/admin";
     } else if(email === "member@example.com" && password === "1234"){
       localStorage.setItem("token", "demo-member-token");
       localStorage.setItem("role", "member");
-      window.location.href="/member/dashboard";
+      window.location.href="/member";
     }else{
       setError("Invalid credentials");
   }      

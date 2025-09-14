@@ -1,13 +1,13 @@
 // components/MemberTable.jsx
 // 👉 Component này hiển thị filter, bảng, pagination
-
 import React, { useEffect, useState } from "react";
+/*
 import {
   fetchMembers,
   toggleMemberLock,
   resetMemberPassword,
-} from "../../services/MemberListService";
-
+} from "../../services/admin/MemberListService";
+*/
 function MemberTable() {
   // State quản lý dữ liệu
   const [members, setMembers] = useState([]);
@@ -23,7 +23,7 @@ function MemberTable() {
   });
 
   const limit = 5;
-
+/*
   // Load members từ API
   const loadMembers = async (applyFilter = false) => {
     try {
@@ -40,17 +40,91 @@ function MemberTable() {
       setMsg(err.response?.data?.message || "Lỗi tải danh sách member");
     }
   };
+*/
 
-  // Khi page thay đổi thì load lại
+ // Fake data
+  const fakeMembers = [
+  {
+    id: 1,
+    email: "alice@example.com",
+    fullName: "Alice Nguyen",
+    phoneNumber: "0901234567",
+    isActive: true,
+  },
+  {
+    id: 2,
+    email: "bob@example.com",
+    fullName: "Bob Tran",
+    phoneNumber: "0912345678",
+    isActive: false,
+  },
+  {
+    id: 3,
+    email: "charlie@example.com",
+    fullName: "Charlie Pham",
+    phoneNumber: "0987654321",
+    isActive: true,
+  },
+  {
+    id: 4,
+    email: "david@example.com",
+    fullName: "David Le",
+    phoneNumber: "0934567890",
+    isActive: true,
+  },
+  {
+    id: 5,
+    email: "eva@example.com",
+    fullName: "Eva Hoang",
+    phoneNumber: "0971234567",
+    isActive: false,
+  },
+  {
+    id: 6,
+    email: "frank@example.com",
+    fullName: "Frank Vu",
+    phoneNumber: "0956781234",
+    isActive: true,
+  },];
+
+  // load members(fake)
+  // Load members (fake)
+  const loadMembers = () => {
+    try {
+      // Filter trước
+      let filtered = fakeMembers.filter((m) => {
+        return (
+          (!filters.email || m.email.includes(filters.email)) &&
+          (!filters.fullName ||
+            m.fullName.toLowerCase().includes(filters.fullName.toLowerCase())) &&
+          (filters.isActive === ""
+            ? true
+            : m.isActive.toString() === filters.isActive)
+        );
+      });
+
+      // Pagination
+      const start = (page - 1) * limit;
+      const end = start + limit;
+      const paged = filtered.slice(start, end);
+
+      setMembers(paged);
+      setHasMore(end < filtered.length);
+      setMsg("");
+    } catch (err) {
+      setMsg("Lỗi tải danh sách member");
+    }
+  };
+
   useEffect(() => {
-    loadMembers(true);
+    loadMembers();
     // eslint-disable-next-line
-  }, [page]);
+  }, [page, filters]);
 
   // Submit filter
   const handleFilter = () => {
     setPage(1); // reset về trang 1
-    loadMembers(true);
+    loadMembers();
   };
 
   // View member
@@ -59,25 +133,19 @@ function MemberTable() {
   };
 
   // Lock/unlock
-  const handleToggleLock = async (id, isActive) => {
-    try {
-      const res = await toggleMemberLock(id, isActive);
-      alert(res.message);
-      loadMembers(true);
-    } catch (err) {
-      alert("Lỗi: " + err.message);
-    }
+  const handleToggleLock = (id, isActive) => {
+    setMembers((prev) =>
+      prev.map((m) =>
+        m.id === id ? { ...m, isActive: !isActive } : m
+      )
+    );
+    alert(isActive ? "Đã khóa member" : "Đã mở khóa member");
   };
 
   // Reset password
-  const handleResetPassword = async (id) => {
+  const handleResetPassword = (id) => {
     if (!window.confirm("Reset password về 'Member@123'?")) return;
-    try {
-      const res = await resetMemberPassword(id);
-      alert(res.message);
-    } catch (err) {
-      alert("Lỗi: " + err.message);
-    }
+    alert("Đã reset password cho member " + id);
   };
 
   return (
@@ -130,19 +198,14 @@ function MemberTable() {
         <tbody>
           {members.length === 0 ? (
             <tr>
-              <td
-                colSpan="6"
-                className="text-center p-3 text-gray-500"
-              >
+              <td colSpan="6" className="text-center p-3 text-gray-500">
                 Không có member nào
               </td>
             </tr>
           ) : (
             members.map((m, idx) => (
               <tr key={m.id}>
-                <td className="border px-3 py-2">
-                  {(page - 1) * limit + idx + 1}
-                </td>
+                <td className="border px-3 py-2">{(page - 1) * limit + idx + 1}</td>
                 <td className="border px-3 py-2">{m.email}</td>
                 <td className="border px-3 py-2">{m.fullName || "-"}</td>
                 <td className="border px-3 py-2">{m.phoneNumber || "-"}</td>

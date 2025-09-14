@@ -1,10 +1,11 @@
 //client/src/components/CreateEvent/CreateEventForm.jsx
 import React, {useState} from 'react';
-import { createEvent } from '../../services/CreateEventSerivce';
+import { createEvent } from '../../services/admin/CreateEventService';
+import { validateEventForm } from '../../utils/validation';
 
 const CreateEventForm = () => {
     const [form, setForm] = useState({
-        tiltle: "",
+        title: "",
         description: "",
         location: "",
         minAttendees: "",
@@ -27,6 +28,15 @@ const CreateEventForm = () => {
         e.preventDefault();
         setMsg("");
 
+
+        //function to handle time, min and max attendees
+        const validationError = validateEventForm(form);
+          if (validationError) {
+          setMsg(validationError);
+          return;
+        }
+
+
         try {
             const payload = {
                 ...form, 
@@ -35,16 +45,16 @@ const CreateEventForm = () => {
                 deposit: form.deposit ? parseFloat(form.deposit) : 0.0, 
             };
 
-            const data = await CreateEventForm(payload);
+            const data = await createEvent(payload);
 
-            setMsg(`Create event successful: ${data.event.tiltle}`);
+            setMsg(`Create event successful: ${data.event.title}`);
             setForm({
-                tiltle: "",
+                title: "",
                 description: "",
                 location: "",
                 minAttendees: "",
                 maxAttendees: "",
-                deposit,
+                deposit: "",
                 startAt: "",
                 endAt: "",
                 registrationStartAt: "",

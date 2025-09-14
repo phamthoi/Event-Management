@@ -1,5 +1,5 @@
 import React from "react";
-
+import {Link} from "react-router-dom"
 const EventTable = ({ events, onDelete, page, limit }) => {
   return (
     <table className="w-full border-collapse border border-gray-300">
@@ -33,7 +33,8 @@ const EventTable = ({ events, onDelete, page, limit }) => {
                 <td className="border px-3 py-2 text-right">{depositStr}</td>
                 <td className="border px-3 py-2">{ev.status}</td>
                 <td className="border px-3 py-2">
-                  <a href={`/pages/edit-event.html?id=${ev.id}`} className="text-blue-600 hover:underline mr-2">Update</a>
+
+                  <Link to={`/admin/events/edit/${ev.id}`} className="text-blue-600 hover:underline mr-2">Update</Link>
                   <button onClick={() => onDelete(ev.id)} className="text-blue-600 hover:underline">Delete</button>
                 </td>
               </tr>

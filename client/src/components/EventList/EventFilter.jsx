@@ -9,7 +9,7 @@ const EventFilter = ({ onFilter }) => {
     startDate: "",
     endDate: ""
   });
-
+  
   const handleChange = (e) => {
     const { id, value } = e.target;
     setFilters(prev => ({ ...prev, [id]: value }));

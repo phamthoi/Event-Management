@@ -19,9 +19,9 @@ function Sidebar() {
       <div>
         <p className="font-semibold">Event ▾</p>
         <div className="ml-3 flex flex-col gap-1">
-          <Link to="/dashboard/events/create">Create Event</Link>
-          <Link to="/dashboard/events/list">Event List</Link>
-          <Link to="/dashboard/events/attendance">Attendance</Link>
+          <Link to="/admin/events/create">Create Event</Link>
+          <Link to="/admin/events/list">Event List</Link>
+          <Link to="/admin/events/attendance">Attendance</Link>
         </div>
       </div>
 
@@ -29,8 +29,8 @@ function Sidebar() {
       <div>
         <p className="font-semibold">Member ▾</p>
         <div className="ml-3 flex flex-col gap-1">
-          <Link to="/dashboard/members/create">Create Member</Link>
-          <Link to="/dashboard/members/list">Member List</Link>
+          <Link to="/admin/members/create">Create Member</Link>
+          <Link to="/admin/members/list">Member List</Link>
         </div>
       </div>
 
@@ -38,7 +38,7 @@ function Sidebar() {
       <div>
         <p className="font-semibold">Notifications ▾</p>
         <div className="ml-3 flex flex-col gap-1">
-          <Link to="/dashboard/notifications/send">Send Notification</Link>
+          <Link to="/admin/notifications/send">Send Notification</Link>
         </div>
       </div>
 

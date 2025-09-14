@@ -1,5 +1,5 @@
 //client/src/services/AttendanceService.js
-import api from "./axios";
+import api from "../axios";
 
 // Lấy danh sách sự kiện
 export const getEvents = () => api.get("/admin/events/list");

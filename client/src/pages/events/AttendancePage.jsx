@@ -1,9 +1,11 @@
+//client/src/pages/events/AttendancePage.jsx
+/*
 import { useEffect, useState } from "react";
-import {
-  getEvents,
-  getRegistrations,
-  updateAttendance,
-} from "../../services/attendanceService";
+//import {
+//  getEvents,
+//  getRegistrations,
+//  updateAttendance,
+//} from "../../services/admin/attendanceService";
 
 import EventSelect from "../../components/attendance/EventSelect";
 import MemberTable from "../../components/attendance/MemberTable";
@@ -16,6 +18,7 @@ function AttendancePage() {
   const [message, setMessage] = useState("");
   const [isOngoing, setIsOngoing] = useState(false);
 
+  
   // Load events
   useEffect(() => {
     const fetchEvents = async () => {
@@ -100,6 +103,69 @@ function AttendancePage() {
       <SaveButton onClick={handleSave} />
 
       <div className="mt-2 text-red-500">{message}</div>
+    </div>
+  );
+}
+
+export default AttendancePage;
+*/
+
+// client/src/pages/events/AttendancePage.jsx
+import React, { useEffect, useState } from "react";
+import EventSelect from "../../components/attendance/EventSelect";
+import MemberTable from "../../components/attendance/MemberTable";
+import SaveButton from "../../components/attendance/SaveButton";
+
+function AttendancePage() {
+  const [events, setEvents] = useState([]);
+  const [selectedEvent, setSelectedEvent] = useState("");
+  const [registrations, setRegistrations] = useState([]);
+
+  // Lấy events từ localStorage
+  useEffect(() => {
+    const stored = JSON.parse(localStorage.getItem("events")) || [];
+    setEvents(stored);
+  }, []);
+
+  // Khi chọn event -> load registrations
+  useEffect(() => {
+    if (selectedEvent) {
+      const storedRegs =
+        JSON.parse(localStorage.getItem(`registrations_${selectedEvent}`)) || [];
+      setRegistrations(storedRegs);
+    }
+  }, [selectedEvent]);
+
+  const handleToggle = (regId) => {
+    const updated = registrations.map((reg) =>
+      reg.id === regId ? { ...reg, attended: !reg.attended } : reg
+    );
+    setRegistrations(updated);
+    localStorage.setItem(`registrations_${selectedEvent}`, JSON.stringify(updated));
+  };
+
+  const handleSave = () => {
+    localStorage.setItem(`registrations_${selectedEvent}`, JSON.stringify(registrations));
+    alert("Saved!");
+  };
+
+  return (
+    <div className="p-6">
+      <h1 className="text-xl font-bold mb-4">Attendance</h1>
+
+      <EventSelect
+        events={events}
+        selectedEvent={selectedEvent}
+        onChange={(e) => setSelectedEvent(e.target.value)}
+      />
+
+      <MemberTable
+        registrations={registrations}
+        isOngoing={true}
+        onToggle={handleToggle}
+      />
+
+      <SaveButton onClick={handleSave} />
     </div>
   );
 }

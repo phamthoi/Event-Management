@@ -1,6 +1,6 @@
 // client/src/services/memberService.js
 
-import api from "./axios"; 
+import api from "../axios"; 
 
 // Lấy danh sách member (có filter + pagination)
 export const fetchMembers = async ({ page, limit, email, fullName, isActive }) => {

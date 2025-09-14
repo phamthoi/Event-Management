@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { CreateMember } from "../../services/CreateMemberService";
+import { CreateMember } from "../../services/admin/CreateMemberService";
 
 const CreateMemberForm = () => {
     const [form, setForm] = useState({

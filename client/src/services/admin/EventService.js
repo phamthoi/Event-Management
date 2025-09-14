@@ -1,4 +1,4 @@
-import api from "./axios";
+import api from "../axios";
 
 export const getEvents = async (page = 1, limit = 5, filters = {}) => {
   const params = { page, limit, ...filters };
@@ -19,3 +19,7 @@ export const deleteEvent = async (eventId) => {
     throw new Error(err.response?.data?.message || err.message || "Delete failed");
   }
 };
+
+
+
+
