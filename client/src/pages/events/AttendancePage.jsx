@@ -121,18 +121,31 @@ function AttendancePage() {
   const [selectedEvent, setSelectedEvent] = useState("");
   const [registrations, setRegistrations] = useState([]);
 
-  // Lấy events từ localStorage
   useEffect(() => {
     const stored = JSON.parse(localStorage.getItem("events")) || [];
     setEvents(stored);
   }, []);
 
-  // Khi chọn event -> load registrations
   useEffect(() => {
     if (selectedEvent) {
-      const storedRegs =
-        JSON.parse(localStorage.getItem(`registrations_${selectedEvent}`)) || [];
-      setRegistrations(storedRegs);
+      const allRegs = JSON.parse(localStorage.getItem("registrations")) || {};
+      const members = JSON.parse(localStorage.getItem("members")) || [];
+
+      // Tìm member nào đăng ký event này
+      const regsForEvent = Object.entries(allRegs)
+        .filter(([memberId, events]) => events[selectedEvent]) // chỉ lấy member có đăng ký event
+        .map(([memberId]) => {
+          const user = members.find((m) => m.id === parseInt(memberId));
+          return {
+            id: parseInt(memberId),
+            user,
+            attended: false, // mặc định false khi mới load
+          };
+        });
+
+      setRegistrations(regsForEvent);
+    } else {
+      setRegistrations([]);
     }
   }, [selectedEvent]);
 
@@ -141,11 +154,14 @@ function AttendancePage() {
       reg.id === regId ? { ...reg, attended: !reg.attended } : reg
     );
     setRegistrations(updated);
-    localStorage.setItem(`registrations_${selectedEvent}`, JSON.stringify(updated));
   };
 
   const handleSave = () => {
-    localStorage.setItem(`registrations_${selectedEvent}`, JSON.stringify(registrations));
+    // lưu riêng vào attendance_{eventId}
+    localStorage.setItem(
+      `attendance_${selectedEvent}`,
+      JSON.stringify(registrations)
+    );
     alert("Saved!");
   };
 

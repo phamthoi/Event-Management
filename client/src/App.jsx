@@ -12,6 +12,12 @@ import CreateMemberPage from "./pages/members/CreateMemberPage.jsx";
 import MemberListPage from "./pages/members/MemberListPage.jsx";
 
 
+// Member
+import MemberDashboardPage from "./pages/MemberDashboardPage.jsx";  
+import MemberProfilePage from "./pages/member/MemberProfilePage.jsx";
+import ViewMemberListPage from "./pages/member/ViewMemberListPage.jsx";
+import UpcomingEventsPage from "./pages/member/UpcomingEventPage.jsx";
+import MyEventsPage from "./pages/member/MyEventsPage.jsx";
 function App() {
   const token = localStorage.getItem("token");
   const role = localStorage.getItem("role");
@@ -52,6 +58,27 @@ function App() {
             path="notifications/send"
             element={<p>Send Notification Page (Coming Soon)</p>}
           />
+        </Route>
+
+        {/*member dashboard*/}
+        <Route
+          path="/member/*"
+          element={
+            token && role === "member" ? (
+              <MemberDashboardPage />
+            ) : (
+              <Navigate to="/login" />
+            )
+          }  
+        >
+          {/* Nested routes */}
+          <Route index element={<p>Welcome to member Dashboard</p>} />
+
+          {/**member profile */}
+          <Route path="profile/update" element={<MemberProfilePage />} />
+          <Route path="list-member" element={<ViewMemberListPage/>}/>
+          <Route path="upcoming-event" element={<UpcomingEventsPage/>}/>
+          <Route path="my-event" element={<MyEventsPage/>}/>
         </Route>
 
         {/* Fallback */}

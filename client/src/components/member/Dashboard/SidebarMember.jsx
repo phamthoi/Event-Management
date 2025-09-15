@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
 
-function Sidebar() {
+function Sidebar(){
     const handleLogout = () => {
         localStorage.removeItem("token");
-        window.location.href = "/login"; // back to login page
+        window.location.href="/login"; // back to login
     };
 
     return (
@@ -15,13 +15,12 @@ function Sidebar() {
         👤 Loading...
       </div>
 
-      {/* Event */}
+      {/* Profile */}
       <div>
-        <p className="font-semibold">Event ▾</p>
+        <p className="font-semibold">Profile ▾</p>
         <div className="ml-3 flex flex-col gap-1">
-          <Link to="/admin/events/create">Create Event</Link>
-          <Link to="/admin/events/list">Event List</Link>
-          <Link to="/admin/events/attendance">Attendance</Link>
+          <Link to="/member/profile/update">Update Infomation</Link>
+          <Link to="/member/profile/change-password">Change Password</Link>
         </div>
       </div>
 
@@ -29,8 +28,16 @@ function Sidebar() {
       <div>
         <p className="font-semibold">Member ▾</p>
         <div className="ml-3 flex flex-col gap-1">
-          <Link to="/admin/members/create">Create Member</Link>
-          <Link to="/admin/members/list">Member List</Link>
+          <Link to="/member/list-member">View Member</Link>
+        </div>
+      </div>
+
+      {/**Event */}
+      <div>
+        <p className="font-semibold">Event ▾</p>
+        <div className="ml-3 flex flex-col gap-1">
+          <Link to="/member/upcoming-event">Upcoming Event</Link>
+          <Link to="/member/my-event">My Event</Link>
         </div>
       </div>
 
@@ -38,7 +45,7 @@ function Sidebar() {
       <div>
         <p className="font-semibold">Notifications ▾</p>
         <div className="ml-3 flex flex-col gap-1">
-          <Link to="/admin/notifications/send">Send Notification</Link>
+          <Link to="/member/notifications">Get Notification</Link>
         </div>
       </div>
 

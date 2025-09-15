@@ -2,25 +2,51 @@
 import React, { useState } from "react";
 import LoginForm from "../components/Login/LoginForm";
 import ForgotPasswordForm from "../components/Login/ForgotPasswordForm";
+import { getMembers } from "../services/admin/MemberListService";
 
 const LoginPage = () => {
   const [showForgot, setShowForgot] = useState(false);
   const [error, setError] = useState("");
 
   // Demo login
-  const handleLogin = (email, password) => {
+   const handleLogin = (email, password) => {
+    // 1. Admin mặc định
     if (email === "admin@example.com" && password === "1234") {
       localStorage.setItem("token", "demo-admin-token");
-      localStorage.setItem("role", "admin")
+      localStorage.setItem("role", "admin");
+      localStorage.setItem(
+        "currentUser",
+        JSON.stringify({ id: 0, email, fullName: "System Admin", role: "admin" })
+      );
       window.location.href = "/admin";
-    } else if(email === "member@example.com" && password === "1234"){
-      localStorage.setItem("token", "demo-member-token");
-      localStorage.setItem("role", "member");
-      window.location.href="/member";
-    }else{
+      return;
+    }
+
+    // 2. Check member trong localStorage
+    const members = getMembers() || [];
+    const user = members.find((m) => m.email === email && m.password === password);
+
+    if (!user) {
       setError("Invalid credentials");
-  }      
-  }
+      return;
+    }
+
+    if (!user.isActive) {
+      setError("This account is locked");
+      return;
+    }
+    
+    console.log("Members in storage:", members);
+    console.log("Login input:", email, password);
+
+
+    localStorage.setItem("token", "demo-token-" + user.id);
+    localStorage.setItem("role", "member");
+    localStorage.setItem("currentUser", JSON.stringify(user));
+    window.location.href = "/member";
+    
+
+  };
 
   const handleForgot = () => {
     setError("");
@@ -48,11 +74,7 @@ const LoginPage = () => {
       error={error}
     />
   ) : (
-    <LoginForm
-      onLogin={handleLogin}
-      onForgot={handleForgot}
-      error={error}
-    />
+    <LoginForm onLogin={handleLogin} onForgot={handleForgot} error={error} />
   );
 };
 
