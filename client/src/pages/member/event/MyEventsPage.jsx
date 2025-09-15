@@ -1,6 +1,6 @@
 // client/src/pages/events/MyEventsPage.jsx
 import React, { useEffect, useState } from "react";
-import { getEvents, getRegistrations, cancelRegistration } from "../../../services/admin/event/eventService";
+import { getEvents, getRegistrations, cancelRegistration } from "../../../services/fakeApi";
 import { getEventStatus } from "../../../utils/getEventStatus";
 import EventCard from "../../../components/member/EventList/EventCard";
 

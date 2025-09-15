@@ -1,4 +1,4 @@
-import api from "./axios";
+import api from "../../axios";
 
 // Lấy danh sách events
 export const getEvents = async () => {
@@ -13,7 +13,7 @@ export const getEventById = async (id) => {
 };
 
 // Tạo event mới
-export const addEvent = async (event) => {
+export const createEvent = async (event) => {
   const res = await api.post("/admin/events/create", event);
   return res.data;
 };
@@ -29,3 +29,4 @@ export const deleteEvent = async (id) => {
   const res = await api.delete(`/admin/events/${id}`);
   return res.data;
 };
+

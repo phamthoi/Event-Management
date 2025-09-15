@@ -90,51 +90,6 @@ export const getEvents = () => {
   return stored;
 };
 
-const REGISTRATION_KEY = "registrations";
-
-// Quản lý đăng ký member
-export const getRegistrations = () => {
-  return JSON.parse(localStorage.getItem(REGISTRATION_KEY)) || {};
-};
-
-// Lấy danh sách đăng ký của một member cụ thể
-export const getMemberRegistrations = (memberId) => {
-  const regs = getRegistrations();
-  return regs[memberId] || {}; // { eventId: true, ... }
-};
-
-// Member đăng ký event
-export const registerEvent = (memberId, eventId) => {
-  if (!memberId || !eventId) {
-    throw new Error("memberId và eventId là bắt buộc");
-  }
-
-  const regs = getRegistrations();
-
-  // Đảm bảo luôn là object
-  if (typeof regs[memberId] !== "object" || regs[memberId] === null) {
-    regs[memberId] = {};
-  }
-
-  regs[memberId][eventId] = true;
-  localStorage.setItem(REGISTRATION_KEY, JSON.stringify(regs));
-  return true;
-};
-
-// Member hủy đăng ký
-export const cancelRegistration = (memberId, eventId) => {
-  const regs = getRegistrations();
-
-  if (typeof regs[memberId] === "object" && regs[memberId] !== null) {
-    delete regs[memberId][eventId];
-    if (Object.keys(regs[memberId]).length === 0) {
-      delete regs[memberId]; // nếu không còn event nào thì xóa luôn
-    }
-  }
-
-  localStorage.setItem(REGISTRATION_KEY, JSON.stringify(regs));
-  return true;
-};
 
 const fakeMembers = [
   {
@@ -299,3 +254,52 @@ export function updateMemberPassword(currentPassword, newPassword) {
   localStorage.setItem(MEMBER_KEY, JSON.stringify(members));
   return Promise.resolve(true);
 }
+
+
+{/*đăng ký sự kiện  */}
+
+const REGISTRATION_KEY = "registrations";
+
+// Quản lý đăng ký member
+export const getRegistrations = () => {
+  return JSON.parse(localStorage.getItem(REGISTRATION_KEY)) || {};
+};
+
+// Lấy danh sách đăng ký của một member cụ thể
+export const getMemberRegistrations = (memberId) => {
+  const regs = getRegistrations();
+  return regs[memberId] || {}; // { eventId: true, ... }
+};
+
+// Member đăng ký event
+export const registerEvent = (memberId, eventId) => {
+  if (!memberId || !eventId) {
+    throw new Error("memberId và eventId là bắt buộc");
+  }
+
+  const regs = getRegistrations();
+
+  // Đảm bảo luôn là object
+  if (typeof regs[memberId] !== "object" || regs[memberId] === null) {
+    regs[memberId] = {};
+  }
+
+  regs[memberId][eventId] = true;
+  localStorage.setItem(REGISTRATION_KEY, JSON.stringify(regs));
+  return true;
+};
+
+// Member hủy đăng ký
+export const cancelRegistration = (memberId, eventId) => {
+  const regs = getRegistrations();
+
+  if (typeof regs[memberId] === "object" && regs[memberId] !== null) {
+    delete regs[memberId][eventId];
+    if (Object.keys(regs[memberId]).length === 0) {
+      delete regs[memberId]; // nếu không còn event nào thì xóa luôn
+    }
+  }
+
+  localStorage.setItem(REGISTRATION_KEY, JSON.stringify(regs));
+  return true;
+};
