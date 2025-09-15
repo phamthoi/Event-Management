@@ -1,6 +1,6 @@
 //client/src/page/CreateEventPage.jsx
 import React from "react";
-import CreateEventForm from "../../components/Create/CreateEventForm";
+import CreateEventForm from "../../../components/admin/Create/CreateEventForm";
 
 const CreateEventPage = () => {
   return (

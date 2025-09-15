@@ -5,9 +5,9 @@ import {
   getRegistrations,
   registerEvent,
   cancelRegistration,
-} from "../../services/admin/EventService";
-import { getEventStatus } from "../../utils/getEventStatus";
-import EventCard from "../../components/member/EventList/EventCard";
+} from "../../../services/fakeApi";
+import { getEventStatus } from "../../../utils/getEventStatus";
+import EventCard from "../../../components/member/EventList/EventCard";
 
 const UpcomingEventsPage = () => {
   const [events, setEvents] = useState([]);

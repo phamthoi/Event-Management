@@ -3,21 +3,23 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "./pages/LoginPage.jsx";
 
 // Admin
-import AdminDashboardPage from "./pages/AdminDashboardPage.jsx";
-import CreateEventPage from "./pages/events/CreateEventPage.jsx";
-import EventListPage from "./pages/events/EventListPage.jsx";
-import EditEventPage from "./pages/events/EditEventPage.jsx";
-import AttendancePage from "./pages/events/AttendancePage.jsx";
-import CreateMemberPage from "./pages/members/CreateMemberPage.jsx";
-import MemberListPage from "./pages/members/MemberListPage.jsx";
+import AdminDashboardPage from "./pages/admin/AdminDashboardPage.jsx";
+import CreateEventPage from "./pages/admin/events/CreateEventPage.jsx";
+import EventListPage from "./pages/admin/events/EventListPage.jsx";
+import EditEventPage from "./pages/admin/events/EditEventPage.jsx";
+import AttendancePage from "./pages/admin/events/AttendancePage.jsx";
+import CreateMemberPage from "./pages/admin/members/CreateMemberPage.jsx";
+import MemberListPage from "./pages/admin/members/MemberListPage.jsx";
 
 
 // Member
-import MemberDashboardPage from "./pages/MemberDashboardPage.jsx";  
-import MemberProfilePage from "./pages/member/MemberProfilePage.jsx";
-import ViewMemberListPage from "./pages/member/ViewMemberListPage.jsx";
-import UpcomingEventsPage from "./pages/member/UpcomingEventPage.jsx";
-import MyEventsPage from "./pages/member/MyEventsPage.jsx";
+import MemberDashboardPage from "./pages/member/MemberDashBoardPage.jsx";  
+import MemberProfilePage from "./pages/member/profileMember/MemberProfilePage.jsx";
+import ChangePasswordPage from "./pages/member/profileMember/ChangePasswordPage.jsx";
+import ViewMemberListPage from "./pages/member/memberList/ViewMemberListPage.jsx";
+import UpcomingEventsPage from "./pages/member/event/UpcomingEventPage.jsx";
+import MyEventsPage from "./pages/member/event/MyEventsPage.jsx";
+
 function App() {
   const token = localStorage.getItem("token");
   const role = localStorage.getItem("role");
@@ -79,6 +81,8 @@ function App() {
           <Route path="list-member" element={<ViewMemberListPage/>}/>
           <Route path="upcoming-event" element={<UpcomingEventsPage/>}/>
           <Route path="my-event" element={<MyEventsPage/>}/>
+          <Route path="profile/change-password" element={<ChangePasswordPage/>}/>
+          
         </Route>
 
         {/* Fallback */}

@@ -1,8 +1,8 @@
-//client/src/pages/member/memberProfilePage.jsx
+// client/src/pages/member/memberProfilePage.jsx
 import React, { useEffect, useState } from "react";
-import { getProfile, updateProfile } from "../../services/member/memberService";
-import ProfileView from "../../components/member/profile/ProfileView";
-import ProfileForm from "../../components/member/profile/ProfileForm";
+import ProfileView from "../../../components/member/profile/ProfileView";
+import ProfileForm from "../../../components/member/profile/ProfileForm";
+import { getProfile, updateProfile } from "../../../services/fakeApi";
 
 const MemberProfilePage = () => {
   const [profile, setProfile] = useState(null);
@@ -19,12 +19,13 @@ const MemberProfilePage = () => {
     const fetchProfile = async () => {
       try {
         const data = await getProfile();
-        if (data.email) {
+        if (data) {
           setProfile(data);
         } else {
-          alert(data.message || "Failed to load profile");
+          alert("Failed to load profile");
         }
       } catch (err) {
+        console.error("fetchProfile error:", err);
         alert("Error loading profile");
       }
     };
@@ -35,12 +36,12 @@ const MemberProfilePage = () => {
   const handleSave = async (updatedData) => {
     try {
       const data = await updateProfile(updatedData);
-      if (data.user) {
+      if (data) {
         alert("Profile updated successfully");
-        setProfile(data.user);
+        setProfile(data);
         setIsEditing(false);
       } else {
-        alert(data.message || "Failed to update profile");
+        alert("Failed to update profile");
       }
     } catch (err) {
       alert("Error updating profile");

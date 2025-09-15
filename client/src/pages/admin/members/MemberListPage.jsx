@@ -1,7 +1,7 @@
 // client/src/pages/MemberListPage.jsx
 
 import React from "react";
-import MemberTable from "../../components/MemberList/MemberTable";
+import MemberTable from "../../../components/admin/MemberList/MemberTable";
 
 function MemberListPage() {
   return (

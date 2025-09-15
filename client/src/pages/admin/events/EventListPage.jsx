@@ -64,13 +64,13 @@ export default EventListPage;
 */
 //client/src/pages/events/EventListPage.jsx
 import React, { useEffect, useState } from "react";
-import EventFilter from "../../components/EventList/EventFilter";
-import EventTable from "../../components/EventList/EventTable";
-import Pagination from "../../components/EventList/Pagination";
-import { getEventStatus } from "../../utils/getEventStatus";
+import EventFilter from "../../../components/admin/EventList/EventFilter";
+import EventTable from "../../../components/admin/EventList/EventTable";
+import Pagination from "../../../components/admin/EventList/Pagination";
+import { getEventStatus } from "../../../utils/getEventStatus";
 import { useNavigate } from "react-router-dom";
-import { getEvents, deleteEvent } from "../../services/admin/eventService";
-
+//import { getEvents, deleteEvent } from "../../services/admin/eventService";
+import { getEvents, deleteEvent } from "../../../services/fakeApi";
 const EventListPage = () => {
 // import { getEvents, deleteEvent } from "../../services/admin/EventService"; // Tạm thời bỏ API
 

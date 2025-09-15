@@ -1,8 +1,8 @@
 // client/src/pages/events/AttendancePage.jsx
 import React, { useEffect, useState } from "react";
-import EventSelect from "../../components/attendance/EventSelect";
-import MemberTable from "../../components/attendance/MemberTable";
-import SaveButton from "../../components/attendance/SaveButton";
+import EventSelect from "../../../components/admin/attendance/EventSelect";
+import MemberTable from "../../../components/admin/attendance/MemberTable";
+import SaveButton from "../../../components/admin/attendance/SaveButton";
 
 function AttendancePage() {
   const [events, setEvents] = useState([]);

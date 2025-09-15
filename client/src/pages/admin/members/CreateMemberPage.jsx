@@ -1,5 +1,5 @@
 import React from "react";
-import CreateMemberForm from "../../components/Create/CreateMemberForm";
+import CreateMemberForm from "../../../components/admin/Create/CreateMemberForm";
 
 /*
 function CreateMemberPage() {

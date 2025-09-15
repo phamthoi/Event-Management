@@ -1,7 +1,7 @@
 //client/src/pages/events/EditEventPage.jsx
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import EditEventForm from "../../components/EventList/EditEventForm";
+import EditEventForm from "../../../components/admin/EventList/EditEventForm";
 
 const EditEventPage = () => {
   const { id } = useParams();

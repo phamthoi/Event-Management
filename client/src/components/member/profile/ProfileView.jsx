@@ -6,10 +6,10 @@ const ProfileView = ({ profile, onEdit }) => {
         <strong>Email:</strong> {profile.email}
       </p>
       <p>
-        <strong>Name:</strong> {profile.name || "-"}
+        <strong>Name:</strong> {profile.fullName || "-"}
       </p>
       <p>
-        <strong>Phone:</strong> {profile.phone || "-"}
+        <strong>Phone:</strong> {profile.phoneNumber || "-"}
       </p>
       <button
         onClick={onEdit}

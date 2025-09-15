@@ -1,7 +1,7 @@
 //client/src/components/CreateEvent/CreateEventForm.jsx
 import React, {useState} from 'react';
-import { createEvent } from '../../services/admin/CreateEventService';
-import { validateEventForm } from '../../utils/validation';
+import { createEvent } from '../../../services/admin/CreateEventService';
+import { validateEventForm } from '../../../utils/validation';
 
 const CreateEventForm = () => {
     const [form, setForm] = useState({

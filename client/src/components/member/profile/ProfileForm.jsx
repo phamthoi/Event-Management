@@ -2,17 +2,17 @@
 import React, { useState, useEffect } from "react";
 
 const ProfileForm = ({ profile, onCancel, onSave }) => {
-  const [name, setName] = useState(profile.name || "");
-  const [phone, setPhone] = useState(profile.phone || "");
+  const [name, setName] = useState(profile.fullName || "");
+  const [phone, setPhone] = useState(profile.phoneNumber || "");
 
   useEffect(() => {
-    setName(profile.name || "");
-    setPhone(profile.phone || "");
+    setName(profile.fullName || "");
+    setPhone(profile.phoneNumber || "");
   }, [profile]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSave({ name, phone });
+    onSave({ fullName: name, phoneNumber: phone });
   };
 
   return (

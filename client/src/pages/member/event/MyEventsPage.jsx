@@ -1,8 +1,8 @@
 // client/src/pages/events/MyEventsPage.jsx
 import React, { useEffect, useState } from "react";
-import { getEvents, getRegistrations, cancelRegistration } from "../../services/admin/EventService";
-import { getEventStatus } from "../../utils/getEventStatus";
-import EventCard from "../../components/member/EventList/EventCard";
+import { getEvents, getRegistrations, cancelRegistration } from "../../../services/admin/event/eventService";
+import { getEventStatus } from "../../../utils/getEventStatus";
+import EventCard from "../../../components/member/EventList/EventCard";
 
 const MyEventsPage = () => {
   const [events, setEvents] = useState([]);

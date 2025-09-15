@@ -1,6 +1,6 @@
 // client/src/components/MemberList/MemberTable.jsx
 import React, { useEffect, useState } from "react";
-import { getMembers, toggleMemberLock, resetMemberPassword } from "../../services/admin/MemberListService";
+import { getMembers, toggleMemberLock, resetMemberPassword } from "../../../services/fakeApi";
 
 function MemberTable({ role = "admin" }) {
   const [members, setMembers] = useState([]);

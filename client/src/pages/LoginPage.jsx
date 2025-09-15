@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import LoginForm from "../components/Login/LoginForm";
 import ForgotPasswordForm from "../components/Login/ForgotPasswordForm";
-import { getMembers } from "../services/admin/MemberListService";
+import { getMembers } from "../services/fakeApi";
 
 const LoginPage = () => {
   const [showForgot, setShowForgot] = useState(false);
