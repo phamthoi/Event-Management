@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-//import { CreateMember } from "../../../../services/admin/CreateMemberService";
+import { createMember } from "../../../services/admin/member/memberService";
 
 const CreateMemberForm = () => {
     const [form, setForm] = useState({
@@ -17,7 +17,7 @@ const CreateMemberForm = () => {
         e.preventDefault();
         setMsg({text:"", type:""});
         try{
-            const data = await CreateMember(form);
+            const data = await createMember(form);
             setMsg({text: `create member successful: ${data.email}`, type: "success"});
             setForm({fullName: "", email: "", password:""});
         } catch(err){

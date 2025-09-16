@@ -1,6 +1,6 @@
 // client/src/components/MemberList/MemberTable.jsx
 import React, { useEffect, useState } from "react";
-import { getMembers, toggleMemberLock, resetMemberPassword } from "../../../services/fakeApi";
+import { getMembers, toggleMemberLock, resetMemberPassword } from "../../../services/admin/member/memberService";
 
 function MemberTable({ role = "admin" }) {
   const [members, setMembers] = useState([]);
@@ -16,10 +16,17 @@ function MemberTable({ role = "admin" }) {
 
   const limit = 5;
 
-  const loadMembers = () => {
+  const loadMembers = async () => {
     try {
-      let all = getMembers();
+      const res = await getMembers(); 
+      console.log("getMembers trả về:", res);
 
+      // Nếu backend trả về object { members: [...], total, page, limit }
+      let all = res.members || res; 
+
+      if (!Array.isArray(all)) {
+        throw new Error("API không trả về mảng members");
+      }
       // filter chung
       let filtered = all.filter((m) => {
         const matchesEmail = !filters.email || m.email.includes(filters.email);
@@ -27,6 +34,8 @@ function MemberTable({ role = "admin" }) {
         const matchesStatus = filters.isActive === "" ? true : m.isActive.toString() === filters.isActive;
         return matchesEmail && matchesName && matchesStatus;
       });
+
+      
 
       // member chỉ thấy active
       if (role === "member") filtered = filtered.filter((m) => m.isActive);

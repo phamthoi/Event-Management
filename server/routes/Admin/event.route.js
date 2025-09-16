@@ -5,10 +5,10 @@ import { EventController } from "../../controllers/Admin/event.controller.js";
 const router = express.Router();
 
 // POST /events - Tạo event mới (chỉ admin)
-router.post("/", authMiddleware, EventController.createEvent);
+router.post("/create", authMiddleware, EventController.createEvent);
 
 // GET /events - Lấy danh sách events
-router.get("/", authMiddleware, EventController.getEventsList);
+router.get("/list", authMiddleware, EventController.getEventsList);
 
 // GET /events/:id - Lấy chi tiết event
 router.get("/:id", authMiddleware, EventController.getEventById);

@@ -23,6 +23,7 @@ import MyEventsPage from "./pages/member/event/MyEventsPage.jsx";
 function App() {
   const token = localStorage.getItem("token");
   const role = localStorage.getItem("role");
+  
 
   return (
     <BrowserRouter>
@@ -34,7 +35,7 @@ function App() {
         <Route
           path="/admin/*"
           element={
-            token && role === "admin" ? (
+            token && role === "ADMIN" ? (
               <AdminDashboardPage />
             ) : (
               <Navigate to="/login" />
@@ -48,7 +49,7 @@ function App() {
           <Route path="events/create" element={<CreateEventPage />} />
           <Route path="events/list" element={<EventListPage />} />
           <Route path="events/attendance" element={<AttendancePage />} />
-          <Route path="events/edit/:id" element = {<EditEventPage/>} />
+          <Route path="events/detail/:id" element = {<EditEventPage/>} />
           
 
           {/* Member routes */}
@@ -66,7 +67,7 @@ function App() {
         <Route
           path="/member/*"
           element={
-            token && role === "member" ? (
+            token && role === "MEMBER" ? (
               <MemberDashboardPage />
             ) : (
               <Navigate to="/login" />

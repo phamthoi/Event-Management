@@ -3,13 +3,15 @@ import React, { useState } from "react";
 import LoginForm from "../components/Login/LoginForm";
 import ForgotPasswordForm from "../components/Login/ForgotPasswordForm";
 import { getMembers } from "../services/fakeApi";
+import api from "../services/axios"
+import {jwtDecode} from "jwt-decode"
 
 const LoginPage = () => {
   const [showForgot, setShowForgot] = useState(false);
   const [error, setError] = useState("");
 
   // Demo login
-   const handleLogin = (email, password) => {
+   /*const handleLogin = (email, password) => {
     // 1. Admin mặc định
     if (email === "admin@example.com" && password === "1234") {
       localStorage.setItem("token", "demo-admin-token");
@@ -46,6 +48,30 @@ const LoginPage = () => {
     window.location.href = "/member";
     
 
+  };
+  */
+
+  const handleLogin = async (email, password) => {
+    try {
+      // gọi API backend
+      const res = await api.post("/auth/login", { email, password });
+
+      const { token, user } = res.data;
+      const role = user.role;
+
+      // lưu thông tin vào localStorage
+      localStorage.setItem("token", token);
+      localStorage.setItem("role", role);
+      localStorage.setItem("currentUser", JSON.stringify(user));
+
+      // redirect theo role
+      if (role === "ADMIN") window.location.href = "/admin";
+      else window.location.href = "/member";
+
+    } catch (err) {
+      console.error("login error:", err.response?.data);
+      setError(err.response?.data?.message || "Login failed");
+    }
   };
 
   const handleForgot = () => {
