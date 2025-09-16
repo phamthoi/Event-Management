@@ -4,6 +4,10 @@ import api from "../../axios";
 export const getEvents = async (filters = {}) => {
   const params = new URLSearchParams();
   
+ 
+  params.append('limit', '1000');
+  params.append('page', '1');
+  
   // Thêm các filter params
   Object.keys(filters).forEach(key => {
     if (filters[key]) {

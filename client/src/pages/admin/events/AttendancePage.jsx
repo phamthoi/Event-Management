@@ -18,11 +18,38 @@ function AttendancePage() {
       try {
         setLoading(true);
         const response = await getEvents();
-        // Chỉ lấy events có status ONGOING
-        const ongoingEvents = response.events.filter(event => event.status === 'ONGOING');
-        setEvents(ongoingEvents);
+   
+        
+
+        const allEvents = response.events || response;
+     
+        
+        if (allEvents && Array.isArray(allEvents)) {
+          // Log từng event để kiểm tra status
+          allEvents.forEach((event, index) => {
+            console.log(`📝 Event ${index + 1}:`, {
+              id: event.id,
+              title: event.title,
+              status: event.status,
+              startAt: event.startAt,
+              endAt: event.endAt
+            });
+          });
+          
+          // Filter events ONGOING
+          const ongoingEvents = allEvents.filter(event => {
+            const isOngoing = event.status === 'ONGOING';
+            return isOngoing;
+          });
+          
+      
+          setEvents(ongoingEvents);
+        } else {
+          console.error('❌ allEvents is not an array:', allEvents);
+          setEvents([]);
+        }
       } catch (error) {
-        console.error('Error fetching events:', error);
+        console.error('❌ Error fetching events:', error);
         alert('Lỗi khi tải danh sách events');
       } finally {
         setLoading(false);

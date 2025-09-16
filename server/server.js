@@ -4,10 +4,10 @@ import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
 
-// Cấu hình đọc .env từ thư mục gốc
+// Cấu hình đọc .env từ thư mục server hiện tại
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-dotenv.config({ path: path.join(__dirname, '../.env') });
+dotenv.config({ path: path.join(__dirname, '.env') });
 
 import authRoutes from "./routes/auth.route.js";
 import adminRoutes from "./routes/Admin/admin.route.js";
