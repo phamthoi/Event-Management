@@ -1,14 +1,22 @@
 import api from "../../axios";
 
-// Lấy danh sách events
-export const getEvents = async () => {
-  const res = await api.get("/admin/events/list");
+// Lấy danh sách events với filters
+export const getEvents = async (filters = {}) => {
+  const params = new URLSearchParams();
+  
+  // Thêm các filter params
+  Object.keys(filters).forEach(key => {
+    if (filters[key]) {
+      params.append(key, filters[key]);
+    }
+  });
+  
+  const res = await api.get(`/admin/events/list?${params.toString()}`);
   return res.data;
 };
 
-// Lấy chi tiết event
 export const getEventById = async (id) => {
-  const res = await api.get(`/admin/events/${id}`);
+  const res = await api.get(`/admin/events/detail/${id}`);
   return res.data;
 };
 
@@ -20,13 +28,13 @@ export const createEvent = async (event) => {
 
 // Cập nhật event
 export const updateEvent = async (id, updatedData) => {
-  const res = await api.put(`/admin/edit-event/${id}`, updatedData);
+  const res = await api.put(`/admin/events/edit/${id}`, updatedData);
   return res.data;
 };
 
 // Xóa event
 export const deleteEvent = async (id) => {
-  const res = await api.delete(`/admin/events/${id}`);
+  const res = await api.delete(`/admin/events/delete/${id}`);
   return res.data;
 };
 

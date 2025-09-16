@@ -16,6 +16,18 @@ const EventFilter = ({ onFilter }) => {
   };
 
   const applyFilter = () => onFilter(filters);
+  
+  const clearFilters = () => {
+    const emptyFilters = {
+      name: "",
+      location: "",
+      status: "",
+      startDate: "",
+      endDate: ""
+    };
+    setFilters(emptyFilters);
+    onFilter(emptyFilters);
+  };
 
   return (
     <div className="mb-4 flex flex-wrap gap-2">
@@ -33,6 +45,7 @@ const EventFilter = ({ onFilter }) => {
       <input type="date" id="startDate" value={filters.startDate} onChange={handleChange} className="border px-3 py-1 rounded"/>
       <input type="date" id="endDate" value={filters.endDate} onChange={handleChange} className="border px-3 py-1 rounded"/>
       <button onClick={applyFilter} className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700">Filter</button>
+      <button onClick={clearFilters} className="bg-gray-500 text-white px-4 py-1 rounded hover:bg-gray-600">Clear</button>
     </div>
   );
 };

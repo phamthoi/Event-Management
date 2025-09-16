@@ -5,23 +5,29 @@ import { EventController } from "../../controllers/Admin/event.controller.js";
 const router = express.Router();
 
 // POST /events - Tạo event mới (chỉ admin)
-router.post("/", authMiddleware, EventController.createEvent);
+router.post("/create", authMiddleware, EventController.createEvent);
 
 // GET /events - Lấy danh sách events
-router.get("/", authMiddleware, EventController.getEventsList);
+router.get("/list", authMiddleware, EventController.getEventsList);
 
 // GET /events/:id - Lấy chi tiết event
-router.get("/:id", authMiddleware, EventController.getEventById);
+router.get("/detail/:id", authMiddleware, EventController.getEventById);
 
 
 // PUT /events/:id - Cập nhật event (chỉ admin)
-router.put("/:id", authMiddleware, EventController.updateEvent);
+router.put("/edit/:id", authMiddleware, EventController.updateEvent);
 
 // DELETE /events/:id - Xóa event (chỉ admin)
-router.delete("/:id", authMiddleware, EventController.deleteEvent);
+router.delete("/delete/:id", authMiddleware, EventController.deleteEvent);
+
+
+
+
+// GET /events/:id/registrations - Lấy danh sách đăng ký của event
+router.get("/registrations/:id", authMiddleware, EventController.getEventRegistrations);
 
 // PUT /events/:id/attendance - Cập nhật attendance (chỉ admin)
-router.put("/:id/attendance", authMiddleware, EventController.updateAttendance);
+router.put("/attendance", authMiddleware, EventController.updateAttendance);
 
 // POST /events/:id/register - Đăng ký tham gia event
 // router.post("/:id/register", authMiddleware, EventController.registerEventMember);

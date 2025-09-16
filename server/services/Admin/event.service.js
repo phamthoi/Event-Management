@@ -14,6 +14,7 @@ export class EventService {
       startAt,
       endAt,
       deposit,
+      status,
       registrationStartAt,
       registrationEndAt,
       organizationId,
@@ -32,13 +33,21 @@ export class EventService {
         registrationStartAt: registrationStartAt ? new Date(registrationStartAt) : null,
         registrationEndAt: registrationEndAt ? new Date(registrationEndAt) : null,
         deposit: deposit,
-        status: "DRAFT",
+        status: status,
         organizationId,
         createdById
       },
     });
 
-    return event;
+    // Cập nhật status ngay sau khi tạo event
+    await updateEventStatus();
+    
+    // Lấy lại event với status đã được cập nhật
+    const updatedEvent = await prisma.event.findUnique({
+      where: { id: event.id }
+    });
+
+    return updatedEvent;
   }
 
   static async getEventsList(filters) {
@@ -100,7 +109,8 @@ export class EventService {
       endAt,
       registrationStartAt,
       registrationEndAt,
-      deposit
+      deposit,
+      status,
     } = updateData;
 
     const event = await prisma.event.update({
@@ -115,25 +125,48 @@ export class EventService {
         endAt: endAt ? new Date(endAt) : null,
         registrationStartAt: registrationStartAt ? new Date(registrationStartAt) : null,
         registrationEndAt: registrationEndAt ? new Date(registrationEndAt) : null,
-        deposit: deposit ? parseFloat(deposit) : 0
+        deposit: deposit ? parseFloat(deposit) : 0,
+        status: status,
       }
     });
 
-    return event;
+    // Cập nhật status ngay sau khi update event
+    await updateEventStatus();
+    
+    // Lấy lại event với status đã được cập nhật
+    const updatedEvent = await prisma.event.findUnique({
+      where: { id: eventId }
+    });
+
+    return updatedEvent;
   }
 
   static async deleteEvent(eventId) {
     await prisma.event.delete({ where: { id: eventId } });
   }
 
-  // static async getEventRegistrations(eventId) {
-  //   const registrations = await prisma.registration.findMany({
-  //     where: { eventId },
-  //     include: { user: true },
-  //   });
-
-  //   return registrations;
-  // }
+  static async getEventRegistrations(eventId) {
+    console.log('++Getting registrations for eventId:', eventId);
+    try {
+      const registrations = await prisma.registration.findMany({
+        where: { eventId },
+        include: { 
+          user: {
+            select: {
+              id: true,
+              fullName: true,
+              email: true
+            }
+          }
+        },
+      });
+    
+      return registrations;
+    } catch (error) {
+     
+      throw error;
+    }
+  }
 
   // static async registerEventMember(eventId, userId) {
   //   // Kiểm tra xem user đã đăng ký event này chưa
@@ -165,8 +198,8 @@ export class EventService {
     await Promise.all(
       updates.map((u) =>
         prisma.registration.update({
-          where: { id: parseInt(u.id) },
-          data: { attended: u.attended },
+          where: { id: parseInt(u.registrationId) },
+          data: { attendance: u.attended },
         })
       )
     );

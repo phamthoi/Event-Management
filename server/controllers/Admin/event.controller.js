@@ -93,30 +93,20 @@ export class EventController {
     }
   }
 
-  //chưa sử dụng
-  // static async getEventRegistrations(req, res) {
-  //   try {
-  //     const eventId = parseInt(req.params.eventId);
-  //     const registrations = await EventService.getEventRegistrationsAdmin(eventId);
-      
-  //     res.json({ registrations });
-  //   } catch (error) {
-  //     res.status(500).json({ message: error.message });
-  //   }
-  // }
+  static async getEventRegistrations(req, res) {
+    try {
+      if (req.user.role !== "ADMIN") {
+        return res.status(403).json({ message: "Chỉ admin mới truy cập" });
+      }
 
-  //chưa sử dụng
-  // static async registerEventMember(req, res) {
-  //   try {
-  //     const eventId = parseInt(req.params.id);
-  //     const userId = req.user.id;
+      const eventId = parseInt(req.params.id);
+      const registrations = await EventService.getEventRegistrations(eventId);
       
-  //     const registration = await EventService.registerEventAdmin(eventId, userId);
-  //     res.json({ success: true, registration });
-  //   } catch (error) {
-  //     res.status(400).json({ success: false, message: error.message });
-  //   }
-  // }
+      res.json({ success: true, registrations });
+    } catch (error) {
+      res.status(500).json({ success: false, message: error.message });
+    }
+  }
 
   static async updateAttendance(req, res) {
     try {

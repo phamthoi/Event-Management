@@ -5,10 +5,10 @@ import { MemberController } from "../../controllers/Admin/member.controller.js";
 const router = express.Router();
 
 // GET /members - Lấy danh sách members (chỉ admin)
-router.get("/", authMiddleware, MemberController.getMembersList);
+router.get("/list", authMiddleware, MemberController.getMembersList);
 
 // POST /members - Tạo member mới (chỉ admin)
-router.post("/", authMiddleware, MemberController.createMember);
+router.post("/create", authMiddleware, MemberController.createMember);
 
 // PUT /members/:id/lock - Khóa member (chỉ admin)
 router.put("/:id/lock", authMiddleware, MemberController.lockMember);

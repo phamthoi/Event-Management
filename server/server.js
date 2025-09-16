@@ -32,7 +32,7 @@ app.use("/auth", authRoutes); // login chung
 app.use("/admin", adminRoutes); // admin route (bảo vệ bằng role ADMIN)
 // app.use("/member", memberRoutes); // member route (bảo vệ bằng role MEMBER)
 // app.use("/membersManage", memberManageRoutes); // admin manage members 
-// app.use("/events", eventRoutes); // event routes
+app.use("/events", eventRoutes); // event routes
 // app.use("/notifications", notificationRoutes); // notification routes
 
 

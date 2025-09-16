@@ -1,5 +1,5 @@
 //client/src/components/CreateEvent/CreateEventForm.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createEvent } from '../../../services/admin/event/eventService';
 import { validateEventForm } from '../../../utils/validation';
 
@@ -15,12 +15,79 @@ const CreateEventForm = () => {
     endAt: "",
     registrationStartAt: "",
     registrationEndAt: "",
+    status: "DRAFT", // Thêm trường status với giá trị mặc định
   });
 
   const [msg, setMsg] = useState("");
 
+  // Function to automatically update event status based on current time
+  const updateEventStatus = (formData = null) => {
+    const currentForm = formData || form;
+    const now = new Date();
+    const registrationStart = new Date(currentForm.registrationStartAt);
+    const registrationEnd = new Date(currentForm.registrationEndAt);
+    const eventStart = new Date(currentForm.startAt);
+    const eventEnd = new Date(currentForm.endAt);
+    
+    // Skip if any required dates are missing
+    if (!currentForm.registrationStartAt || !currentForm.registrationEndAt || 
+        !currentForm.startAt || !currentForm.endAt) {
+      return;
+    }
+    
+    // Calculate one day before event start
+    const oneDayBeforeEvent = new Date(eventStart);
+    oneDayBeforeEvent.setDate(oneDayBeforeEvent.getDate() - 1);
+    
+    let newStatus = "DRAFT"; // Default status
+    
+    // Check conditions in priority order
+    if (now > eventEnd) {
+      // After event ends
+      newStatus = "COMPLETED";
+    } else if (now >= eventStart && now <= eventEnd) {
+      // During event period
+      newStatus = "ONGOING";
+    } else if (now >= oneDayBeforeEvent && now < eventStart) {
+      // One day before event start until event starts
+      newStatus = "READY";
+    } else if (now >= registrationStart && now <= registrationEnd) {
+      // During registration period
+      newStatus = "REGISTRATION";
+    }
+    // All other cases remain as DRAFT
+    
+    // Update status if it has changed
+    if (newStatus !== currentForm.status) {
+      setForm(prevForm => ({
+        ...prevForm,
+        status: newStatus
+      }));
+    }
+  };
+  
+  // Auto-update status when component mounts and when event times change
+  useEffect(() => {
+    updateEventStatus();
+  }, []);
+  
+  useEffect(() => {
+    if (form.registrationStartAt && form.registrationEndAt && 
+        form.startAt && form.endAt) {
+      updateEventStatus();
+    }
+  }, [form.registrationStartAt, form.registrationEndAt, form.startAt, form.endAt]);
+
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.id]: e.target.value });
+    const updatedForm = { ...form, [e.target.id]: e.target.value };
+    setForm(updatedForm);
+    
+    // Gọi updateEventStatus ngay sau khi cập nhật form nếu là field thời gian
+    const timeFields = ['registrationStartAt', 'registrationEndAt', 'startAt', 'endAt'];
+    if (timeFields.includes(e.target.id)) {
+      // Truyền updatedForm để sử dụng dữ liệu mới nhất
+      updateEventStatus(updatedForm);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -55,6 +122,7 @@ const CreateEventForm = () => {
         endAt: "",
         registrationStartAt: "",
         registrationEndAt: "",
+        status: "DRAFT", // Reset về DRAFT khi tạo mới
       });
     } catch (err) {
       setMsg(`${err.response?.data?.message || err.message}`);
@@ -100,6 +168,29 @@ const CreateEventForm = () => {
             onChange={handleChange}
             className="w-full px-4 py-3 border border-blue-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
           />
+        </div>
+
+        {/* Event Status */}
+        <div>
+          <label className="block text-sm font-semibold mb-2 text-blue-800">
+            Event Status
+            <span className="text-xs text-gray-500 ml-2">
+              (Tự động cập nhật dựa trên thời gian)
+            </span>
+          </label>
+          <select
+            id="status"
+            value={form.status}
+            onChange={handleChange}
+            className="w-full px-4 py-3 border border-blue-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+          >
+            <option value="DRAFT">Draft</option>
+            <option value="REGISTRATION">Registration Open</option>
+            <option value="READY">Ready</option>
+            <option value="ONGOING">Ongoing</option>
+            <option value="COMPLETED">Completed</option>
+            <option value="CANCELLED">Cancelled</option>
+          </select>
         </div>
 
         {/* Min & Max Attendees */}

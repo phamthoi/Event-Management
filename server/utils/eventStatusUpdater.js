@@ -8,6 +8,33 @@ export async function updateEventStatus() {
   try {
     console.log("🕒 Checking events:", now.toISOString());
 
+    // 0️⃣ DRAFT -> ONGOING (for events created during event time)
+    const draftEventsInProgress = await prisma.event.findMany({
+      where: {
+        status: "DRAFT",
+        startAt: { lte: now },
+        endAt: { gt: now },
+      },
+      include: { registrations: true },
+    });
+
+    for (const ev of draftEventsInProgress) {
+      const registered = ev.registrations.length;
+      if (registered >= (ev.minAttendees || 1)) {
+        await prisma.event.update({
+          where: { id: ev.id },
+          data: { status: "ONGOING" },
+        });
+        console.log(`🚀 Event ${ev.id} moved DRAFT -> ONGOING (created during event time)`);
+      } else {
+        await prisma.event.update({
+          where: { id: ev.id },
+          data: { status: "CANCELLED" },
+        });
+        console.log(`❌ Event ${ev.id} DRAFT -> CANCELLED (insufficient attendees during event time)`);
+      }
+    }
+
     // 1️⃣ DRAFT -> REGISTRATION
     const draftEvents = await prisma.event.findMany({
       where: {
@@ -48,6 +75,39 @@ export async function updateEventStatus() {
           data: { status: "CANCELLED" },
         });
         console.log(`❌ Event ${ev.id} REGISTRATION -> CANCELLED`);
+      }
+    }
+
+    // 2.5️⃣ DRAFT -> READY (for events that are 1 day before start and registration has ended)
+    const oneDayBeforeEvents = await prisma.event.findMany({
+      where: {
+        status: "DRAFT",
+        registrationEndAt: { lt: now },
+        startAt: { gt: now },
+      },
+      include: { registrations: true },
+    });
+
+    for (const ev of oneDayBeforeEvents) {
+      const eventStart = new Date(ev.startAt);
+      const oneDayBefore = new Date(eventStart);
+      oneDayBefore.setDate(oneDayBefore.getDate() - 1);
+      
+      if (now >= oneDayBefore) {
+        const registered = ev.registrations.length;
+        if (registered >= (ev.minAttendees || 1)) {
+          await prisma.event.update({
+            where: { id: ev.id },
+            data: { status: "READY" },
+          });
+          console.log(`✅ Event ${ev.id} DRAFT -> READY (1 day before)`);
+        } else {
+          await prisma.event.update({
+            where: { id: ev.id },
+            data: { status: "CANCELLED" },
+          });
+          console.log(`❌ Event ${ev.id} DRAFT -> CANCELLED (insufficient attendees)`);
+        }
       }
     }
 

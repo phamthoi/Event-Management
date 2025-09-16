@@ -3,49 +3,47 @@ import React, { useState } from "react";
 import LoginForm from "../components/Login/LoginForm";
 import ForgotPasswordForm from "../components/Login/ForgotPasswordForm";
 import { getMembers } from "../services/fakeApi";
+import api from "../services/axios";
 
 const LoginPage = () => {
   const [showForgot, setShowForgot] = useState(false);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  // Demo login
-   const handleLogin = (email, password) => {
-    // 1. Admin mặc định
-    if (email === "admin@example.com" && password === "1234") {
-      localStorage.setItem("token", "demo-admin-token");
-      localStorage.setItem("role", "admin");
-      localStorage.setItem(
-        "currentUser",
-        JSON.stringify({ id: 0, email, fullName: "System Admin", role: "admin" })
-      );
-      window.location.href = "/admin";
-      return;
-    }
-
-    // 2. Check member trong localStorage
-    const members = getMembers() || [];
-    const user = members.find((m) => m.email === email && m.password === password);
-
-    if (!user) {
-      setError("Invalid credentials");
-      return;
-    }
-
-    if (!user.isActive) {
-      setError("This account is locked");
-      return;
-    }
+  // Real API login thay vì demo login
+  const handleLogin = async (email, password) => {
+    setLoading(true);
+    setError("");
     
-    console.log("Members in storage:", members);
-    console.log("Login input:", email, password);
+    try {
+      const response = await api.post("/auth/login", {
+        email,
+        password
+      });
 
-
-    localStorage.setItem("token", "demo-token-" + user.id);
-    localStorage.setItem("role", "member");
-    localStorage.setItem("currentUser", JSON.stringify(user));
-    window.location.href = "/member";
-    
-
+      if (response.data.success) {
+        // Lưu token và user info
+        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("role", response.data.user.role.toLowerCase());
+        localStorage.setItem("currentUser", JSON.stringify(response.data.user));
+        
+        // Redirect dựa trên role
+        if (response.data.user.role === "ADMIN") {
+          window.location.href = "/admin";
+        } else {
+          window.location.href = "/member";
+        }
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      if (error.response?.data?.message) {
+        setError(error.response.data.message);
+      } else {
+        setError("Đăng nhập thất bại. Vui lòng thử lại.");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleForgot = () => {

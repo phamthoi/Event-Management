@@ -1,10 +1,15 @@
-function SaveButton({ onClick }) {
+function SaveButton({ onClick, disabled = false }) {
   return (
     <button
       onClick={onClick}
-      className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+      disabled={disabled}
+      className={`mt-4 px-4 py-2 rounded ${
+        disabled 
+          ? 'bg-gray-400 cursor-not-allowed' 
+          : 'bg-blue-500 hover:bg-blue-600 text-white'
+      }`}
     >
-      Save
+      {disabled ? 'Đang lưu...' : 'Save Attendance'}
     </button>
   );
 }
