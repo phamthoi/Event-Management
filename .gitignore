@@ -25,12 +25,14 @@ logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
+yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
 # ===== BUILD OUTPUTS =====
 build/
 dist/
+dist-ssr/
 out/
 .next/
 .nuxt/
@@ -38,7 +40,18 @@ out/
 .parcel-cache/
 *.tsbuildinfo
 
-# ===== COVERAGE & TESTING =====
+# ===== FRONTEND SPECIFIC =====
+# Vite
+*.local
+
+# React/JSX
+.eslintcache
+
+# Storybook
+.storybook-static/
+storybook-static/
+
+# Coverage
 coverage/
 .nyc_output/
 *.lcov
@@ -47,7 +60,6 @@ __tests__/coverage/
 
 # ===== CACHE & TEMP =====
 .npm/
-.eslintcache
 .rpt2_cache/
 .rts2_cache*/
 tmp/
