@@ -146,7 +146,7 @@ export class EventService {
   }
 
   static async getEventRegistrations(eventId) {
-    console.log('++Getting registrations for eventId:', eventId);
+    
     try {
       const registrations = await prisma.registration.findMany({
         where: { eventId },
@@ -168,31 +168,7 @@ export class EventService {
     }
   }
 
-  // static async registerEventMember(eventId, userId) {
-  //   // Kiểm tra xem user đã đăng ký event này chưa
-  //   const existingRegistration = await prisma.registration.findFirst({
-  //     where: {
-  //       eventId,
-  //       userId
-  //     }
-  //   });
 
-  //   if (existingRegistration) {
-  //     throw new Error("Bạn đã đăng ký event này rồi");
-  //   }
-
-  //   // Tạo đăng ký mới
-  //   const registration = await prisma.registration.create({
-  //     data: {
-  //       eventId,
-  //       userId,
-  //       registeredAt: new Date(),
-  //       attended: false
-  //     }
-  //   });
-
-  //   return registration;
-  // }
 
   static async updateAttendance(updates) {
     await Promise.all(

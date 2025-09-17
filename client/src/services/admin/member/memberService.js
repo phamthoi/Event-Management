@@ -1,4 +1,4 @@
-import api from "./axios";
+import api from "../../axios";
 
 // Tạo member mới
 export const createMember = async (memberData) => {
@@ -6,23 +6,34 @@ export const createMember = async (memberData) => {
   return res.data;
 };
 
-// Lấy danh sách member
-export const getMembers = async () => {
-  const res = await api.get("/admin/members/list");
+// Lấy danh sách member với filters và pagination
+export const getMembers = async (params = {}) => {
+  const queryParams = new URLSearchParams();
+  
+  // Thêm các params vào query string
+  Object.keys(params).forEach(key => {
+    if (params[key] !== "" && params[key] !== null && params[key] !== undefined) {
+      queryParams.append(key, params[key]);
+    }
+  });
+  
+  const res = await api.get(`/admin/members/list?${queryParams.toString()}`);
   return res.data;
 };
 
-// Khóa / mở khóa member
-export const toggleMemberLock = async (id) => {
-  const res = await api.put(`/admin/members/${id}/lock`);
+// Lấy thông tin chi tiết member theo ID
+export const getMemberById = async (id) => {
+  const res = await api.get(`/admin/members/${id}`);
   return res.data;
 };
 
+// Khóa member
 export const MemberLock = async (id) => {
   const res = await api.put(`/admin/members/${id}/lock`);
   return res.data;
 };
 
+// Mở khóa member
 export const MemberUnlock = async (id) => {
   const res = await api.put(`/admin/members/${id}/unlock`);
   return res.data;
@@ -32,4 +43,11 @@ export const MemberUnlock = async (id) => {
 export const resetMemberPassword = async (id) => {
   const res = await api.put(`/admin/members/${id}/reset-password`);
   return res.data;
+};
+
+// Deprecated - sử dụng MemberLock/MemberUnlock thay thế
+export const toggleMemberLock = async (id) => {
+  console.warn('toggleMemberLock is deprecated, use MemberLock/MemberUnlock instead');
+  // Không implement vì không biết trạng thái hiện tại
+  throw new Error('Use MemberLock or MemberUnlock instead');
 };

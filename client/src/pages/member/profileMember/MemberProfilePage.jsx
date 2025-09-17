@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import ProfileView from "../../../components/member/profile/ProfileView";
 import ProfileForm from "../../../components/member/profile/ProfileForm";
-import { getProfile, updateProfile } from "../../../services/fakeApi";
+// import { getProfile, updateProfile } from "../../../services/fakeApi";
 
 const MemberProfilePage = () => {
   const [profile, setProfile] = useState(null);

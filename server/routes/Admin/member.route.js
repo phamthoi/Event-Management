@@ -7,6 +7,9 @@ const router = express.Router();
 // GET /members - Lấy danh sách members (chỉ admin)
 router.get("/list", authMiddleware, MemberController.getMembersList);
 
+// GET /members/:id - Lấy thông tin chi tiết member (chỉ admin)
+router.get("/:id", authMiddleware, MemberController.getMemberById);
+
 // POST /members - Tạo member mới (chỉ admin)
 router.post("/create", authMiddleware, MemberController.createMember);
 

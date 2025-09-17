@@ -99,6 +99,35 @@ export class MemberService {
     };
   }
 
+  static async getMemberById(memberId, organizationId) {
+    const member = await prisma.user.findFirst({
+      where: {
+        id: memberId,
+        organizationId: organizationId,
+        role: "MEMBER"
+      },
+      select: {
+        id: true,
+        email: true,
+        fullName: true,
+        phoneNumber: true,
+        role: true,
+        isActive: true,
+        createdAt: true,
+        updatedAt: true,
+        organizationId: true,
+        organization: {
+          select: {
+            name: true,
+            slug: true
+          }
+        }
+      }
+    });
+
+    return member;
+  }
+
   static async createMember(memberData) {
     const { fullName, email, password, organizationId } = memberData;
 

@@ -10,6 +10,7 @@ import EditEventPage from "./pages/admin/events/EditEventPage.jsx";
 import AttendancePage from "./pages/admin/events/AttendancePage.jsx";
 import CreateMemberPage from "./pages/admin/members/CreateMemberPage.jsx";
 import MemberListPage from "./pages/admin/members/MemberListPage.jsx";
+import MemberDetailPage from "./components/admin/MemberList/MemberDetailPage.jsx";
 
 
 // Member
@@ -54,6 +55,7 @@ function App() {
           {/* Member routes */}
           <Route path="members/create" element={<CreateMemberPage />} />
           <Route path="members/list" element={<MemberListPage />} />
+          <Route path="members/:id" element={<MemberDetailPage />} />
 
           {/* Notification */}
           <Route

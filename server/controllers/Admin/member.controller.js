@@ -95,6 +95,25 @@ export class MemberController {
     }
   }
 
+  static async getMemberById(req, res) {
+    try {
+      if (req.user.role !== "ADMIN") {
+        return res.status(403).json({ message: "Chỉ admin mới truy cập" });
+      }
+
+      const memberId = parseInt(req.params.id);
+      const member = await MemberService.getMemberById(memberId, req.user.organizationId);
+      
+      if (!member) {
+        return res.status(404).json({ message: "Không tìm thấy member" });
+      }
+
+      res.json({ success: true, member });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  }
+
   static async createMember(req, res) {
     try {
       if (req.user.role !== "ADMIN") {

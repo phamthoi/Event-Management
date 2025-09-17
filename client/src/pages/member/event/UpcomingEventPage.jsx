@@ -1,11 +1,11 @@
 // client/src/pages/events/UpcomingEventsPage.jsx
 import React, { useEffect, useState } from "react";
-import {
-  getEvents,
-  getRegistrations,
-  registerEvent,
-  cancelRegistration,
-} from "../../../services/fakeApi";
+// import {
+//   getEvents,
+//   getRegistrations,
+//   registerEvent,
+//   cancelRegistration,
+// } from "../../../services/fakeApi";
 import { getEventStatus } from "../../../utils/getEventStatus";
 import EventCard from "../../../components/member/EventList/EventCard";
 

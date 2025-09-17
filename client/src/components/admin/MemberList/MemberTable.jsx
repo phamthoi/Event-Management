@@ -1,12 +1,15 @@
 // client/src/components/MemberList/MemberTable.jsx
 import React, { useEffect, useState } from "react";
-import { getMembers, toggleMemberLock, resetMemberPassword } from "../../../services/fakeApi";
+import { useNavigate } from "react-router-dom";
+import { getMembers, MemberLock, MemberUnlock, resetMemberPassword } from "../../../services/admin/member/memberService";
 
 function MemberTable({ role = "admin" }) {
+  const navigate = useNavigate();
   const [members, setMembers] = useState([]);
   const [msg, setMsg] = useState("");
   const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(false);
+  const [total, setTotal] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   const [filters, setFilters] = useState({
     email: "",
@@ -14,62 +17,112 @@ function MemberTable({ role = "admin" }) {
     isActive: "",
   });
 
+  // Thêm state để lưu giá trị input tạm thời
+  const [tempFilters, setTempFilters] = useState({
+    email: "",
+    fullName: "",
+    isActive: "",
+  });
+
   const limit = 5;
 
-  const loadMembers = () => {
+  const loadMembers = async () => {
     try {
-      let all = getMembers();
-
-      // filter chung
-      let filtered = all.filter((m) => {
-        const matchesEmail = !filters.email || m.email.includes(filters.email);
-        const matchesName = !filters.fullName || m.fullName.toLowerCase().includes(filters.fullName.toLowerCase());
-        const matchesStatus = filters.isActive === "" ? true : m.isActive.toString() === filters.isActive;
-        return matchesEmail && matchesName && matchesStatus;
-      });
-
-      // member chỉ thấy active
-      if (role === "member") filtered = filtered.filter((m) => m.isActive);
-
-      // pagination
-      const start = (page - 1) * limit;
-      const end = start + limit;
-      setMembers(filtered.slice(start, end));
-      setHasMore(end < filtered.length);
+      setLoading(true);
       setMsg("");
+      
+      const params = {
+        page,
+        limit,
+        ...filters
+      };
+      
+      const response = await getMembers(params);
+      console.log('Members response:', response);
+      
+      setMembers(response.members || []);
+      setTotal(response.total || 0);
     } catch (err) {
-      console.error(err);
-      setMsg("Lỗi tải danh sách member");
+      console.error('Error loading members:', err);
+      setMsg("Lỗi khi tải danh sách member");
+      setMembers([]);
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
     loadMembers();
-  }, [page, filters, role]);
+  }, [page, filters]);
 
   const handleFilter = () => {
     setPage(1);
-    loadMembers();
+    setFilters({ ...tempFilters }); // Áp dụng filter từ tempFilters
+  };
+
+  const handleClearFilter = () => {
+    const emptyFilters = {
+      email: "",
+      fullName: "",
+      isActive: "",
+    };
+    setTempFilters(emptyFilters);
+    setFilters(emptyFilters);
+    setPage(1);
   };
 
   const handleView = (id) => {
+    console.log('+++View member ID:', id);
     if (role !== "admin") return;
-    alert("Xem chi tiết member: " + id);
+    navigate(`/admin/members/${id}`);
   };
 
-  const handleToggleLock = (id, isActive) => {
+  const handleToggleLock = async (id, isActive) => {
     if (role !== "admin") return;
-    toggleMemberLock(id);
-    loadMembers();
-    alert(isActive ? "Đã khóa member" : "Đã mở khóa member");
+    
+    try {
+      setLoading(true);
+      if (isActive) {
+        await MemberLock(id);
+        alert("Đã khóa member");
+      } else {
+        await MemberUnlock(id);
+        alert("Đã mở khóa member");
+      }
+      await loadMembers(); // Reload danh sách
+    } catch (error) {
+      console.error('Error toggling member lock:', error);
+      alert("Lỗi khi thay đổi trạng thái member");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleResetPassword = (id) => {
+  const handleResetPassword = async (id) => {
     if (role !== "admin") return;
     if (!window.confirm("Reset password về 'Member@123'?")) return;
-    resetMemberPassword(id);
-    alert("Đã reset password cho member " + id);
+    
+    try {
+      setLoading(true);
+      await resetMemberPassword(id);
+      alert("Đã reset password cho member " + id);
+    } catch (error) {
+      console.error('Error resetting password:', error);
+      alert("Lỗi khi reset password");
+    } finally {
+      setLoading(false);
+    }
   };
+
+  const totalPages = Math.ceil(total / limit);
+
+  if (loading) {
+    return (
+      <div className="text-center py-4">
+        <div>Đang tải...</div>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -78,21 +131,23 @@ function MemberTable({ role = "admin" }) {
         <input
           type="text"
           placeholder="Email"
-          value={filters.email}
-          onChange={(e) => setFilters({ ...filters, email: e.target.value })}
+          value={tempFilters.email}
+          onChange={(e) => setTempFilters({ ...tempFilters, email: e.target.value })}
           className="border px-3 py-1 rounded"
+          onKeyPress={(e) => e.key === 'Enter' && handleFilter()}
         />
         <input
           type="text"
           placeholder="Full name"
-          value={filters.fullName}
-          onChange={(e) => setFilters({ ...filters, fullName: e.target.value })}
+          value={tempFilters.fullName}
+          onChange={(e) => setTempFilters({ ...tempFilters, fullName: e.target.value })}
           className="border px-3 py-1 rounded"
+          onKeyPress={(e) => e.key === 'Enter' && handleFilter()}
         />
         {role === "admin" && (
           <select
-            value={filters.isActive}
-            onChange={(e) => setFilters({ ...filters, isActive: e.target.value })}
+            value={tempFilters.isActive}
+            onChange={(e) => setTempFilters({ ...tempFilters, isActive: e.target.value })}
             className="border px-3 py-1 rounded"
           >
             <option value="">Status</option>
@@ -101,7 +156,10 @@ function MemberTable({ role = "admin" }) {
           </select>
         )}
         <button onClick={handleFilter} className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700">
-          Lọc
+          Tìm kiếm
+        </button>
+        <button onClick={handleClearFilter} className="bg-gray-500 text-white px-4 py-1 rounded hover:bg-gray-600">
+          Xóa bộ lọc
         </button>
       </div>
 
@@ -139,10 +197,18 @@ function MemberTable({ role = "admin" }) {
                     <button onClick={() => handleView(m.id)} className="bg-gray-300 px-2 py-1 rounded hover:bg-gray-400">
                       View
                     </button>
-                    <button onClick={() => handleToggleLock(m.id, m.isActive)} className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600">
+                    <button 
+                      onClick={() => handleToggleLock(m.id, m.isActive)} 
+                      className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
+                      disabled={loading}
+                    >
                       {m.isActive ? "Lock" : "Unlock"}
                     </button>
-                    <button onClick={() => handleResetPassword(m.id)} className="bg-yellow-400 px-2 py-1 rounded hover:bg-yellow-500">
+                    <button 
+                      onClick={() => handleResetPassword(m.id)} 
+                      className="bg-yellow-400 px-2 py-1 rounded hover:bg-yellow-500"
+                      disabled={loading}
+                    >
                       Reset PW
                     </button>
                   </td>
@@ -155,11 +221,19 @@ function MemberTable({ role = "admin" }) {
 
       {/* Pagination */}
       <div className="flex justify-between items-center mt-4">
-        <button disabled={page === 1} onClick={() => setPage(page - 1)} className="bg-gray-300 px-3 py-1 rounded hover:bg-gray-400 disabled:opacity-50">
+        <button 
+          disabled={page === 1} 
+          onClick={() => setPage(page - 1)} 
+          className="bg-gray-300 px-3 py-1 rounded hover:bg-gray-400 disabled:opacity-50"
+        >
           Previous
         </button>
-        <span>Page {page}</span>
-        <button disabled={!hasMore} onClick={() => setPage(page + 1)} className="bg-gray-300 px-3 py-1 rounded hover:bg-gray-400 disabled:opacity-50">
+        <span>Page {page} of {totalPages} (Total: {total} members)</span>
+        <button 
+          disabled={page >= totalPages} 
+          onClick={() => setPage(page + 1)} 
+          className="bg-gray-300 px-3 py-1 rounded hover:bg-gray-400 disabled:opacity-50"
+        >
           Next
         </button>
       </div>
