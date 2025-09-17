@@ -25,18 +25,8 @@ function AttendancePage() {
      
         
         if (allEvents && Array.isArray(allEvents)) {
-          // Log từng event để kiểm tra status
-          allEvents.forEach((event, index) => {
-            console.log(`📝 Event ${index + 1}:`, {
-              id: event.id,
-              title: event.title,
-              status: event.status,
-              startAt: event.startAt,
-              endAt: event.endAt
-            });
-          });
-          
-          // Filter events ONGOING
+         
+         
           const ongoingEvents = allEvents.filter(event => {
             const isOngoing = event.status === 'ONGOING';
             return isOngoing;

@@ -35,7 +35,7 @@ const EventTable = ({ events, onDelete, page, limit }) => {
                 <td className="border px-3 py-2">
 
                   <Link to={`/admin/events/edit/${ev.id}`} className="text-blue-600 hover:underline mr-2">Update</Link>
-                  <button onClick={() => onDelete(ev.id)} className="text-blue-600 hover:underline">Delete</button>
+                  <button onClick={() => onDelete(ev.id)} className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 transition-colors">Delete</button>
                 </td>
               </tr>
             )

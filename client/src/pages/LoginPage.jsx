@@ -22,12 +22,12 @@ const LoginPage = () => {
       });
 
       if (response.data.success) {
-        // Lưu token và user info
+     
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("role", response.data.user.role.toLowerCase());
         localStorage.setItem("currentUser", JSON.stringify(response.data.user));
         
-        // Redirect dựa trên role
+        
         if (response.data.user.role === "ADMIN") {
           window.location.href = "/admin";
         } else {
