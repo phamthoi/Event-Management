@@ -6,6 +6,9 @@ const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE, // URL backend
   headers: {
     "Content-Type": "application/json",
+    "Cache-Control": "no-cache, no-store, must-revalidate",
+    "Pragma": "no-cache",
+    "Expires": "0"
   },
 });
 
@@ -16,6 +19,18 @@ api.interceptors.request.use((config) => {
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    
+    // Add cache-busting timestamp
+    config.headers['X-Requested-At'] = Date.now();
+    
+    // Add cache-busting parameter to URL
+    if (config.method === 'get') {
+      config.params = {
+        ...config.params,
+        _t: Date.now()
+      };
+    }
+    
     return config;
 });
 

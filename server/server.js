@@ -25,6 +25,18 @@ app.use(cors({
   origin: ["http://localhost:3000", "http://127.0.0.1:3000"],
   credentials: true
 }));
+
+// Middleware disable cache - ngăn browser cache responses
+app.use((req, res, next) => {
+  res.set({
+    'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+    'Pragma': 'no-cache',
+    'Expires': '0',
+    'Surrogate-Control': 'no-store'
+  });
+  next();
+});
+
 app.use(express.json());
 
 // API routes

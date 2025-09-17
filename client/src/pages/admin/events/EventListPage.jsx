@@ -12,7 +12,7 @@ const EventListPage = () => {
 
   const [events, setEvents] = useState([]);
   const [page, setPage] = useState(1);
-  const [limit] = useState(5);
+  const [limit] = useState(10); // Thay đổi từ 5 thành 10
   const [total, setTotal] = useState(0);
   const [filters, setFilters] = useState({});
   const [msg, setMsg] = useState("");
@@ -24,16 +24,23 @@ const EventListPage = () => {
       // Gọi API backend thay vì localStorage
       const response = await getEvents({ page, limit, ...filters });
       
+      // Thêm console.log để debug
+      console.log('++Events API response:', response);
+      console.log('++Total events:', response.total);
+      console.log('++Current page:', page);
+      console.log('++Limit per page:', limit);
+      
       // Thêm status động như cũ
       const eventsWithStatus = response.events.map((ev) => ({
         ...ev,
         status: getEventStatus(ev), 
       }));
-
+  
       setEvents(eventsWithStatus);
       setTotal(response.total || 0);
       setMsg("");
     } catch (err) {
+      console.error('++Error loading events:', err);
       setMsg("Error: " + err.message);
       setEvents([]);
       setTotal(0);

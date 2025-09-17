@@ -35,7 +35,8 @@ export class EventController {
 
       const filters = {
         ...req.query,
-        createdById: req.user.id
+        // Bỏ dòng này để hiển thị tất cả events:
+        // createdById: req.user.id
       };
 
       const result = await EventService.getEventsList(filters);

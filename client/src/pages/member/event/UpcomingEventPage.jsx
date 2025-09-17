@@ -13,7 +13,7 @@ const UpcomingEventsPage = () => {
   const [events, setEvents] = useState([]);
   const [registrations, setRegistrations] = useState({});
   const [page, setPage] = useState(1);
-  const limit = 5;
+  const limit = 10; // Thay đổi từ 5 thành 10
   const [total, setTotal] = useState(0);
 
   const currentUser = JSON.parse(localStorage.getItem("currentUser"));

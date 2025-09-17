@@ -1,9 +1,134 @@
 import { PrismaClient } from "@prisma/client";
-import { updateEventStatus } from "../../utils/eventStatusUpdater.js";
 
 const prisma = new PrismaClient();
 
 export class EventService {
+  // Gộp chức năng updateEventStatus vào trong class
+  static async updateEventStatus() {
+    const now = new Date();
+
+    try {
+
+      // 0️⃣ DRAFT -> ONGOING (for events created during event time)
+      const draftEventsInProgress = await prisma.event.findMany({
+        where: {
+          status: "DRAFT",
+          startAt: { lte: now },
+          endAt: { gt: now },
+        },
+        include: { registrations: true },
+      });
+
+      for (const ev of draftEventsInProgress) {
+        const registered = ev.registrations.length;
+        if (registered >= (ev.minAttendees || 1)) {
+          await prisma.event.update({
+            where: { id: ev.id },
+            data: { status: "ONGOING" },
+          });
+          console.log(`🚀 Event ${ev.id} moved DRAFT -> ONGOING (created during event time)`);
+        } else {
+          await prisma.event.update({
+            where: { id: ev.id },
+            data: { status: "CANCELLED" },
+          });
+          console.log(`❌ Event ${ev.id} DRAFT -> CANCELLED (insufficient attendees during event time)`);
+        }
+      }
+
+      // 1️⃣ DRAFT -> REGISTRATION
+      const draftEvents = await prisma.event.findMany({
+        where: {
+          status: "DRAFT",
+          registrationStartAt: { lte: now },
+          registrationEndAt: { gt: now },
+        },
+      });
+
+      for (const ev of draftEvents) {
+        await prisma.event.update({
+          where: { id: ev.id },
+          data: { status: "REGISTRATION" },
+        });
+        console.log(`📌 Event ${ev.id} moved DRAFT -> REGISTRATION`);
+      }
+
+      // 2️⃣ REGISTRATION -> READY | CANCELLED
+      const regEvents = await prisma.event.findMany({
+        where: {
+          status: "REGISTRATION",
+          registrationEndAt: { lte: now },
+        },
+        include: { registrations: true },
+      });
+
+      for (const ev of regEvents) {
+        const registered = ev.registrations.length;
+        if (registered >= (ev.minAttendees || 1)) {
+          await prisma.event.update({
+            where: { id: ev.id },
+            data: { status: "READY" },
+          });
+          console.log(`✅ Event ${ev.id} REGISTRATION -> READY`);
+        } else {
+          await prisma.event.update({
+            where: { id: ev.id },
+            data: { status: "CANCELLED" },
+          });
+          console.log(`❌ Event ${ev.id} REGISTRATION -> CANCELLED`);
+        }
+      }
+
+      // 2.5️⃣ DRAFT -> READY (for events that are 1 day before start and registration has ended)
+      const oneDayBeforeEvents = await prisma.event.findMany({
+        where: {
+          status: "DRAFT",
+          registrationEndAt: { lt: now },
+          startAt: { gt: now },
+        },
+        include: { registrations: true },
+      });
+
+      for (const ev of oneDayBeforeEvents) {
+        const eventStart = new Date(ev.startAt);
+        const oneDayBefore = new Date(eventStart);
+        oneDayBefore.setDate(oneDayBefore.getDate() - 1);
+        
+        if (now >= oneDayBefore) {
+          const registered = ev.registrations.length;
+          if (registered >= (ev.minAttendees || 1)) {
+            await prisma.event.update({
+              where: { id: ev.id },
+              data: { status: "READY" },
+            });
+            console.log(`✅ Event ${ev.id} DRAFT -> READY (1 day before)`);
+          } else {
+            await prisma.event.update({
+              where: { id: ev.id },
+              data: { status: "CANCELLED" },
+            });
+            console.log(`❌ Event ${ev.id} DRAFT -> CANCELLED (insufficient attendees)`);
+          }
+        }
+      }
+
+      // 3️⃣ READY -> ONGOING
+      await prisma.event.updateMany({
+        where: { status: "READY", startAt: { lte: now } },
+        data: { status: "ONGOING" },
+      });
+
+      // 4️⃣ ONGOING -> COMPLETED
+      await prisma.event.updateMany({
+        where: { status: "ONGOING", endAt: { lte: now } },
+        data: { status: "COMPLETED" },
+      });
+
+    } catch (err) {
+      console.error("❌ Error updating event statuses:", err);
+    }
+  }
+
   static async createEvent(eventData) {
     const {
       title,
@@ -39,8 +164,8 @@ export class EventService {
       },
     });
 
-    // Cập nhật status ngay sau khi tạo event
-    await updateEventStatus();
+    // Cập nhật status ngay sau khi tạo event - sử dụng method trong class
+    await this.updateEventStatus();
     
     // Lấy lại event với status đã được cập nhật
     const updatedEvent = await prisma.event.findUnique({
@@ -51,11 +176,16 @@ export class EventService {
   }
 
   static async getEventsList(filters) {
-    await updateEventStatus(); // Cập nhật trạng thái event trước khi lấy danh sách
+    await this.updateEventStatus(); // Cập nhật trạng thái event trước khi lấy danh sách
 
     const { name, location, status, startDate, endDate, page = 1, limit = 10, createdById } = filters;
 
-    const where = { createdById };
+    const where = {};
+    
+    // Chỉ filter theo createdById khi nó được cung cấp
+    if (createdById) {
+      where.createdById = createdById;
+    }
 
     if (name) where.title = { contains: name, mode: "insensitive" };
     if (location) where.location = { contains: location, mode: "insensitive" };
@@ -130,8 +260,8 @@ export class EventService {
       }
     });
 
-    // Cập nhật status ngay sau khi update event
-    await updateEventStatus();
+    // Cập nhật status ngay sau khi update event - sử dụng method trong class
+    await this.updateEventStatus();
     
     // Lấy lại event với status đã được cập nhật
     const updatedEvent = await prisma.event.findUnique({
@@ -167,8 +297,6 @@ export class EventService {
       throw error;
     }
   }
-
-
 
   static async updateAttendance(updates) {
     await Promise.all(

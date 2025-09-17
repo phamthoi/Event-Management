@@ -4,18 +4,19 @@ import api from "../../axios";
 export const getEvents = async (filters = {}) => {
   const params = new URLSearchParams();
   
- 
-  params.append('limit', '1000');
-  params.append('page', '1');
+  // Sử dụng page và limit từ filters thay vì hardcode
+  params.append('page', filters.page || '1');
+  params.append('limit', filters.limit || '10');
   
-  // Thêm các filter params
+  // Thêm các filter params khác
   Object.keys(filters).forEach(key => {
-    if (filters[key]) {
+    if (filters[key] && key !== 'page' && key !== 'limit') {
       params.append(key, filters[key]);
     }
   });
   
   const res = await api.get(`/admin/events/list?${params.toString()}`);
+  console.log('++Get events API response(service fe):', res.data);
   return res.data;
 };
 
