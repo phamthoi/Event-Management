@@ -45,9 +45,4 @@ export const resetMemberPassword = async (id) => {
   return res.data;
 };
 
-// Deprecated - sử dụng MemberLock/MemberUnlock thay thế
-export const toggleMemberLock = async (id) => {
-  console.warn('toggleMemberLock is deprecated, use MemberLock/MemberUnlock instead');
-  // Không implement vì không biết trạng thái hiện tại
-  throw new Error('Use MemberLock or MemberUnlock instead');
-};
+
