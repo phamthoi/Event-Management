@@ -1,4 +1,4 @@
-import api from "./axios";
+import api from "../axios";
 
 // Lấy profile member hiện tại
 export const getProfile = async () => {

@@ -2,7 +2,34 @@
 import React, { useEffect, useState } from "react";
 import ProfileView from "../../../components/member/profile/ProfileView";
 import ProfileForm from "../../../components/member/profile/ProfileForm";
-// import { getProfile, updateProfile } from "../../../services/fakeApi";
+import {getProfile, updateProfile} from "../../../services/member/profileService"
+
+/*
+//===========Fake API=========== 
+const fakeProfile = {
+  id: 1,
+  fullName: "Nguyen Van A",
+  email: "member@test.com",
+  phoneNumber: "0123456789",
+  role: "MEMBER",
+  organizationId: 123,
+};
+
+const getProfile = async () => {
+  // Fake delay như call API
+  await new Promise((resolve) => setTimeout(resolve, 500));
+  return fakeProfile;
+};
+
+const updateProfile = async (updatedData) => {
+  await new Promise((resolve) => setTimeout(resolve, 500));
+  // Merge dữ liệu fake
+  Object.assign(fakeProfile, updatedData);
+  return fakeProfile;
+};
+//==========end fake API========== 
+
+*/
 
 const MemberProfilePage = () => {
   const [profile, setProfile] = useState(null);
