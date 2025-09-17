@@ -98,20 +98,9 @@ function MemberTable({ role = "admin" }) {
     }
   };
 
-  const handleResetPassword = async (id) => {
+  const handleResetPassword = (id) => {
     if (role !== "admin") return;
-    if (!window.confirm("Reset password về 'Member@123'?")) return;
-    
-    try {
-      setLoading(true);
-      await resetMemberPassword(id);
-      alert("Đã reset password cho member " + id);
-    } catch (error) {
-      console.error('Error resetting password:', error);
-      alert("Lỗi khi reset password");
-    } finally {
-      setLoading(false);
-    }
+    navigate(`/admin/members/${id}/reset-password`);
   };
 
   const totalPages = Math.ceil(total / limit);

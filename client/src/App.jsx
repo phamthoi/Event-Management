@@ -11,6 +11,7 @@ import AttendancePage from "./pages/admin/events/AttendancePage.jsx";
 import CreateMemberPage from "./pages/admin/members/CreateMemberPage.jsx";
 import MemberListPage from "./pages/admin/members/MemberListPage.jsx";
 import MemberDetailPage from "./components/admin/MemberList/MemberDetailPage.jsx";
+import ResetPasswordPage from "./pages/admin/members/ResetPasswordPage.jsx";
 
 
 // Member
@@ -56,6 +57,7 @@ function App() {
           <Route path="members/create" element={<CreateMemberPage />} />
           <Route path="members/list" element={<MemberListPage />} />
           <Route path="members/:id" element={<MemberDetailPage />} />
+          <Route path="members/:id/reset-password" element={<ResetPasswordPage />} />
 
           {/* Notification */}
           <Route
