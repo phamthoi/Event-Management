@@ -1,7 +1,8 @@
+// controllers/auth.controller.js
 import { AuthService } from '../services/auth.service.js';
 
 export class AuthController {
-  static async loginAdmin(req, res) {
+  static async login(req, res) {
     try {
       const { email, password } = req.body;
       
@@ -12,7 +13,8 @@ export class AuthController {
         });
       }
 
-      const result = await AuthService.loginAdmin(email, password);
+      // DÙNG HÀM CHUNG
+      const result = await AuthService.login(email, password);
       
       if (!result.success) {
         return res.status(401).json(result);

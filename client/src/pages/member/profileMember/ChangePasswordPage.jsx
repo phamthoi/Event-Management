@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { updateMemberPassword } from "../../../services/fakeApi";
+import { updateMemberPassword } from "../../../services/member/profileService";
 
 const ChangePasswordPage = () => {
   const [current, setCurrent] = useState("");

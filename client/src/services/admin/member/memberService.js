@@ -12,9 +12,15 @@ export const getMembers = async () => {
   return res.data;
 };
 
-// Khóa / mở khóa member
-export const toggleMemberLock = async (id) => {
-  const res = await api.put(`/admin/members/${id}/toggle-lock`);
+// Khóa member
+export const lockMember = async (id) => {
+  const res = await api.put(`/admin/members/${id}/lock`);
+  return res.data;
+};
+
+// Mở khóa member
+export const unlockMember = async (id) => {
+  const res = await api.put(`/admin/members/${id}/unlock`);
   return res.data;
 };
 

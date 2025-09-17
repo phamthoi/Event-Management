@@ -1,6 +1,6 @@
 // client/src/components/MemberList/MemberTable.jsx
 import React, { useEffect, useState } from "react";
-import { getMembers, toggleMemberLock, resetMemberPassword } from "../../../services/admin/member/memberService";
+import { getMembers, lockMember, unlockMember, resetMemberPassword } from "../../../services/admin/member/memberService";
 
 function MemberTable({ role = "admin" }) {
   const [members, setMembers] = useState([]);
@@ -18,16 +18,14 @@ function MemberTable({ role = "admin" }) {
 
   const loadMembers = async () => {
     try {
-      const res = await getMembers(); 
+      const res = await getMembers();
       console.log("getMembers trả về:", res);
 
-      // Nếu backend trả về object { members: [...], total, page, limit }
       let all = res.members || res; 
-
       if (!Array.isArray(all)) {
         throw new Error("API không trả về mảng members");
       }
-      // filter chung
+
       let filtered = all.filter((m) => {
         const matchesEmail = !filters.email || m.email.includes(filters.email);
         const matchesName = !filters.fullName || m.fullName.toLowerCase().includes(filters.fullName.toLowerCase());
@@ -35,12 +33,8 @@ function MemberTable({ role = "admin" }) {
         return matchesEmail && matchesName && matchesStatus;
       });
 
-      
-
-      // member chỉ thấy active
       if (role === "member") filtered = filtered.filter((m) => m.isActive);
 
-      // pagination
       const start = (page - 1) * limit;
       const end = start + limit;
       setMembers(filtered.slice(start, end));
@@ -66,18 +60,39 @@ function MemberTable({ role = "admin" }) {
     alert("Xem chi tiết member: " + id);
   };
 
-  const handleToggleLock = (id, isActive) => {
+  const handleToggleLock = async (id, isActive) => {
     if (role !== "admin") return;
-    toggleMemberLock(id);
-    loadMembers();
-    alert(isActive ? "Đã khóa member" : "Đã mở khóa member");
+
+    try {
+      if (isActive) {
+        await lockMember(id);
+        alert("Đã khóa member");
+      } else {
+        await unlockMember(id);
+        alert("Đã mở khóa member");
+      }
+
+      // Cập nhật trạng thái realtime mà không reload toàn bộ API
+      setMembers((prev) =>
+        prev.map((m) => (m.id === id ? { ...m, isActive: !isActive } : m))
+      );
+    } catch (err) {
+      console.error(err);
+      alert("Lỗi khi thay đổi trạng thái member");
+    }
   };
 
-  const handleResetPassword = (id) => {
+  const handleResetPassword = async (id) => {
     if (role !== "admin") return;
     if (!window.confirm("Reset password về 'Member@123'?")) return;
-    resetMemberPassword(id);
-    alert("Đã reset password cho member " + id);
+
+    try {
+      await resetMemberPassword(id);
+      alert("Đã reset password cho member " + id);
+    } catch (err) {
+      console.error(err);
+      alert("Lỗi reset password");
+    }
   };
 
   return (
@@ -109,7 +124,10 @@ function MemberTable({ role = "admin" }) {
             <option value="false">Locked</option>
           </select>
         )}
-        <button onClick={handleFilter} className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700">
+        <button
+          onClick={handleFilter}
+          className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700"
+        >
           Lọc
         </button>
       </div>
@@ -145,13 +163,24 @@ function MemberTable({ role = "admin" }) {
                 </td>
                 {role === "admin" && (
                   <td className="border px-3 py-2 space-x-2">
-                    <button onClick={() => handleView(m.id)} className="bg-gray-300 px-2 py-1 rounded hover:bg-gray-400">
+                    <button
+                      onClick={() => handleView(m.id)}
+                      className="bg-gray-300 px-2 py-1 rounded hover:bg-gray-400"
+                    >
                       View
                     </button>
-                    <button onClick={() => handleToggleLock(m.id, m.isActive)} className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600">
+                    <button
+                      onClick={() => handleToggleLock(m.id, m.isActive)}
+                      className={`px-2 py-1 rounded hover:opacity-90 ${
+                        m.isActive ? "bg-red-500 text-white" : "bg-green-500 text-white"
+                      }`}
+                    >
                       {m.isActive ? "Lock" : "Unlock"}
                     </button>
-                    <button onClick={() => handleResetPassword(m.id)} className="bg-yellow-400 px-2 py-1 rounded hover:bg-yellow-500">
+                    <button
+                      onClick={() => handleResetPassword(m.id)}
+                      className="bg-yellow-400 px-2 py-1 rounded hover:bg-yellow-500"
+                    >
                       Reset PW
                     </button>
                   </td>
@@ -164,11 +193,19 @@ function MemberTable({ role = "admin" }) {
 
       {/* Pagination */}
       <div className="flex justify-between items-center mt-4">
-        <button disabled={page === 1} onClick={() => setPage(page - 1)} className="bg-gray-300 px-3 py-1 rounded hover:bg-gray-400 disabled:opacity-50">
+        <button
+          disabled={page === 1}
+          onClick={() => setPage(page - 1)}
+          className="bg-gray-300 px-3 py-1 rounded hover:bg-gray-400 disabled:opacity-50"
+        >
           Previous
         </button>
         <span>Page {page}</span>
-        <button disabled={!hasMore} onClick={() => setPage(page + 1)} className="bg-gray-300 px-3 py-1 rounded hover:bg-gray-400 disabled:opacity-50">
+        <button
+          disabled={!hasMore}
+          onClick={() => setPage(page + 1)}
+          className="bg-gray-300 px-3 py-1 rounded hover:bg-gray-400 disabled:opacity-50"
+        >
           Next
         </button>
       </div>

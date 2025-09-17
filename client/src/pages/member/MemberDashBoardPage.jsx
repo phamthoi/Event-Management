@@ -5,7 +5,7 @@ import DashboardLayoutMember from "../../components/member/Dashboard/DashboardLa
 function MemberDashboardPage(){
   const token = localStorage.getItem("token");
 
-   if (!token) {
+  if (!token) {
     return <Navigate to="/login" />;
   }
 

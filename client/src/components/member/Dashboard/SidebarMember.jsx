@@ -3,12 +3,14 @@ import { Link } from "react-router-dom";
 function Sidebar(){
     const handleLogout = () => {
         localStorage.removeItem("token");
+        localStorage.removeItem("role");
+localStorage.removeItem("currentUser");
         window.location.href="/login"; // back to login
     };
 
     return (
       <div className="w-64 bg-gray-800 p-4 text-white shadow-lg flex flex-col gap-2">
-      <h2 className="text-2xl font-bold mb-6">Admin Dashboard</h2>
+      <h2 className="text-2xl font-bold mb-6">Member Dashboard</h2>
 
       {/* Thông tin user (sẽ lấy từ API sau) */}
       <div className="mb-4 p-2 bg-gray-100 rounded text-sm text-gray-700">
