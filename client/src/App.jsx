@@ -4,6 +4,8 @@ import LoginPage from "./pages/LoginPage.jsx";
 
 // Admin
 import AdminDashboardPage from "./pages/admin/AdminDashboardPage.jsx";
+import AdminProfilePage from "./pages/admin/profile/AdminProfilePage.jsx";
+import AdminChangePasswordPage from "./pages/admin/profile/AdminChangePasswordPage.jsx";
 import CreateEventPage from "./pages/admin/events/CreateEventPage.jsx";
 import EventListPage from "./pages/admin/events/EventListPage.jsx";
 import EditEventPage from "./pages/admin/events/EditEventPage.jsx";
@@ -45,6 +47,10 @@ function App() {
         >
           {/* Nested routes */}
           <Route index element={<p>Welcome to Admin Dashboard</p>} />
+
+          {/*profile*/}
+          <Route path="profile/view" element={<AdminProfilePage/>}/>
+          <Route path="profile/changepass" element={<AdminChangePasswordPage/>}/>
 
           {/* Event routes */}
           <Route path="events/create" element={<CreateEventPage />} />

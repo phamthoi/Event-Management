@@ -10,6 +10,14 @@ function Sidebar() {
       <div className="w-64 bg-gray-800 p-4 text-white shadow-lg flex flex-col gap-2">
       <h2 className="text-2xl font-bold mb-6">Admin Dashboard</h2>
 
+      {/* admin Profile */}
+      <div>
+        <p className="font-semibold">Profile ▾</p>
+        <div className="ml-3 flex flex-col gap-1">
+          <Link to="/admin/profile/view">View & update</Link>
+          <Link to="/admin/profile/changepass">Change Password</Link>
+        </div>
+      </div>
 
       {/* Event */}
       <div>

@@ -1,37 +1,33 @@
-// client/src/pages/member/memberProfilePage.jsx
+// AdminProfilePage.jsx
 import React, { useEffect, useState } from "react";
 import ProfileView from "../../../components/profile/ProfileView";
 import ProfileForm from "../../../components/profile/ProfileForm";
-import {getProfile, updateProfile} from "../../../services/member/profileService"
+import { getAdminProfile, updateAdminProfile } from "../../../services/admin/profile/adminProfileService";
 
 /*
 //===========Fake API=========== 
 const fakeProfile = {
   id: 1,
   fullName: "Nguyen Van A",
-  email: "member@test.com",
+  email: "admin@test.com",
   phoneNumber: "0123456789",
-  role: "MEMBER",
+  role: "ADMIN",
   organizationId: 123,
 };
 
 const getProfile = async () => {
-  // Fake delay như call API
-  await new Promise((resolve) => setTimeout(resolve, 500));
+  await new Promise((resolve) => setTimeout(resolve, 500)); // fake delay
   return fakeProfile;
 };
 
 const updateProfile = async (updatedData) => {
-  await new Promise((resolve) => setTimeout(resolve, 500));
-  // Merge dữ liệu fake
-  Object.assign(fakeProfile, updatedData);
+  await new Promise((resolve) => setTimeout(resolve, 500)); // fake delay
+  Object.assign(fakeProfile, updatedData); // merge dữ liệu
   return fakeProfile;
 };
 //==========end fake API========== 
 */
-
-
-const MemberProfilePage = () => {
+const AdminProfilePage = () => {
   const [profile, setProfile] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
 
@@ -45,39 +41,30 @@ const MemberProfilePage = () => {
 
     const fetchProfile = async () => {
       try {
-        const data = await getProfile();
-        if (data) {
-          setProfile(data);
-        } else {
-          alert("Failed to load profile");
-        }
+        const data = await getProfile(); // dùng fake API
+        setProfile(data);
       } catch (err) {
-        console.error("fetchProfile error:", err);
-        alert("Error loading profile");
+        console.error("Error fetching admin profile:", err);
       }
     };
-
     fetchProfile();
   }, []);
 
   const handleSave = async (updatedData) => {
     try {
-      const data = await updateProfile(updatedData);
-      if (data) {
-        alert("Profile updated successfully");
-        setProfile(data);
-        setIsEditing(false);
-      } else {
-        alert("Failed to update profile");
-      }
+      const data = await updateProfile(updatedData); // dùng fake API
+      setProfile(data);
+      setIsEditing(false);
+      alert("Profile updated successfully!");
     } catch (err) {
-      alert("Error updating profile");
+      console.error("Error updating admin profile:", err);
+      alert("Failed to update profile.");
     }
   };
 
-  if (!profile) return <p className="text-center mt-10">Loading...</p>;
+  if (!profile) return <p className="text-center mt-10">Loading profile...</p>;
 
-   return (
+    return (
     <div className="min-h-screen bg-gray-100 flex items-start justify-center py-8">
       <div className="w-full max-w-3xl">
         {!isEditing ? (
@@ -94,4 +81,4 @@ const MemberProfilePage = () => {
   );
 };
 
-export default MemberProfilePage;
+export default AdminProfilePage;
