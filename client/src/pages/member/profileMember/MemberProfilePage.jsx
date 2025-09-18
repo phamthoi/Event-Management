@@ -28,8 +28,8 @@ const updateProfile = async (updatedData) => {
   return fakeProfile;
 };
 //==========end fake API========== 
-
 */
+
 
 const MemberProfilePage = () => {
   const [profile, setProfile] = useState(null);
@@ -77,10 +77,9 @@ const MemberProfilePage = () => {
 
   if (!profile) return <p className="text-center mt-10">Loading...</p>;
 
-  return (
-    <div className="bg-gray-100 flex items-center justify-center min-h-screen">
-      <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
-        <h1 className="text-2xl font-bold text-center mb-4">Member Profile</h1>
+   return (
+    <div className="min-h-screen bg-gray-100 flex items-start justify-center py-8">
+      <div className="w-full max-w-3xl">
         {!isEditing ? (
           <ProfileView profile={profile} onEdit={() => setIsEditing(true)} />
         ) : (

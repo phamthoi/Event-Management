@@ -22,10 +22,10 @@ const EditEventPage = () => {
         // Format dates for datetime-local input
         const eventData = {
           ...response.event,
-          startAt: response.event.startAt ? new Date(response.event.startAt).toISOString().slice(0, 16) : '',
-          endAt: response.event.endAt ? new Date(response.event.endAt).toISOString().slice(0, 16) : '',
-          registrationStartAt: response.event.registrationStartAt ? new Date(response.event.registrationStartAt).toISOString().slice(0, 16) : '',
-          registrationEndAt: response.event.registrationEndAt ? new Date(response.event.registrationEndAt).toISOString().slice(0, 16) : ''
+          startAt: response.event.startAt ? new Date(response.event.startAt).toLocaleString('sv-SE', {hour12: false}).replace(' ', 'T'): '',
+          endAt: response.event.endAt ? new Date(response.event.endAt).toLocaleString('sv-SE', {hour12: false}).replace(' ', 'T'): '',
+          registrationStartAt: response.event.registrationStartAt ? new Date(response.event.registrationStartAt).toLocaleString('sv-SE', {hour12: false}).replace(' ', 'T'): '',
+          registrationEndAt: response.event.registrationEndAt ? new Date(response.event.registrationEndAt).toLocaleString('sv-SE', {hour12: false}).replace(' ', 'T'): '',
         };
         setEvent(eventData);
       }

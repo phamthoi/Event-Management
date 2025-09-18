@@ -2,7 +2,6 @@
 import React, { useState } from "react";
 import LoginForm from "../components/Login/LoginForm";
 import ForgotPasswordForm from "../components/Login/ForgotPasswordForm";
-// import { getMembers } from "../services/fakeApi";
 import api from "../services/axios";
 
 const LoginPage = () => {
@@ -10,7 +9,7 @@ const LoginPage = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  /*
+
   // Real API login thay vì demo login
   const handleLogin = async (email, password) => {
     setLoading(true);
@@ -46,8 +45,9 @@ const LoginPage = () => {
       setLoading(false);
     }
   };
-  */
- // ======= Fake Login =======
+  
+  /*
+  // ======= Fake Login =======
   const handleLogin = async (email, password) => {
     setLoading(true);
     setError("");
@@ -90,8 +90,7 @@ const LoginPage = () => {
     setLoading(false);
   };
   // ======= End Fake Login =======
-
-
+*/
   const handleForgot = () => {
     setError("");
     setShowForgot(true);
