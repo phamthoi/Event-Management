@@ -3,7 +3,9 @@ import { AuthService } from '../services/auth.service.js';
 export class AuthController {
   static async login(req, res) {
     try {
+      
       const { email, password } = req.body;
+      
       
       if (!email || !password) {
         return res.status(400).json({ 
@@ -17,6 +19,7 @@ export class AuthController {
       if (!result.success) {
         return res.status(401).json(result);
       }
+      
 
       res.json(result);
     } catch (error) {

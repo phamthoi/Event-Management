@@ -8,6 +8,9 @@ export class AuthService {
 
   static async login(email, password) {
     try {
+
+  
+      
      
       const user = await prisma.user.findUnique({
         where: { email },
@@ -46,7 +49,7 @@ export class AuthService {
           role: user.role,
           organizationId: user.organizationId
         },
-        process.env.JWT_SECRET || "your-secret-key",
+        process.env.JWT_SECRET,
         { expiresIn: "24h" }
       );
 

@@ -19,13 +19,25 @@ const EditEventPage = () => {
     try {
       const response = await getEventById(id);
       if (response.success) {
-        // Format dates for datetime-local input
+        // Helper function to format date for datetime-local input
+        const formatDateForInput = (dateString) => {
+          if (!dateString) return '';
+          const date = new Date(dateString);
+          const year = date.getFullYear();
+          const month = String(date.getMonth() + 1).padStart(2, '0');
+          const day = String(date.getDate()).padStart(2, '0');
+          const hours = String(date.getHours()).padStart(2, '0');
+          const minutes = String(date.getMinutes()).padStart(2, '0');
+          return `${year}-${month}-${day}T${hours}:${minutes}`;
+        };
+        
+        // Format dates for datetime-local input using local timezone
         const eventData = {
           ...response.event,
-          startAt: response.event.startAt ? new Date(response.event.startAt).toISOString().slice(0, 16) : '',
-          endAt: response.event.endAt ? new Date(response.event.endAt).toISOString().slice(0, 16) : '',
-          registrationStartAt: response.event.registrationStartAt ? new Date(response.event.registrationStartAt).toISOString().slice(0, 16) : '',
-          registrationEndAt: response.event.registrationEndAt ? new Date(response.event.registrationEndAt).toISOString().slice(0, 16) : ''
+          startAt: formatDateForInput(response.event.startAt),
+          endAt: formatDateForInput(response.event.endAt),
+          registrationStartAt: formatDateForInput(response.event.registrationStartAt),
+          registrationEndAt: formatDateForInput(response.event.registrationEndAt)
         };
         setEvent(eventData);
       }

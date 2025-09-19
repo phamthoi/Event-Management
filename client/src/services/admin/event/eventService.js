@@ -16,7 +16,7 @@ export const getEvents = async (filters = {}) => {
   });
   
   const res = await api.get(`/admin/events/list?${params.toString()}`);
-  console.log('++Get events API response(service fe):', res.data);
+  
   return res.data;
 };
 
