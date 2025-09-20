@@ -1,10 +1,10 @@
 // client/src/pages/events/MyEventsPage.jsx
 import React, { useEffect, useState } from "react";
-import { getEvents } from "../../../services/admin/event/eventService";
-import { getMemberRegistrations, cancelRegistration } from "../../../services/member/activeOfMember";
+// import { getEvents } from "../../../services/admin/event/eventService";
+// import { getMemberRegistrations, cancelRegistration } from "../../../services/member/activeOfMember";
 import { getEventStatus } from "../../../utils/getEventStatus";
 import EventCard from "../../../components/member/EventList/EventCard";
-/*
+
 // ============= Fake =================
 // Fake data
 const fakeEvents = Array.from({ length: 10 }, (_, i) => {
@@ -23,29 +23,29 @@ const fakeEvents = Array.from({ length: 10 }, (_, i) => {
 });
 
 // Fake member registrations
-const fakeRegs = {
+let fakeRegs = {
   1: [2, 3, 5], // memberId = 1 đã đăng ký eventId 2,3,5
 };
 // ================ END ==========
-*/
+
 const MyEventsPage = () => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
 
   // Fake member Id = 1
-  //const currentMemberId = 1;
+  const currentMemberId = 1;
 
   const loadEvents = async () => {
     try {
       setLoading(true);
 
       // ======= API thật =======
-       const allEvents = await getEvents();
-       const regs = await getMemberRegistrations();
+      // const allEvents = await getEvents();
+      // const regs = await getMemberRegistrations();
 
       // ======= Thay bằng fake =======
-      //const allEvents = fakeEvents;
-      //const regs = fakeRegs[currentMemberId] || [];
+      const allEvents = fakeEvents;
+      const regs = fakeRegs[currentMemberId] || [];
 
       // Lọc ra chỉ những event đã đăng ký
       const myEvents = allEvents
@@ -77,14 +77,13 @@ const MyEventsPage = () => {
 
     try {
       // =======  API thật =======
-      await cancelRegistration(event.id);
+      // await cancelRegistration(event.id);
 
-      /*
       // ======= Thay bằng fake =======
       const newRegs = (fakeRegs[currentMemberId] || []).filter(
         (id) => id !== event.id
       );
-      fakeRegs[currentMemberId] = newRegs;*/
+      fakeRegs[currentMemberId] = newRegs;
 
       alert("Đã hủy đăng ký thành công");
       loadEvents(); // reload lại danh sách

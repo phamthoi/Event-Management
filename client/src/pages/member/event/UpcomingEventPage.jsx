@@ -1,8 +1,8 @@
 // client/src/pages/events/UpcomingEventsPage.jsx
 import React, { useEffect, useState } from "react";
-import { getEvents } from "../../../services/admin/event/eventService";
-import { getRegistrations } from "../../../services/admin/event/attendanceService";
-import { registerEvent, cancelRegistration } from "../../../services/member/activeOfMember";
+// import { getEvents } from "../../../services/admin/event/eventService";
+// import { getRegistrations } from "../../../services/admin/event/attendanceService";
+// import { registerEvent, cancelRegistration } from "../../../services/member/activeOfMember";
 import { getEventStatus } from "../../../utils/getEventStatus";
 import EventCard from "../../../components/member/EventList/EventCard";
 
@@ -15,10 +15,9 @@ const UpcomingEventsPage = () => {
   const limit = 10;
 
   //======== API thật=========
-  const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-  const currentMemberId = currentUser?.id;
+  // const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+  // const currentMemberId = currentUser?.id;
 
-  /*
   //=========== Fake API =========
   const currentUser = { id: 1, fullName: "Demo Member" }; // fake currentUser
   const currentMemberId = currentUser.id;
@@ -42,9 +41,9 @@ const UpcomingEventsPage = () => {
   // Fake registrations
   const [fakeRegs, setFakeRegs] = useState({}); // { memberId: { eventId: true } }
   //==================== End Fake API =====================
-*/
   
 // Load danh sách sự kiện từ backend
+  /*
   const loadEvents = async () => {
     try {
       setLoading(true);
@@ -60,8 +59,8 @@ const UpcomingEventsPage = () => {
       setLoading(false);
     }
   };
+  */
 
-  /*
   //================ fake loadevents=============
   const loadEvents = async () => {
     setLoading(true);
@@ -77,9 +76,9 @@ const UpcomingEventsPage = () => {
     setLoading(false);
   };
   //============== END ======================
-*/
 
   // Load danh sách registrations của member
+  /*
   const loadRegistrations = async () => {
     try {
       const res = await getRegistrations();
@@ -93,7 +92,8 @@ const UpcomingEventsPage = () => {
       console.error("Error loading registrations:", err);
     }
   };
- /*
+  */
+ 
  //================= fake load registrations=========
  // Load registrations
   const loadRegistrations = async () => {
@@ -101,22 +101,22 @@ const UpcomingEventsPage = () => {
     setRegistrations({ [currentMemberId]: memberRegs });
   };
   // ================== END ====================
-  */
  
-  useEffect(() => {
-    loadEvents();
-    loadRegistrations();
-  }, [page]);
-  
-  //============ Fake===========
   /*
   useEffect(() => {
     loadEvents();
     loadRegistrations();
+  }, [page]);
+  */
+  
+  //============ Fake===========
+  useEffect(() => {
+    loadEvents();
+    loadRegistrations();
   }, [page, fakeRegs]);
-*/
   
   // Xử lý đăng ký / hủy đăng ký
+  /*
   const handleToggleRegister = async (event) => {
     if (!currentMemberId) {
       alert("Bạn chưa đăng nhập");
@@ -147,8 +147,8 @@ const UpcomingEventsPage = () => {
       alert("Đăng ký / hủy đăng ký thất bại");
     }
   };
+  */
 
-  /*
   //============= Fake register / cancel
   const handleToggleRegister = async (event) => {
   const memberRegs = fakeRegs[currentMemberId] || {};
@@ -175,7 +175,7 @@ const UpcomingEventsPage = () => {
   }
 };
   //====================== END====================
-*/
+
   if (loading) return <p className="text-center mt-10">Đang tải...</p>;
 
   const totalPages = Math.ceil(total / limit);

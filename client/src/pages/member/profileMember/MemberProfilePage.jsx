@@ -2,9 +2,8 @@
 import React, { useEffect, useState } from "react";
 import ProfileView from "../../../components/profile/ProfileView";
 import ProfileForm from "../../../components/profile/ProfileForm";
-import {getProfile, updateProfile} from "../../../services/member/profileService"
+// import {getProfile, updateProfile} from "../../../services/member/profileService"
 
-/*
 //===========Fake API=========== 
 const fakeProfile = {
   id: 1,
@@ -28,8 +27,6 @@ const updateProfile = async (updatedData) => {
   return fakeProfile;
 };
 //==========end fake API========== 
-*/
-
 
 const MemberProfilePage = () => {
   const [profile, setProfile] = useState(null);
