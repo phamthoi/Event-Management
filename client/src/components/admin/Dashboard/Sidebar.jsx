@@ -14,7 +14,7 @@ function Sidebar() {
       <div>
         <p className="font-semibold">Profile ▾</p>
         <div className="ml-3 flex flex-col gap-1">
-          <Link to="/admin/profile/view">View & update</Link>
+          <Link to="/admin/profile">View & update</Link>
           <Link to="/admin/profile/changepass">Change Password</Link>
         </div>
       </div>

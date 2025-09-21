@@ -21,7 +21,7 @@ const AdminChangePasswordPage = () => {
     }
 
     try {
-      await updateAdminPassword(current, newPass); // Gọi API backend
+      await updateAdminPassword(current, newPass); // Gọi API backend thật
       setSuccess("✅ Password updated successfully!");
       setCurrent("");
       setNewPass("");
@@ -33,16 +33,7 @@ const AdminChangePasswordPage = () => {
 
   return (
     <div className="min-h-screen flex flex-col items-center bg-gray-100 px-4 py-8">
-      {/* Header */}
-      <div className="w-full max-w-3xl mb-6 flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-gray-800">Admin: Change Member Password</h1>
-        <button
-          onClick={() => navigate("/admin/members/list")}
-          className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition duration-200"
-        >
-          Back to Members
-        </button>
-      </div>
+     
 
       {/* Card */}
       <div className="bg-white shadow-xl rounded-2xl w-full max-w-md p-8 space-y-6">

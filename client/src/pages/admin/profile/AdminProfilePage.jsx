@@ -27,6 +27,7 @@ const updateProfile = async (updatedData) => {
 };
 //==========end fake API========== 
 */
+
 const AdminProfilePage = () => {
   const [profile, setProfile] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -41,10 +42,11 @@ const AdminProfilePage = () => {
 
     const fetchProfile = async () => {
       try {
-        const data = await getProfile(); // dùng fake API
+        const data = await getAdminProfile(); // sử dụng API thật
         setProfile(data);
       } catch (err) {
         console.error("Error fetching admin profile:", err);
+        alert("Failed to fetch profile.");
       }
     };
     fetchProfile();
@@ -52,7 +54,7 @@ const AdminProfilePage = () => {
 
   const handleSave = async (updatedData) => {
     try {
-      const data = await updateProfile(updatedData); // dùng fake API
+      const data = await updateAdminProfile(updatedData); // sử dụng API thật
       setProfile(data);
       setIsEditing(false);
       alert("Profile updated successfully!");

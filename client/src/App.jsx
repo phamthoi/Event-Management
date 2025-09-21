@@ -49,7 +49,7 @@ function App() {
           <Route index element={<p>Welcome to Admin Dashboard</p>} />
 
           {/*profile*/}
-          <Route path="profile/view" element={<AdminProfilePage/>}/>
+          <Route path="profile" element={<AdminProfilePage/>}/>
           <Route path="profile/changepass" element={<AdminChangePasswordPage/>}/>
 
           {/* Event routes */}
