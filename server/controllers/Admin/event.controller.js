@@ -35,8 +35,8 @@ export class EventController {
 
       const filters = {
         ...req.query,
-        // Bỏ dòng này để hiển thị tất cả events:
-        // createdById: req.user.id
+        // Thay đổi từ createdById sang organizationId
+        organizationId: req.user.organizationId
       };
 
       const result = await EventService.getEventsList(filters);
@@ -101,7 +101,7 @@ export class EventController {
       }
 
       const eventId = parseInt(req.params.id);
-      const registrations = await EventService.getEventRegistrations(eventId);
+      const registrations = await EventService.getEventRegistrations(eventId, req.user.organizationId);
       
       res.json({ success: true, registrations });
     } catch (error) {

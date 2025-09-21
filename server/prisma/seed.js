@@ -1,5 +1,6 @@
 // prisma/seed.js
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
@@ -22,7 +23,7 @@ async function main() {
       email: "admin@example.com",
       fullName: "Admin User",
       phoneNumber: "0901234567",
-      passwordHash: "hashedpassword",
+      passwordHash: await bcrypt.hash("password123", 10),
       role: "ADMIN",
       organizationId: org.id,
     },
@@ -33,7 +34,7 @@ async function main() {
       email: "member@example.com",
       fullName: "Member User",
       phoneNumber: "0909876543",
-      passwordHash: "hashedpassword",
+      passwordHash: await bcrypt.hash("password123", 10),
       role: "MEMBER",
       organizationId: org.id,
     },

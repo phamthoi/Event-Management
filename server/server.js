@@ -11,7 +11,8 @@ dotenv.config({ path: path.join(__dirname, '.env') });
 
 import authRoutes from "./routes/auth.route.js";
 import adminRoutes from "./routes/Admin/admin.route.js";
-import memberRoutes from "./routes/Admin/member.route.js";
+
+import memberRoutes from "./routes/Member/member.route.js";
 
 import eventRoutes from "./routes/Admin/event.route.js";
 import notificationRoutes from "./routes/notification.route.js";
@@ -42,6 +43,7 @@ app.use(express.json());
 // API routes
 app.use("/auth", authRoutes); // login chung
 app.use("/admin", adminRoutes); // admin route (bảo vệ bằng role ADMIN)
+app.use("/member", memberRoutes); // member route (bảo vệ bằng role MEMBER)
 
 
 

@@ -120,12 +120,18 @@ export class EventService {
       page = 1,
       limit = 10,
       createdById,
+      organizationId,
     } = filters;
   
     const where = {};
   
     if (createdById) {
       where.createdById = createdById;
+    }
+    
+    // Thêm filter organizationId
+    if (organizationId) {
+      where.organizationId = organizationId;
     }
   
     if (name) where.title = { contains: name, mode: "insensitive" };

@@ -1,31 +1,73 @@
 // client/src/pages/events/MyEventsPage.jsx
 import React, { useEffect, useState } from "react";
 // import { getEvents } from "../../../services/admin/event/eventService";
-// import { getMemberRegistrations, cancelRegistration } from "../../../services/member/activeOfMember";
+import { getMemberRegistrations, cancelRegistration } from "../../../services/member/event/activeOfMemberService";
+
+//===========Fake API=========== 
+// const fakeMyEvents = [
+//   {
+//     id: 1,
+//     title: "Hội thảo công nghệ 2024",
+//     description: "Hội thảo về các xu hướng công nghệ mới",
+//     startDate: "2024-03-15T09:00:00Z",
+//     endDate: "2024-03-15T17:00:00Z",
+//     location: "Hà Nội",
+//     maxParticipants: 100,
+//     status: "ACTIVE",
+//     registrationDate: "2024-02-20T10:00:00Z"
+//   },
+//   {
+//     id: 2,
+//     title: "Workshop React Advanced",
+//     description: "Workshop nâng cao về React và các thư viện liên quan",
+//     startDate: "2024-03-20T14:00:00Z",
+//     endDate: "2024-03-20T18:00:00Z",
+//     location: "TP.HCM",
+//     maxParticipants: 50,
+//     status: "ACTIVE",
+//     registrationDate: "2024-02-25T15:30:00Z"
+//   }
+// ];
+
+// const getMemberRegistrations = async () => {
+//   await new Promise((resolve) => setTimeout(resolve, 500));
+//   return fakeMyEvents;
+// };
+
+// const cancelRegistration = async (eventId) => {
+//   await new Promise((resolve) => setTimeout(resolve, 500));
+//   // Fake remove event from list
+//   const index = fakeMyEvents.findIndex(event => event.id === eventId);
+//   if (index > -1) {
+//     fakeMyEvents.splice(index, 1);
+//   }
+//   return { message: "Hủy đăng ký thành công" };
+// };
+//==========end fake API==========
 import { getEventStatus } from "../../../utils/getEventStatus";
 import EventCard from "../../../components/member/EventList/EventCard";
 
 // ============= Fake =================
 // Fake data
-const fakeEvents = Array.from({ length: 10 }, (_, i) => {
-  const status = i % 3 === 0 ? "DRAFT" : "REGISTRATION"; // 1/3 draft, còn lại open
-  const now = new Date();
-  const regEnd = new Date(now);
-  regEnd.setDate(now.getDate() + (i % 5)); // registrationEndAt vài ngày nữa
-  return {
-    id: i + 1,
-    name: `Event ${i + 1}`,
-    description: `Description for Event ${i + 1}`,
-    maxAttendees: 10 + i,
-    registrationEndAt: regEnd.toISOString(),
-    status,
-  };
-});
+// const fakeEvents = Array.from({ length: 10 }, (_, i) => {
+//   const status = i % 3 === 0 ? "DRAFT" : "REGISTRATION"; // 1/3 draft, còn lại open
+//   const now = new Date();
+//   const regEnd = new Date(now);
+//   regEnd.setDate(now.getDate() + (i % 5)); // registrationEndAt vài ngày nữa
+//   return {
+//     id: i + 1,
+//     name: `Event ${i + 1}`,
+//     description: `Description for Event ${i + 1}`,
+//     maxAttendees: 10 + i,
+//     registrationEndAt: regEnd.toISOString(),
+//     status,
+//   };
+// });
 
 // Fake member registrations
-let fakeRegs = {
-  1: [2, 3, 5], // memberId = 1 đã đăng ký eventId 2,3,5
-};
+// let fakeRegs = {
+//   1: [2, 3, 5], // memberId = 1 đã đăng ký eventId 2,3,5
+// };
 // ================ END ==========
 
 const MyEventsPage = () => {
@@ -33,24 +75,21 @@ const MyEventsPage = () => {
   const [loading, setLoading] = useState(true);
 
   // Fake member Id = 1
-  const currentMemberId = 1;
+  // const currentMemberId = 1;
 
   const loadEvents = async () => {
     try {
       setLoading(true);
 
       // ======= API thật =======
-      // const allEvents = await getEvents();
-      // const regs = await getMemberRegistrations();
-
+      const myEvents = await getMemberRegistrations();
+      
       // ======= Thay bằng fake =======
-      const allEvents = fakeEvents;
-      const regs = fakeRegs[currentMemberId] || [];
-
-      // Lọc ra chỉ những event đã đăng ký
-      const myEvents = allEvents
-        .map((ev) => ({ ...ev, status: getEventStatus(ev) }))
-        .filter((ev) => regs.includes(ev.id)); // chỉ lấy event user đã đăng ký
+      // const allEvents = fakeEvents;
+      // const regs = fakeRegs[currentMemberId] || [];
+      // const myEvents = allEvents
+      //   .map((ev) => ({ ...ev, status: getEventStatus(ev) }))
+      //   .filter((ev) => regs.includes(ev.id)); // chỉ lấy event user đã đăng ký
 
       setEvents(myEvents);
     } catch (err) {
@@ -77,13 +116,13 @@ const MyEventsPage = () => {
 
     try {
       // =======  API thật =======
-      // await cancelRegistration(event.id);
+      await cancelRegistration(event.id);
 
       // ======= Thay bằng fake =======
-      const newRegs = (fakeRegs[currentMemberId] || []).filter(
-        (id) => id !== event.id
-      );
-      fakeRegs[currentMemberId] = newRegs;
+      // const newRegs = (fakeRegs[currentMemberId] || []).filter(
+      //   (id) => id !== event.id
+      // );
+      // fakeRegs[currentMemberId] = newRegs;
 
       alert("Đã hủy đăng ký thành công");
       loadEvents(); // reload lại danh sách

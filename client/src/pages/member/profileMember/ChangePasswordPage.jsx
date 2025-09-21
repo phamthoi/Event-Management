@@ -1,5 +1,19 @@
 import React, { useState } from "react";
-import { updateMemberPassword } from "../../../services/member/profileService";
+import { updateMemberPassword } from "../../../services/member/profile/profileService";
+
+//===========Fake API=========== 
+// const updateMemberPassword = async (currentPassword, newPassword) => {
+//   // Fake delay như call API
+//   await new Promise((resolve) => setTimeout(resolve, 500));
+//   
+//   // Fake validation - giả sử mật khẩu hiện tại là "123456"
+//   if (currentPassword !== "123456") {
+//     throw new Error("Mật khẩu hiện tại không đúng");
+//   }
+//   
+//   return { message: "Đổi mật khẩu thành công" };
+// };
+//==========end fake API==========
 
 const ChangePasswordPage = () => {
   const [current, setCurrent] = useState("");

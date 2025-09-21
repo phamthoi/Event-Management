@@ -17,13 +17,10 @@ function AttendancePage() {
     const fetchEvents = async () => {
       try {
         setLoading(true);
-        const response = await getEvents();
-   
-        
-
+        const response = await getEvents({ limit: 1000 }); // Hoặc số lượng đủ lớn
+        console.log('++++++ events:', response.events);
         const allEvents = response.events || response;
-     
-        
+        console.log('++++++ allEvents:', allEvents);
         if (allEvents && Array.isArray(allEvents)) {
          
          

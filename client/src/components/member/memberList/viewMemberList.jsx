@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-//import { getMembers } from "../../../services/admin/member/memberService";
+import { getMembers } from "../../../services/member/member/memberService";
 
 function ViewMemberList() {
   const [members, setMembers] = useState([]);
