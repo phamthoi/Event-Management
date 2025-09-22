@@ -46,7 +46,7 @@ export class AuthService {
           role: user.role,
           organizationId: user.organizationId
         },
-        process.env.JWT_SECRET || "your-secret-key",
+        process.env.JWT_SECRET,
         { expiresIn: "24h" }
       );
 

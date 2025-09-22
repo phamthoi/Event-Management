@@ -18,15 +18,39 @@ const EditEventPage = () => {
   const loadEvent = async () => {
     try {
       const response = await getEventById(id);
+      // const testTime = new Date("2025-10-05T01:00:00.000Z");
+      // console.log("🪣  Test: " + testTime);
+      // const formatted = testTime.toLocaleString('sv-SE', { hour12: false }).replace(' ', 'T');
+      // console.log("🪣 Test (sau khi toLocaleString): " + formatted);
+  
+      console.log(`🪣[CLIENT → (page)] Event ID: ${id} | Dữ liệu nhận từ server:`, JSON.stringify({
+        startAt: response.event?.startAt,
+        endAt: response.event?.endAt,
+      }, null, 2));
+      
       if (response.success) {
-        // Format dates for datetime-local input
+        // Format dates for datetime-local input với đầy đủ giây
+        const formatDateTime = (dateString) => {
+          if (!dateString) return '';
+          const date = new Date(dateString);
+          
+          // Chuyển về local timezone và format
+          const localISOTime = new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
+            .toISOString()
+            .slice(0, 19);
+          
+          return localISOTime;
+        };
+        
         const eventData = {
           ...response.event,
-          startAt: response.event.startAt ? new Date(response.event.startAt).toLocaleString('sv-SE', {hour12: false}).replace(' ', 'T'): '',
-          endAt: response.event.endAt ? new Date(response.event.endAt).toLocaleString('sv-SE', {hour12: false}).replace(' ', 'T'): '',
-          registrationStartAt: response.event.registrationStartAt ? new Date(response.event.registrationStartAt).toLocaleString('sv-SE', {hour12: false}).replace(' ', 'T'): '',
-          registrationEndAt: response.event.registrationEndAt ? new Date(response.event.registrationEndAt).toLocaleString('sv-SE', {hour12: false}).replace(' ', 'T'): '',
+          startAt: formatDateTime(response.event.startAt),
+          endAt: formatDateTime(response.event.endAt),
+          registrationStartAt: formatDateTime(response.event.registrationStartAt),
+          registrationEndAt: formatDateTime(response.event.registrationEndAt),
         };
+        
+        console.log('🪣 Formatted eventData:', eventData);
         setEvent(eventData);
       }
       setLoading(false);
@@ -74,6 +98,11 @@ const EditEventPage = () => {
         maxAttendees: event.maxAttendees ? parseInt(event.maxAttendees) : null,
         deposit: event.deposit ? parseFloat(event.deposit) : 0.0,
       };
+
+      console.log(`🎉 [CLIENT SUBMIT(page)] Event ID: ${id} | Dữ liệu thời gian trước khi gửi lên server:`, JSON.stringify({
+        startAt: payload.startAt,
+        endAt: payload.endAt,
+      }, null, 2));
 
       const response = await updateEvent(id, payload);
       if (response.success) {

@@ -24,12 +24,12 @@ api.interceptors.request.use((config) => {
     config.headers['X-Requested-At'] = Date.now();
     
     // Add cache-busting parameter to URL
-    if (config.method === 'get') {
-      config.params = {
-        ...config.params,
-        _t: Date.now()
-      };
-    }
+    // if (config.method === 'get') {
+    //   config.params = {
+    //     ...config.params,
+    //     _t: Date.now()
+    //   };
+    // }
     
     return config;
 });

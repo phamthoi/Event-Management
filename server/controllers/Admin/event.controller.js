@@ -35,7 +35,7 @@ export class EventController {
 
       const filters = {
         ...req.query,
-        // Thay đổi từ createdById sang organizationId
+        
         organizationId: req.user.organizationId
       };
 
@@ -58,6 +58,12 @@ export class EventController {
         return res.status(404).json({ message: "Event không tồn tại" });
       }
 
+
+    console.log(`🪣 [DATABASE → SERVER(controller)] Event ID: ${req.params.id} | Thời gian từ database:`, JSON.stringify({
+      startAt: event.startAt,
+      endAt: event.endAt
+    }, null, 2));
+
       res.json({ success: true, event });
     } catch (error) {
       res.status(500).json({ success: false, message: error.message });
@@ -71,6 +77,10 @@ export class EventController {
       }
 
       const eventId = parseInt(req.params.id);
+      
+      // Console log để theo dõi thời gian nhận từ client
+      // console.log(`[EVENT CONTROLLER] updateEvent - Event ID: ${eventId}, startAt: ${req.body.startAt} , endAt: ${req.body.endAt} `);
+      
       const event = await EventService.updateEvent(eventId, req.body);
       
       res.json({ success: true, event });

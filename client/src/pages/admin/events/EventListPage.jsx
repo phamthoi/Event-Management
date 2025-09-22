@@ -25,10 +25,10 @@ const EventListPage = () => {
       const response = await getEvents({ page, limit, ...filters });
       
       // Thêm console.log để debug
-      console.log('++Events API response:', response);
-      console.log('++Total events:', response.total);
-      console.log('++Current page:', page);
-      console.log('++Limit per page:', limit);
+      // console.log('++Events API response:', response);
+      // console.log('++Total events:', response.total);
+      // console.log('++Current page:', page);
+      // console.log('++Limit per page:', limit);
       
       // Thêm status động như cũ
       const eventsWithStatus = response.events.map((ev) => ({
