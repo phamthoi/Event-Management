@@ -42,7 +42,7 @@ function Sidebar() {
       <div>
         <p className="font-semibold">Notifications ▾</p>
         <div className="ml-3 flex flex-col gap-1">
-          <Link to="/admin/notifications/send">Send Notification</Link>
+          <Link to="/admin/notifications">Send Notification</Link>
         </div>
       </div>
 

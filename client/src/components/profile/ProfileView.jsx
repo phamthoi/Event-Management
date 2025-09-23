@@ -1,5 +1,5 @@
 // client/src/components/member/profile/ProfileView.jsx
-import React from "react";
+import React, { useEffect } from "react";
 
 const ProfileView = ({ profile, onEdit }) => {
   const getStatusBadge = (isActive) =>
@@ -15,9 +15,24 @@ const ProfileView = ({ profile, onEdit }) => {
 
   const getRoleBadge = (role) => (
     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-      {role}
+      {role || "-"}
     </span>
   );
+
+  // Debug: kiểm tra profile khi render
+  useEffect(() => {
+    console.log("Profile object:", profile);
+    if (profile) {
+      console.log("isActive:", profile.isActive);
+      console.log("role:", profile.role);
+      console.log("fullName:", profile.fullName);
+    }
+  }, [profile]);
+
+  // Nếu profile chưa load, hiển thị loading
+  if (!profile) {
+    return <p>Loading profile...</p>;
+  }
 
   return (
     <div className="space-y-6">
@@ -37,15 +52,18 @@ const ProfileView = ({ profile, onEdit }) => {
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center text-white text-2xl font-bold">
-              {profile.fullName ? profile.fullName.charAt(0).toUpperCase() : "U"}
+              {profile.fullName
+                ? profile.fullName.charAt(0).toUpperCase()
+                : "U"}
             </div>
             <div>
               <h3 className="text-lg font-semibold">{profile.fullName || "-"}</h3>
-              <p className="text-gray-600">{profile.email}</p>
+              <p className="text-gray-600">{profile.email || "-"}</p>
             </div>
           </div>
           <div className="flex space-x-2">
-            {getStatusBadge(profile.isActive)}
+            {/* Chỉ render badge khi isActive đã xác định */}
+            {profile.isActive !== undefined && getStatusBadge(profile.isActive)}
             {getRoleBadge(profile.role)}
           </div>
         </div>

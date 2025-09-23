@@ -59,6 +59,15 @@ model User {
   notifications  Notification[]  @relation("UserNotifications")
 }
 
+model PasswordReset {
+  id        Int      @id @default(autoincrement())
+  email     String
+  codeHash      String
+  expiresAt DateTime
+  used Boolean @default(false)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+}
+
 model Event {
   id                  Int       @id @default(autoincrement())
   title               String

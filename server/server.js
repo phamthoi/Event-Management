@@ -44,7 +44,7 @@ app.use(express.json());
 app.use("/auth", authRoutes); // login chung
 app.use("/admin", adminRoutes); // admin route (bảo vệ bằng role ADMIN)
 app.use("/member", memberRoutes); // member route (bảo vệ bằng role MEMBER)
-
+app.use("/notifications", notificationRoutes); //notification route
 
 
 

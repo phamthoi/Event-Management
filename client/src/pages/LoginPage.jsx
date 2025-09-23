@@ -22,7 +22,15 @@ const LoginPage = () => {
       });
 
       if (response.data.success) {
-     
+        const user = response.data.user;
+
+        //check status of user. 
+        if(user.isActive === false || user.status === "LOCKED"){
+          setError("Your account have been locked!");
+          return; // dừng không login được. 
+        }
+
+        // save info
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("role", response.data.user.role.toLowerCase());
         localStorage.setItem("currentUser", JSON.stringify(response.data.user));
@@ -100,18 +108,51 @@ const LoginPage = () => {
     setError("");
     setShowForgot(false);
   };
-
+  // step 1: send code
   const handleSendCode = async (email) => {
-    alert(`Send reset code to ${email} (demo)`);
+    try{
+      const res = await api.post("/auth/forgot-password", {email});
+      alert("A verification code has been sent to your email!");
+      return true;
+    } catch(err){
+      console.error("Send code error:", err);
+      setError(err.response?.data?.error || "Không gửi được code!");
+      return false;
+    }
   };
 
+  //step 2: verify code
+  const handleVerifyCode = async (email, code) => {
+    try {
+      const res = await api.post("/auth/verify-code", {email, code});
+      return res.data.ok;
+    }catch(err){
+      console.error("Verify error:", err);
+      setError(err.response?.data?.error || "Code không hợp lệ!");
+      return false;
+    }
+  }
+
+  // Step 3: reset password
   const handleResetPassword = async (email, code, newPassword) => {
-    alert(`Reset password for ${email} with code ${code} (demo)`);
+    try {
+      await api.post("/auth/reset-password", {
+        email,
+        code,
+        newPassword,
+      });
+      alert("Đặt lại mật khẩu thành công!");
+      setShowForgot(false); // quay về login
+    } catch (err) {
+      console.error("Reset error:", err);
+      setError(err.response?.data?.error || "Không thể đặt lại mật khẩu!");
+    }
   };
 
   return showForgot ? (
     <ForgotPasswordForm
       onSendCode={handleSendCode}
+      onVerifyCode={handleVerifyCode}
       onResetPassword={handleResetPassword}
       onBack={handleBackToLogin}
       error={error}
