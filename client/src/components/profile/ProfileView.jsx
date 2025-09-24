@@ -2,16 +2,16 @@
 import React from "react";
 
 const ProfileView = ({ profile, onEdit }) => {
-  const getStatusBadge = (isActive) =>
-    isActive ? (
-      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-        Active
-      </span>
-    ) : (
-      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-        Locked
-      </span>
-    );
+  // const getStatusBadge = (isActive) =>
+  //   isActive ? (
+  //     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+  //       Active
+  //     </span>
+  //   ) : (
+  //     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+  //       Locked
+  //     </span>
+  //   );
 
   const getRoleBadge = (role) => (
     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
@@ -45,7 +45,7 @@ const ProfileView = ({ profile, onEdit }) => {
             </div>
           </div>
           <div className="flex space-x-2">
-            {getStatusBadge(profile.isActive)}
+            {/* {getStatusBadge(profile.isActive)} */}
             {getRoleBadge(profile.role)}
           </div>
         </div>
