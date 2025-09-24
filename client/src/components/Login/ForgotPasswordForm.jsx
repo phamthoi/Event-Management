@@ -41,6 +41,7 @@ function ForgotPasswordForm({ onSendCode, onVerifyCode, onResetPassword, onBack,
       setStep(3); // chuyển sang nhập mật khẩu mới
     } else {
       alert("Invalid or expired code. You can resend code.");
+      localStorage.removeItem("forgotEmail");
     }
   };
 
