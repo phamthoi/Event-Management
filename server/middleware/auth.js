@@ -8,9 +8,10 @@ export function authMiddleware(req, res, next) {
   if (!authHeader) return res.status(401).json({ message: "No token provided" });
   
   
-  const token = authHeader && authHeader.split(" ")[1]; 
+  // const token = authHeader && authHeader.split(" ")[1]; 
+  const token = authHeader; 
  
-  if (!token) return res.sendStatus(401).json({ message: "Invalid token format"});
+  //if (!token) return res.sendStatus(401).json({ message: "Invalid token format"});
 
   
   //  Kiểm tra token có hợp lệ không bằng jwt.verify

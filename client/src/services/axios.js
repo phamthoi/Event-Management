@@ -6,9 +6,10 @@ const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE, // URL backend
   headers: {
     "Content-Type": "application/json",
-    "Cache-Control": "no-cache, no-store, must-revalidate",
-    "Pragma": "no-cache",
-    "Expires": "0"
+    // "Content-Type": "application/x-www-form-urlencoded",
+    // "Cache-Control": "no-cache, no-store, must-revalidate",
+    // "Pragma": "no-cache",
+    // "Expires": "0"
   },
 });
 
@@ -17,13 +18,14 @@ const api = axios.create({
 api.interceptors.request.use((config) => {
     const token = localStorage.getItem("token");
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+      // config.headers.Authorization = `Bearer ${token}`;
+      config.headers.Authorization = `${token}`;
     }
     
-    // Add cache-busting timestamp
-    config.headers['X-Requested-At'] = Date.now();
     
-    // Add cache-busting parameter to URL
+    // config.headers['X-Requested-At'] = Date.now();
+    
+    
     // if (config.method === 'get') {
     //   config.params = {
     //     ...config.params,

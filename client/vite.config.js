@@ -8,10 +8,10 @@ export default defineConfig({
   server: {
     port: 3000,
     host: true,
-    // Disable cache trong development
+    
     headers: {
-      'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
-      'Pragma': 'no-cache',
+      // 'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+      // 'Pragma': 'no-cache',
       'Expires': '0'
     },
     proxy: {

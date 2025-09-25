@@ -111,6 +111,9 @@ export class EventService {
   }
 
   static async getEventsList(filters) {
+
+  // throw new Error();
+    
     const {
       name,
       location,

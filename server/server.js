@@ -20,20 +20,21 @@ import notificationRoutes from "./routes/notification.route.js";
 const app = express();
 // const PORT = process.env.PORT || 4000;
 const PORT = 4000;
+app.set('etag', false);
 
 // Middleware cấu hình CORS - cho phép frontend từ port 3000
 app.use(cors({
-  origin: ["http://localhost:3000", "http://127.0.0.1:3000"],
-  credentials: true
+  origin: ["http://localhost:3000"],
+  // credentials: true
 }));
 
-// Middleware disable cache - ngăn browser cache responses
+
 app.use((req, res, next) => {
   res.set({
-    'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
-    'Pragma': 'no-cache',
-    'Expires': '0',
-    'Surrogate-Control': 'no-store'
+    // 'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+    // 'Pragma': 'no-cache',
+    // 'Expires': '0',
+    // 'Surrogate-Control': 'no-store'
   });
   next();
 });

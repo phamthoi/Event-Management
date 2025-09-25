@@ -38,11 +38,12 @@ function App() {
         <Route
           path="/admin/*"
           element={
-            token && role === "admin" ? (
+            // ===== TẮT REDIRECT ĐỂ TEST LỖI 401 =====
+            // token && role === "admin" ? (
               <AdminDashboardPage />
-            ) : (
-              <Navigate to="/login" />
-            )
+            // ) : (
+            //   <Navigate to="/login" />
+            // )
           }
         >
           {/* Nested routes */}
@@ -76,11 +77,12 @@ function App() {
         <Route
           path="/member/*"
           element={
-            token && role === "member" ? (
+            // ===== TẮT REDIRECT ĐỂ TEST LỖI 401 =====
+            // token && role === "member" ? (
               <MemberDashboardPage />
-            ) : (
-              <Navigate to="/login" />
-            )
+            // ) : (
+            //   <Navigate to="/login" />
+            // )
           }  
         >
           {/* Nested routes */}
