@@ -105,7 +105,6 @@ export const getMembersByOrganization = async (organizationId, page = 1, limit =
     
     const where = {
       organizationId: organizationId,
-      role: 'MEMBER',
       isActive: true
     };
     
