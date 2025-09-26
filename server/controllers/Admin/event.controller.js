@@ -29,6 +29,24 @@ export class EventController {
 
   static async getEventsList(req, res) {
     try {
+      console.log(" 🍎HTTP Method:", req.method);
+
+      console.log(" 🍎URL:", req.url);
+
+      // Path Parameters
+      console.log(" 🍎ID (Path Parameters):", req.params);
+
+      // Query Parameters
+      console.log(" 🍎page (Query Parameters ):", req.query.page);
+      console.log(" 🍎limit (Query Parameters ):", req.query.limit);
+
+      console.log(" 🍎Content-Type:", req.headers["content-type"]);
+      console.log(" 🍎Authorization:", req.headers.authorization);
+
+      console.log(" 🍎Request body:", req.body);
+
+      console.log(" 🍎🍎🍎🍎🍎🍎🍎🍎🍎🍎");
+
       const { page, limit } = req.query;
 
       // if (req.user.role !== "MEMBER") {
@@ -59,6 +77,22 @@ export class EventController {
 
   static async getEventById(req, res) {
     try {
+      console.log(" 🍑URL:", req.url);
+
+      // Path Parameters
+      console.log(" 🍑ID (Path Parameters):", req.params);
+
+      // Query Parameters
+      console.log(" 🍑page (Query Parameters ):", req.query.page);
+      console.log(" 🍑limit (Query Parameters ):", req.query.limit);
+
+      console.log(" 🍑Content-Type:", req.headers["content-type"]);
+      console.log(" 🍑Authorization:", req.headers.authorization);
+
+      console.log(" 🍑Request body:", req.body);
+
+      console.log("🍑🍑🍑🍑🍑🍑🍑");
+
       if (req.user.role !== "ADMIN") {
         return res.status(403).json({ message: "Chỉ admin mới truy cập" });
       }
@@ -69,17 +103,17 @@ export class EventController {
         return res.status(404).json({ message: "Event không tồn tại" });
       }
 
-      console.log(
-        `🪣 [DATABASE → SERVER(controller)] Event ID: ${req.params.id} | Thời gian từ database:`,
-        JSON.stringify(
-          {
-            startAt: event.startAt,
-            endAt: event.endAt,
-          },
-          null,
-          2
-        )
-      );
+      // console.log(
+      //   `🪣 [DATABASE → SERVER(controller)] Event ID: ${req.params.id} | Thời gian từ database:`,
+      //   JSON.stringify(
+      //     {
+      //       startAt: event.startAt,
+      //       endAt: event.endAt,
+      //     },
+      //     null,
+      //     2
+      //   )
+      // );
 
       res.json({ success: true, event });
     } catch (error) {
@@ -89,6 +123,22 @@ export class EventController {
 
   static async updateEvent(req, res) {
     try {
+      console.log(" 🥝URL:", req.url);
+
+      // Path Parameters
+      console.log(" 🥝ID (Path Parameters):", req.params);
+
+      // Query Parameters
+      console.log(" 🥝page (Query Parameters ):", req.query.page);
+      console.log(" 🥝limit (Query Parameters ):", req.query.limit);
+
+      console.log(" 🥝Content-Type:", req.headers["content-type"]);
+      console.log(" 🥝Authorization:", req.headers.authorization);
+
+      console.log(" 🥝Request body:", req.body);
+
+      console.log("🥝🥝🥝🥝🥝🥝🥝🥝");
+
       if (req.user.role !== "ADMIN") {
         return res.status(403).json({ message: "Chỉ admin mới update event" });
       }

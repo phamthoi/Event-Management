@@ -125,7 +125,7 @@ export class EventService {
       // createdById,
       organizationId,
     } = filters;
-    console.log('++Filters:', filters);
+    // console.log('++Filters:', filters);
   
     const where = {};
   
@@ -179,7 +179,7 @@ export class EventService {
       WHERE id = ${eventId}
     `;
     
-    console.log('🪣 [RAW DATABASE] Thời gian gốc từ DB:', rawEvent[0]);
+    // console.log('🪣 [RAW DATABASE] Thời gian gốc từ DB:', rawEvent[0]);
     
     const event = await prisma.event.findUnique({
       where: { id: eventId },
@@ -203,8 +203,8 @@ export class EventService {
       status,
     } = updateData;
 
-    // Console log để theo dõi thời gian trước khi lưu vào database
-    console.log(`🎉 [SERVICE → DATABASE(trước khi lưu xuống database)] updateEvent - Event ID: ${eventId} | startAt: ${startAt}  | endAt: ${endAt}  `);
+    
+    //console.log(`🎉 [SERVICE → DATABASE(trước khi lưu xuống database)] updateEvent - Event ID: ${eventId} | startAt: ${startAt}  | endAt: ${endAt}  `);
 
     const correctStatus = this.calculateEventStatus({
       initialStatus: status,
