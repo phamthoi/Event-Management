@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getMembers } from "../../../services/member/member/memberService";
+import { showErrorAlert } from "../../../utils/member/errorHandler";
 
 function ViewMemberList() {
   const [members, setMembers] = useState([]);
@@ -50,7 +51,7 @@ function ViewMemberList() {
       setMembers(response.members || []);
       setTotal(response.total || 0);
     } catch (err) {
-      console.error("Error loading members:", err);
+      showErrorAlert(err);
       setMsg("Lỗi khi tải danh sách member");
       setMembers([]);
     } finally {

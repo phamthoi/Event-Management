@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getMembers, MemberLock, MemberUnlock, resetMemberPassword } from "../../../services/admin/member/memberService";
+import { showErrorAlert } from "../../../utils/admin/errorHandler";
 
 function MemberTable({ role = "admin" }) {
   const navigate = useNavigate();
@@ -44,7 +45,7 @@ function MemberTable({ role = "admin" }) {
       setTotal(response.total || 0);
     } catch (err) {
       console.error('Error loading members:', err);
-      setMsg("Lỗi khi tải danh sách member");
+      showErrorAlert(err);
       setMembers([]);
     } finally {
       setLoading(false);
@@ -92,7 +93,7 @@ function MemberTable({ role = "admin" }) {
       await loadMembers(); // Reload danh sách
     } catch (error) {
       console.error('Error toggling member lock:', error);
-      alert("Lỗi khi thay đổi trạng thái member");
+      showErrorAlert(error);
     } finally {
       setLoading(false);
     }

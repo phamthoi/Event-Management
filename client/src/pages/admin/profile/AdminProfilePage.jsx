@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import ProfileView from "../../../components/profile/ProfileView";
 import ProfileForm from "../../../components/profile/ProfileForm";
 import { getAdminProfile, updateAdminProfile } from "../../../services/admin/profile/adminProfileService";
+import { showErrorAlert } from "../../../utils/admin/errorHandler";
 
 /*
 //===========Fake API=========== 
@@ -46,7 +47,7 @@ const AdminProfilePage = () => {
         setProfile(data);
       } catch (err) {
         console.error("Error fetching admin profile:", err);
-        alert("Failed to fetch profile.");
+        showErrorAlert(err);
       }
     };
     fetchProfile();
@@ -60,7 +61,7 @@ const AdminProfilePage = () => {
       alert("Profile updated successfully!");
     } catch (err) {
       console.error("Error updating admin profile:", err);
-      alert("Failed to update profile.");
+      showErrorAlert(err);
     }
   };
 

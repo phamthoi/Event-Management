@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getMemberById } from '../../../services/admin/member/memberService';
+import { showErrorAlert } from '../../../utils/admin/errorHandler';
 
 const ResetPasswordPage = () => {
   const { id } = useParams();
@@ -26,7 +27,7 @@ const ResetPasswordPage = () => {
       setMember(data.member);
     } catch (error) {
       console.error('>>>?Error fetching member:', error);
-      alert('Lỗi khi tải thông tin thành viên');
+      showErrorAlert(error);
       navigate('/admin/members/list');
     } finally {
       setLoading(false);
@@ -93,11 +94,11 @@ const ResetPasswordPage = () => {
         navigate('/admin/members/list');
       } else {
         const errorData = await response.json();
-        alert(errorData.message || 'Lỗi khi reset mật khẩu');
+        showErrorAlert({ response: { data: errorData } });
       }
     } catch (error) {
       console.error('Error resetting password:', error);
-      alert('Lỗi khi reset mật khẩu');
+      showErrorAlert(error);
     } finally {
       setSubmitting(false);
     }

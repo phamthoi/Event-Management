@@ -3,8 +3,9 @@ import React, { useEffect, useState } from "react";
 import EventSelect from "../../../components/admin/attendance/EventSelect";
 import MemberTable from "../../../components/admin/attendance/MemberTable";
 import SaveButton from "../../../components/admin/attendance/SaveButton";
-import { getEvents } from "../../../services/admin/event/eventService";
+import { getOngoingEvents } from "../../../services/admin/event/eventService";
 import { getRegistrations, updateAttendance } from "../../../services/admin/event/attendanceService";
+import { showErrorAlert } from "../../../utils/admin/errorHandler";
 
 function AttendancePage() {
   const [events, setEvents] = useState([]);
@@ -12,32 +13,18 @@ function AttendancePage() {
   const [registrations, setRegistrations] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // Lấy danh sách events từ API và filter chỉ lấy ONGOING
   useEffect(() => {
     const fetchEvents = async () => {
       try {
         setLoading(true);
-        const response = await getEvents({ limit: 1000 }); // Hoặc số lượng đủ lớn
-        console.log('++++++ events:', response.events);
-        const allEvents = response.events || response;
-        console.log('++++++ allEvents:', allEvents);
-        if (allEvents && Array.isArray(allEvents)) {
-         
-         
-          const ongoingEvents = allEvents.filter(event => {
-            const isOngoing = event.status === 'ONGOING';
-            return isOngoing;
-          });
-          
-      
-          setEvents(ongoingEvents);
-        } else {
-          console.error('❌ allEvents is not an array:', allEvents);
-          setEvents([]);
+        const response = await getOngoingEvents();
+        
+        if (response.success) {
+          setEvents(response.events);
         }
       } catch (error) {
-        console.error('❌ Error fetching events:', error);
-        alert('Lỗi khi tải danh sách events');
+        console.error('Error fetching ongoing events:', error);
+        showErrorAlert(error);
       } finally {
         setLoading(false);
       }
@@ -62,7 +49,7 @@ function AttendancePage() {
           setRegistrations(formattedRegs);
         } catch (error) {
           console.error('Error fetching registrations:', error);
-          alert('Lỗi khi tải danh sách đăng ký');
+          showErrorAlert(error);
         } finally {
           setLoading(false);
         }
@@ -94,7 +81,7 @@ function AttendancePage() {
       alert('Đã lưu điểm danh thành công!');
     } catch (error) {
       console.error('Error saving attendance:', error);
-      alert('Lỗi khi lưu điểm danh');
+      showErrorAlert(error);
     } finally {
       setLoading(false);
     }

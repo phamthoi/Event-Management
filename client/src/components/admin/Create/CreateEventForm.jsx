@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { createEvent } from '../../../services/admin/event/eventService';
 import { validateEventForm } from '../../../utils/validation';
+import { showErrorAlert } from '../../../utils/admin/errorHandler';
 
 const CreateEventForm = () => {
   const [form, setForm] = useState({
@@ -125,7 +126,7 @@ const CreateEventForm = () => {
         status: "DRAFT", // Reset về DRAFT khi tạo mới
       });
     } catch (err) {
-      setMsg(`${err.response?.data?.message || err.message}`);
+      showErrorAlert(err);
     }
   };
 

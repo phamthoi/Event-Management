@@ -29,39 +29,16 @@ export class EventController {
 
   static async getEventsList(req, res) {
     try {
-      console.log(" 🍎HTTP Method:", req.method);
 
-      console.log(" 🍎URL:", req.url);
-
-      // Path Parameters
-      console.log(" 🍎ID (Path Parameters):", req.params);
-
-      // Query Parameters
-      console.log(" 🍎page (Query Parameters ):", req.query.page);
-      console.log(" 🍎limit (Query Parameters ):", req.query.limit);
-
-      console.log(" 🍎Content-Type:", req.headers["content-type"]);
-      console.log(" 🍎Authorization:", req.headers.authorization);
-
-      console.log(" 🍎Request body:", req.body);
-
-      console.log(" 🍎🍎🍎🍎🍎🍎🍎🍎🍎🍎");
 
       const { page, limit } = req.query;
 
-      // if (req.user.role !== "MEMBER") {
+   
       if (req.user.role !== "ADMIN") {
         return res.status(403).json({});
       }
 
-      if (page && (isNaN(page) || page < 1)) {
-        return res.status(400).json({});
-      }
-
-      if (limit && (isNaN(limit) || limit < 1 || limit > 100)) {
-        return res.status(400).json({});
-      }
-
+ 
       const filters = {
         ...req.query,
 
@@ -77,21 +54,7 @@ export class EventController {
 
   static async getEventById(req, res) {
     try {
-      console.log(" 🍑URL:", req.url);
-
-      // Path Parameters
-      console.log(" 🍑ID (Path Parameters):", req.params);
-
-      // Query Parameters
-      console.log(" 🍑page (Query Parameters ):", req.query.page);
-      console.log(" 🍑limit (Query Parameters ):", req.query.limit);
-
-      console.log(" 🍑Content-Type:", req.headers["content-type"]);
-      console.log(" 🍑Authorization:", req.headers.authorization);
-
-      console.log(" 🍑Request body:", req.body);
-
-      console.log("🍑🍑🍑🍑🍑🍑🍑");
+     
 
       if (req.user.role !== "ADMIN") {
         return res.status(403).json({ message: "Chỉ admin mới truy cập" });
@@ -123,21 +86,7 @@ export class EventController {
 
   static async updateEvent(req, res) {
     try {
-      console.log(" 🥝URL:", req.url);
-
-      // Path Parameters
-      console.log(" 🥝ID (Path Parameters):", req.params);
-
-      // Query Parameters
-      console.log(" 🥝page (Query Parameters ):", req.query.page);
-      console.log(" 🥝limit (Query Parameters ):", req.query.limit);
-
-      console.log(" 🥝Content-Type:", req.headers["content-type"]);
-      console.log(" 🥝Authorization:", req.headers.authorization);
-
-      console.log(" 🥝Request body:", req.body);
-
-      console.log("🥝🥝🥝🥝🥝🥝🥝🥝");
+     
 
       if (req.user.role !== "ADMIN") {
         return res.status(403).json({ message: "Chỉ admin mới update event" });
@@ -145,8 +94,7 @@ export class EventController {
 
       const eventId = parseInt(req.params.id);
 
-      // Console log để theo dõi thời gian nhận từ client
-      // console.log(`[EVENT CONTROLLER] updateEvent - Event ID: ${eventId}, startAt: ${req.body.startAt} , endAt: ${req.body.endAt} `);
+
 
       const event = await EventService.updateEvent(eventId, req.body);
 
@@ -203,6 +151,22 @@ export class EventController {
       res.json({ success: true });
     } catch (error) {
       res.status(400).json({ success: false, message: error.message });
+    }
+  }
+
+  static async getOngoingEvents(req, res) {
+    try {
+      if (req.user.role !== "ADMIN") {
+        return res.status(403).json({ message: "Chỉ admin mới truy cập" });
+      }
+
+      const events = await EventService.getOngoingEventsByOrganization(
+        req.user.organizationId
+      );
+
+      res.json({ success: true, events });
+    } catch (error) {
+      res.status(500).json({ success: false, message: error.message });
     }
   }
 }

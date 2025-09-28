@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { getEventById, updateEvent } from '../../../services/admin/event/eventService';
 import EditEventForm from '../../../components/admin/EventList/EditEventForm';
 import { validateEventForm } from '../../../utils/validation';
+import { showErrorAlert } from '../../../utils/admin/errorHandler';
 
 const EditEventPage = () => {
   const { id } = useParams();
@@ -55,7 +56,7 @@ const EditEventPage = () => {
       }
       setLoading(false);
     } catch (err) {
-      setMsg('Error loading event: ' + err.message);
+      showErrorAlert(err);
       setLoading(false);
     }
   };
@@ -113,7 +114,7 @@ const EditEventPage = () => {
       }
     } catch (err) {
       console.error('Error updating event:', err);
-      setMsg('Lỗi: ' + (err.response?.data?.message || err.message));
+      showErrorAlert(err);
     }
   };
 

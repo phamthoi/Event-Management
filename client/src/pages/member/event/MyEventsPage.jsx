@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 // import { getEvents } from "../../../services/admin/event/eventService";
 import { getMemberRegistrations, cancelRegistration } from "../../../services/member/event/activeOfMemberService";
+import { showErrorAlert } from "../../../utils/member/errorHandler";
 
 //===========Fake API=========== 
 // const fakeMyEvents = [
@@ -94,7 +95,7 @@ const MyEventsPage = () => {
       setEvents(myEvents);
     } catch (err) {
       console.error("Load events error:", err);
-      alert("Không thể tải sự kiện của bạn");
+      showErrorAlert(err);
     } finally {
       setLoading(false);
     }
@@ -128,7 +129,7 @@ const MyEventsPage = () => {
       loadEvents(); // reload lại danh sách
     } catch (err) {
       console.error("Cancel registration error:", err);
-      alert("Hủy đăng ký thất bại");
+      showErrorAlert(err);
     }
   };
 

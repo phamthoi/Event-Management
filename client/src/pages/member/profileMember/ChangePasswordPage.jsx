@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { updateMemberPassword } from "../../../services/member/profile/profileService";
+import { showErrorAlert } from "../../../utils/member/errorHandler";
 
 //===========Fake API=========== 
 // const updateMemberPassword = async (currentPassword, newPassword) => {
@@ -39,6 +40,7 @@ const ChangePasswordPage = () => {
       setNewPass("");
       setConfirm("");
     } catch (err) {
+      showErrorAlert(err);
       setError("❌ " + (err.response?.data?.message || err.message || err.toString()));
     }
   };

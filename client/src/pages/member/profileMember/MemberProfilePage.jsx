@@ -2,7 +2,8 @@
 import React, { useEffect, useState } from "react";
 import ProfileView from "../../../components/profile/ProfileView";
 import ProfileForm from "../../../components/profile/ProfileForm";
-import {getProfile, updateProfile} from "../../../services/member/profile/profileService"
+import {getProfile, updateProfile} from "../../../services/member/profile/profileService";
+import { showErrorAlert } from "../../../utils/member/errorHandler";
 
 //===========Fake API=========== 
 // const fakeProfile = {
@@ -49,7 +50,7 @@ const MemberProfilePage = () => {
           alert("Failed to load profile");
         }
       } catch (err) {
-        console.error("fetchProfile error:", err);
+        showErrorAlert(err);
         alert("Error loading profile");
       }
     };
@@ -68,6 +69,7 @@ const MemberProfilePage = () => {
         alert("Failed to update profile");
       }
     } catch (err) {
+      showErrorAlert(err);
       alert("Error updating profile");
     }
   };

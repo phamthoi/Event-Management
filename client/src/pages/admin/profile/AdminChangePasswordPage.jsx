@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { updateAdminPassword } from "../../../services/admin/profile/adminProfileService";
 import { useNavigate } from "react-router-dom";
+import { showErrorAlert } from "../../../utils/admin/errorHandler";
 
 const AdminChangePasswordPage = () => {
   const navigate = useNavigate();
@@ -27,7 +28,7 @@ const AdminChangePasswordPage = () => {
       setNewPass("");
       setConfirm("");
     } catch (err) {
-      setError("❌ " + (err.response?.data?.message || err.message || err.toString()));
+      showErrorAlert(err);
     }
   };
 

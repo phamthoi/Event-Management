@@ -283,4 +283,25 @@ export class EventService {
       )
     );
   }
+
+  static async getOngoingEventsByOrganization(organizationId) {
+    const events = await prisma.event.findMany({
+      where: {
+        organizationId: organizationId,
+        status: 'ONGOING'
+      },
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        title: true,
+        location: true,
+        startAt: true,
+        endAt: true,
+        status: true,
+        deposit: true,
+      },
+    });
+
+    return events;
+  }
 }

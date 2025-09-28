@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import { getUpcomingEvents, registerEvent, cancelRegistration, getMemberRegistrations } from "../../../services/member/event/activeOfMemberService";
 import { getEventStatus } from "../../../utils/getEventStatus";
 import EventCard from "../../../components/member/EventList/EventCard";
+import { showErrorAlert } from "../../../utils/member/errorHandler";
 
 const UpcomingEventsPage = () => {
   const [events, setEvents] = useState([]);
@@ -121,7 +122,7 @@ const UpcomingEventsPage = () => {
       setTotal(res.total);
     } catch (err) {
       console.error("Error loading events:", err);
-      alert("Không thể tải sự kiện");
+      showErrorAlert(err);
     } finally {
       setLoading(false);
     }
@@ -155,6 +156,7 @@ const UpcomingEventsPage = () => {
       setRegistrations({ [currentMemberId]: regMap });
     } catch (err) {
       console.error("Error loading registrations:", err);
+      showErrorAlert(err);
     }
   };
  
@@ -204,8 +206,8 @@ const UpcomingEventsPage = () => {
       }
       await loadRegistrations();
     } catch (err) {
-      
-      alert("Đăng ký / hủy đăng ký thất bại");
+      console.error("Registration error:", err);
+      showErrorAlert(err);
     }
   };
 

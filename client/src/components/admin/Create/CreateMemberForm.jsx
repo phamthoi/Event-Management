@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { createMember } from "../../../services/admin/member/memberService";
+import { showErrorAlert } from "../../../utils/admin/errorHandler";
 
 const CreateMemberForm = () => {
     const [form, setForm] = useState({
@@ -53,7 +54,7 @@ const CreateMemberForm = () => {
             setMsg({text: `Tạo thành viên thành công: ${data.member.email}`, type: "success"});
             setForm({fullName: "", email: "", password:"", confirmPassword: ""});
         } catch(err){
-            setMsg({text: err.response?.data?.message || err.message, type: "error"});
+            showErrorAlert(err);
         } finally {
             setLoading(false);
         }

@@ -4,10 +4,9 @@ import api from "../../axios";
 export const getEvents = async (filters = {}) => {
   const params = new URLSearchParams();
   
-  
+  // Thêm lại page và limit parameters
   params.append('page', filters.page || '1');
   params.append('limit', filters.limit || '10');
-  
   
   Object.keys(filters).forEach(key => {
     if (filters[key] && key !== 'page' && key !== 'limit') {
@@ -16,9 +15,7 @@ export const getEvents = async (filters = {}) => {
   });
   
   const res = await api.get(`/admin/events/list?${params.toString()}`);
-  // const res = await api.get(`/admin/events/listABC?${params.toString()}`);
-
-
+  
   console.log('++Get events API response(service fe):', res.data);
   return res.data;
 };
@@ -54,6 +51,13 @@ export const updateEvent = async (id, updatedData) => {
 // Xóa event
 export const deleteEvent = async (id) => {
   const res = await api.delete(`/admin/events/delete/${id}`);
+  return res.data;
+};
+
+// Lấy danh sách events đang ongoing của organization
+export const getOngoingEvents = async () => {
+  const res = await api.get('/admin/events/ongoing');
+  console.log('++Get ongoing events API response:', res.data);
   return res.data;
 };
 
