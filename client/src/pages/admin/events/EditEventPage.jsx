@@ -4,7 +4,7 @@ import { getEventById, updateEvent } from '../../../services/admin/event/eventSe
 import EditEventForm from '../../../components/admin/EventList/EditEventForm';
 import { validateEventForm } from '../../../utils/validation';
 import { showErrorAlert } from '../../../utils/admin/errorHandler';
-
+  
 const EditEventPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -101,15 +101,33 @@ const EditEventPage = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="p-6 bg-gray-100 min-h-screen">
-        <div className="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow">
-          <div className="text-center">Loading...</div>
-        </div>
-      </div>
-    );
-  }
+  const handleCancel = async () => {
+    // Kiểm tra số người đăng ký
+    if ((event.registeredCount || 0) > 0) {
+      setMsg(`Cannot cancel event with ${event.registeredCount} registered members. Please contact members to unregister first.`);
+      return;
+    }
+
+    if (window.confirm('Are you sure you want to cancel this event? This action cannot be undone.')) {
+      try {
+        const payload = {
+          ...event,
+          status: 'CANCELLED'
+        };
+
+        const response = await updateEvent(id, payload);
+        if (response.success) {
+          setMsg('Event cancelled successfully!');
+          setEvent({ ...event, status: 'CANCELLED' });
+        } else {
+          setMsg('Cancel failed: ' + (response.message || 'Unknown error'));
+        }
+      } catch (err) {
+        console.error('Error cancelling event:', err);
+        showErrorAlert(err);
+      }
+    }
+  };
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
@@ -120,6 +138,7 @@ const EditEventPage = () => {
           event={event}
           onChange={handleChange}
           onSubmit={handleSubmit}
+          onCancel={handleCancel}
         />
         
         {msg && (

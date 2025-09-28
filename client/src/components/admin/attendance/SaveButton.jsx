@@ -9,7 +9,7 @@ function SaveButton({ onClick, disabled = false }) {
           : 'bg-blue-500 hover:bg-blue-600 text-white'
       }`}
     >
-      {disabled ? 'Đang lưu...' : 'Save Attendance'}
+      {disabled ? 'Saving...' : 'Save Attendance'}
     </button>
   );
 }

@@ -10,6 +10,11 @@ export class EventService {
     startAt,
     endAt,
   }) {
+    // Nếu status là CANCELLED, giữ nguyên không tính toán lại
+    if (initialStatus === "CANCELLED") {
+      return "CANCELLED";
+    }
+
     const now = new Date();
 
     if (registrationStartAt && now < new Date(registrationStartAt)) {
@@ -158,13 +163,30 @@ export class EventService {
         endAt: true,
         status: true,
         deposit: true,
+        _count: {
+          select: {
+            registrations: {
+              where: {
+                status: {
+                  in: ['REGISTERED', 'ATTENDED']
+                }
+              }
+            }
+          }
+        }
       },
     });
   
     const total = await prisma.event.count({ where });
+
+    // Thêm registeredCount vào mỗi event
+    const eventsWithCount = events.map(event => ({
+      ...event,
+      registeredCount: event._count.registrations
+    }));
   
     return {
-      events,
+      events: eventsWithCount,
       total,
       page: parseInt(page),
       limit: parseInt(limit),
@@ -183,7 +205,27 @@ export class EventService {
     
     const event = await prisma.event.findUnique({
       where: { id: eventId },
+      include: {
+        _count: {
+          select: {
+            registrations: {
+              where: {
+                status: {
+                  in: ['REGISTERED', 'ATTENDED']
+                }
+              }
+            }
+          }
+        }
+      }
     });
+
+    if (event) {
+      return {
+        ...event,
+        registeredCount: event._count.registrations
+      };
+    }
 
     return event;
   }

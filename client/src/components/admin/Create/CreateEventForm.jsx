@@ -158,7 +158,7 @@ const CreateEventForm = () => {
           <label className="block text-sm font-semibold mb-2 text-blue-800">
             Event Status
             <span className="text-xs text-gray-500 ml-2">
-              (Tự động cập nhật dựa trên thời gian)
+              (Auto-updated based on time)
             </span>
           </label>
           <select

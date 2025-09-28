@@ -16,7 +16,7 @@ function MemberTable({ registrations, isOngoing, onToggle }) {
               colSpan="4"
               className="text-center p-3 text-gray-500 border"
             >
-              Không có member nào
+              No members found
             </td>
           </tr>
         ) : (

@@ -1,4 +1,3 @@
-// client/src/components/MemberList/MemberTable.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getMembers, MemberLock, MemberUnlock, resetMemberPassword } from "../../../services/admin/member/memberService";
@@ -18,7 +17,6 @@ function MemberTable({ role = "admin" }) {
     isActive: "",
   });
 
-  // Thêm state để lưu giá trị input tạm thời
   const [tempFilters, setTempFilters] = useState({
     email: "",
     fullName: "",
@@ -58,7 +56,7 @@ function MemberTable({ role = "admin" }) {
 
   const handleFilter = () => {
     setPage(1);
-    setFilters({ ...tempFilters }); // Áp dụng filter từ tempFilters
+    setFilters({ ...tempFilters });
   };
 
   const handleClearFilter = () => {
@@ -85,12 +83,12 @@ function MemberTable({ role = "admin" }) {
       setLoading(true);
       if (isActive) {
         await MemberLock(id);
-        alert("Đã khóa member");
+        alert("Member locked");
       } else {
         await MemberUnlock(id);
-        alert("Đã mở khóa member");
+        alert("Member unlocked");
       }
-      await loadMembers(); // Reload danh sách
+      await loadMembers();
     } catch (error) {
       console.error('Error toggling member lock:', error);
       showErrorAlert(error);
@@ -109,14 +107,13 @@ function MemberTable({ role = "admin" }) {
   if (loading) {
     return (
       <div className="text-center py-4">
-        <div>Đang tải...</div>
+        <div>Loading...</div>
       </div>
     );
   }
 
   return (
     <div>
-      {/* Filter */}
       <div className="mb-4 flex flex-wrap gap-2">
         <input
           type="text"
@@ -146,14 +143,13 @@ function MemberTable({ role = "admin" }) {
           </select>
         )}
         <button onClick={handleFilter} className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700">
-          Tìm kiếm
+          Search
         </button>
         <button onClick={handleClearFilter} className="bg-gray-500 text-white px-4 py-1 rounded hover:bg-gray-600">
-          Xóa bộ lọc
+          Clear Filter
         </button>
       </div>
 
-      {/* Table */}
       <table className="w-full border-collapse border border-gray-300">
         <thead>
           <tr className="bg-gray-200">
@@ -169,7 +165,7 @@ function MemberTable({ role = "admin" }) {
           {members.length === 0 ? (
             <tr>
               <td colSpan={role === "admin" ? 6 : 5} className="text-center p-3 text-gray-500">
-                Không có member nào
+                No members found
               </td>
             </tr>
           ) : (
@@ -209,7 +205,6 @@ function MemberTable({ role = "admin" }) {
         </tbody>
       </table>
 
-      {/* Pagination */}
       <div className="flex justify-between items-center mt-4">
         <button 
           disabled={page === 1} 

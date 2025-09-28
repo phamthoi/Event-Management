@@ -18,12 +18,12 @@ const CreateMemberForm = () => {
 
     const validateForm = () => {
         if (!form.fullName || !form.email || !form.password || !form.confirmPassword) {
-            setMsg({text: "Vui lòng điền đầy đủ thông tin", type: "error"});
+            setMsg({text: "Please fill in all required information", type: "error"});
             return false;
         }
         
         if (form.password !== form.confirmPassword) {
-            setMsg({text: "Mật khẩu xác nhận không khớp", type: "error"});
+            setMsg({text: "Password confirmation does not match", type: "error"});
             return false;
         }
         
@@ -48,7 +48,7 @@ const CreateMemberForm = () => {
             };
             
             const data = await createMember(memberData);
-            setMsg({text: `Tạo thành viên thành công: ${data.member.email}`, type: "success"});
+            setMsg({text: `Member created successfully: ${data.member.email}`, type: "success"});
             setForm({fullName: "", email: "", password:"", confirmPassword: ""});
         } catch(err){
             showErrorAlert(err);
@@ -59,15 +59,15 @@ const CreateMemberForm = () => {
 
     return (
         <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md mx-auto">
-            <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Tạo Thành Viên Mới</h2>
+            <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Create New Member</h2>
             
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Họ và tên *</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
                     <input
                         type="text"
                         id="fullName"
-                        placeholder="Nhập họ và tên"
+                        placeholder="Enter full name"
                         value={form.fullName}
                         onChange={handleChange}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -80,7 +80,7 @@ const CreateMemberForm = () => {
                     <input
                         type="email"
                         id="email"
-                        placeholder="Nhập email"
+                        placeholder="Enter email"
                         value={form.email}
                         onChange={handleChange}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -89,11 +89,11 @@ const CreateMemberForm = () => {
                 </div>
                 
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Mật khẩu *</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Password *</label>
                     <input
                         type="password"
                         id="password"
-                        placeholder="Nhập mật khẩu"
+                        placeholder="Enter password"
                         value={form.password}
                         onChange={handleChange}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -102,11 +102,11 @@ const CreateMemberForm = () => {
                 </div>
                 
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Xác nhận mật khẩu *</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Confirm Password *</label>
                     <input
                         type="password"
                         id="confirmPassword"
-                        placeholder="Nhập lại mật khẩu"
+                        placeholder="Re-enter password"
                         value={form.confirmPassword}
                         onChange={handleChange}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -119,7 +119,7 @@ const CreateMemberForm = () => {
                     disabled={loading}
                     className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
-                    {loading ? "Đang tạo..." : "Tạo Thành Viên"}
+                    {loading ? "Creating..." : "Create Member"}
                 </button>
 
                 {msg.text && (

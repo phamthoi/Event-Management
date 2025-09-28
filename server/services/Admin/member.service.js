@@ -68,7 +68,7 @@ export class MemberService {
   // Admin methods
   static async getMembersList(filters) {
     const { email, fullName, isActive, page = 1, limit = 10, organizationId } = filters;
-    const where = { organizationId, role: "MEMBER" };
+    const where = { organizationId};
 
     if (email) where.email = { contains: email, mode: "insensitive" };
     if (fullName) where.fullName = { contains: fullName, mode: "insensitive" };

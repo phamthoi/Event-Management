@@ -1,4 +1,3 @@
-// client/src/components/EventList/EventFilter.jsx
 import React, { useState } from "react";
 
 const EventFilter = ({ onFilter }) => {

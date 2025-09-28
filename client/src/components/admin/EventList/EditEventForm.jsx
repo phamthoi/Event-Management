@@ -1,57 +1,56 @@
-// components/EventList/EditEventForm.jsx
 import React, { useEffect } from "react";
 
-const EditEventForm = ({ event = {}, onChange, onSubmit }) => {
-  // Function to automatically update event status based on current time
+const EditEventForm = ({ event = {}, onChange, onSubmit, onCancel }) => {
   const updateEventStatus = () => {
     const now = new Date();
     const registrationStart = new Date(event.registrationStartAt);
     const registrationEnd = new Date(event.registrationEndAt);
     const eventStart = new Date(event.startAt);
     const eventEnd = new Date(event.endAt);
-    
-    // Calculate one day before event start
+
     const oneDayBeforeEvent = new Date(eventStart);
     oneDayBeforeEvent.setDate(oneDayBeforeEvent.getDate() - 1);
-    
+
     let newStatus = event.status;
-    
+
     if (now >= registrationStart && now <= registrationEnd) {
-      // During registration period
       newStatus = "REGISTRATION";
     } else if (now >= eventStart && now <= eventEnd) {
-      // During event period
       newStatus = "ONGOING";
     } else if (now >= oneDayBeforeEvent && now < eventStart) {
-      // One day before event start
       newStatus = "READY";
     } else if (now > eventEnd) {
-      // After event ends
       newStatus = "COMPLETED";
     }
-    
-    // Update status if it has changed
+
     if (newStatus !== event.status) {
       onChange({
         target: {
-          name: 'status',
-          value: newStatus
-        }
+          name: "status",
+          value: newStatus,
+        },
       });
     }
   };
-  
-  // Auto-update status when event times change
+
   useEffect(() => {
-    if (event.registrationStartAt && event.registrationEndAt && 
-        event.startAt && event.endAt) {
+    if (
+      event.registrationStartAt &&
+      event.registrationEndAt &&
+      event.startAt &&
+      event.endAt
+    ) {
       updateEventStatus();
     }
-  }, [event.registrationStartAt, event.registrationEndAt, event.startAt, event.endAt]);
+  }, [
+    event.registrationStartAt,
+    event.registrationEndAt,
+    event.startAt,
+    event.endAt,
+  ]);
 
   return (
     <form onSubmit={onSubmit} className="space-y-6">
-      {/* Event name */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Event name
@@ -67,7 +66,6 @@ const EditEventForm = ({ event = {}, onChange, onSubmit }) => {
         />
       </div>
 
-      {/* Description */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Description
@@ -82,7 +80,6 @@ const EditEventForm = ({ event = {}, onChange, onSubmit }) => {
         />
       </div>
 
-      {/* Location */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Location
@@ -97,19 +94,19 @@ const EditEventForm = ({ event = {}, onChange, onSubmit }) => {
         />
       </div>
 
-      {/* Event Status */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Event Status
           <span className="text-xs text-gray-500 ml-2">
-            (Tự động cập nhật dựa trên thời gian)
+            (Auto-updated based on time)
           </span>
         </label>
         <select
           name="status"
           value={event.status || "DRAFT"}
           onChange={onChange}
-          className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          disabled
+          className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-100 text-gray-600 cursor-not-allowed"
         >
           <option value="DRAFT">Draft</option>
           <option value="REGISTRATION">Registration Open</option>
@@ -120,7 +117,6 @@ const EditEventForm = ({ event = {}, onChange, onSubmit }) => {
         </select>
       </div>
 
-      {/* Min & Max attendees */}
       <div className="grid grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -150,7 +146,18 @@ const EditEventForm = ({ event = {}, onChange, onSubmit }) => {
         </div>
       </div>
 
-      {/* Event start & end */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Number of registered users
+        </label>
+        <input
+          type="number"
+          value={event.registeredCount || 0}
+          readOnly
+          className="w-full px-3 py-2 border rounded bg-gray-100 text-gray-600 cursor-not-allowed"
+        />
+      </div>
+
       <div className="grid grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -180,7 +187,6 @@ const EditEventForm = ({ event = {}, onChange, onSubmit }) => {
         </div>
       </div>
 
-      {/* Registration start & end */}
       <div className="grid grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -210,7 +216,6 @@ const EditEventForm = ({ event = {}, onChange, onSubmit }) => {
         </div>
       </div>
 
-      {/* Deposit */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Deposit (VND)
@@ -227,13 +232,35 @@ const EditEventForm = ({ event = {}, onChange, onSubmit }) => {
         />
       </div>
 
-      {/* Submit */}
-      <button
-        type="submit"
-        className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 font-semibold transition"
-      >
-        Update Event
-      </button>
+      <div className="flex gap-4">
+        <button
+          type="submit"
+          className="flex-1 bg-blue-600 text-white py-2 rounded hover:bg-blue-700 font-semibold transition"
+        >
+          Update Event
+        </button>
+        
+        {event.status !== 'CANCELLED' && (event.registeredCount || 0) === 0 && (
+          <button
+            type="button"
+            onClick={onCancel}
+            className="flex-1 bg-red-600 text-white py-2 rounded hover:bg-red-700 font-semibold transition"
+          >
+            Cancel Event
+          </button>
+        )}
+        
+        {event.status !== 'CANCELLED' && (event.registeredCount || 0) > 0 && (
+          <button
+            type="button"
+            disabled
+            className="flex-1 bg-gray-400 text-white py-2 rounded cursor-not-allowed font-semibold"
+            title={`Cannot cancel event with ${event.registeredCount} registered members`}
+          >
+            Cancel Event
+          </button>
+        )}
+      </div>
     </form>
   );
 };

@@ -1,4 +1,3 @@
-//client/src/EventList/pagination.jsx
 import React from "react";
 
 const Pagination = ({ total, page, limit, onPageChange }) => {
