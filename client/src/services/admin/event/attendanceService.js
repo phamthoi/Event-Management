@@ -1,9 +1,14 @@
 import api from "../../axios";
 
+
+export const getOngoingEvents = async () => {
+  const res = await api.get('/admin/events/ongoing');
+  return res.data;
+};
+
 // Lấy danh sách đăng ký của event
 export const getRegistrations = async (eventId) => {
   const res = await api.get(`/admin/events/registrations/${eventId}`);
-  
   return res.data;
 };
 
@@ -14,21 +19,10 @@ export const updateAttendance = async (updates) => {
   return res.data;
 };
 
-
-
-
-
-
-
-
-
-
-
-
 // Lấy danh sách đăng ký của 1 member
 export const getMemberRegistrations = async (memberId) => {
   const res = await api.get(`/admin/member/registrations/${memberId}`);
-  return res.data; // { eventId: true, ... } hoặc danh sách registration
+  return res.data; 
 };
 
 // Member đăng ký 1 event

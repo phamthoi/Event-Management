@@ -6,13 +6,13 @@ function AdminDashboardPage() {
   const token = localStorage.getItem("token");
 
  
-  // if (!token) {
-  //   return <Navigate to="/login" />;
-  // }
+  if (!token) {
+    return <Navigate to="/login" />;
+  }
 
   return (
     <DashboardLayout>
-      {/* Render các route con */}
+      
       <Outlet />
     </DashboardLayout>
   );

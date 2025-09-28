@@ -27,8 +27,6 @@ const CreateMemberForm = () => {
             return false;
         }
         
-       
-        
         return true;
     };
 
@@ -43,7 +41,6 @@ const CreateMemberForm = () => {
         setLoading(true);
         
         try{
-            // Chỉ gửi fullName, email, password (không gửi confirmPassword)
             const memberData = {
                 fullName: form.fullName,
                 email: form.email,

@@ -1,33 +1,8 @@
-// AdminProfilePage.jsx
 import React, { useEffect, useState } from "react";
 import ProfileView from "../../../components/profile/ProfileView";
 import ProfileForm from "../../../components/profile/ProfileForm";
 import { getAdminProfile, updateAdminProfile } from "../../../services/admin/profile/adminProfileService";
 import { showErrorAlert } from "../../../utils/admin/errorHandler";
-
-/*
-//===========Fake API=========== 
-const fakeProfile = {
-  id: 1,
-  fullName: "Nguyen Van A",
-  email: "admin@test.com",
-  phoneNumber: "0123456789",
-  role: "ADMIN",
-  organizationId: 123,
-};
-
-const getProfile = async () => {
-  await new Promise((resolve) => setTimeout(resolve, 500)); // fake delay
-  return fakeProfile;
-};
-
-const updateProfile = async (updatedData) => {
-  await new Promise((resolve) => setTimeout(resolve, 500)); // fake delay
-  Object.assign(fakeProfile, updatedData); // merge dữ liệu
-  return fakeProfile;
-};
-//==========end fake API========== 
-*/
 
 const AdminProfilePage = () => {
   const [profile, setProfile] = useState(null);
@@ -43,7 +18,7 @@ const AdminProfilePage = () => {
 
     const fetchProfile = async () => {
       try {
-        const data = await getAdminProfile(); // sử dụng API thật
+        const data = await getAdminProfile();
         setProfile(data);
       } catch (err) {
         console.error("Error fetching admin profile:", err);
@@ -55,7 +30,7 @@ const AdminProfilePage = () => {
 
   const handleSave = async (updatedData) => {
     try {
-      const data = await updateAdminProfile(updatedData); // sử dụng API thật
+      const data = await updateAdminProfile(updatedData);
       setProfile(data);
       setIsEditing(false);
       alert("Profile updated successfully!");

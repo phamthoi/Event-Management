@@ -1,4 +1,3 @@
-//client/src/pages/events/EventListPage.jsx
 import React, { useEffect, useState } from "react";
 import EventFilter from "../../../components/admin/EventList/EventFilter";
 import EventTable from "../../../components/admin/EventList/EventTable";
@@ -23,8 +22,7 @@ const EventListPage = () => {
 
   const loadEvents = async () => {
     try {
-      const response = await getEvents({ page: 1, limit: 10, ...filters });
-
+      const response = await getEvents({ page, limit: 10, ...filters });
 
       const eventsWithStatus = response.events.map((ev) => ({
         ...ev,
@@ -47,14 +45,14 @@ const EventListPage = () => {
   }, [page, filters]);
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Bạn có chắc muốn xóa event này?")) return;
+    if (!window.confirm("Are you sure you want to delete this event?")) return;
     try {
       await deleteEvent(id);
-      alert("✅ Xóa sự kiện thành công!");
+      alert("✅ Event deleted successfully!");
       loadEvents();
     } catch (err) {
       console.error("++Error deleting event:", err);
-      showDeleteErrorAlert(err, "sự kiện");
+      showDeleteErrorAlert(err, "event");
     }
   };
 
@@ -72,26 +70,20 @@ const EventListPage = () => {
       ?.scrollIntoView({ behavior: "smooth" });
   };
 
-
-
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
       <h1 className="text-2xl font-bold mb-4">Event List</h1>
 
       <div className="mb-4">
-      
-
         <button
           onClick={goToEventsTable}
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
         >
-          Đi đến bảng sự kiện
+          Go to Events Table
         </button>
       </div>
 
-      
       <EventFilter onFilter={handleFilter} />
-  
 
       <div id="events-table">
         <EventTable

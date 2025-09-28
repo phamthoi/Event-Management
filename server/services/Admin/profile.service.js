@@ -53,7 +53,12 @@ export const updateAdminProfile = async (userId, updateData) => {
         phoneNumber: true,
         role: true,
         organizationId: true,
-        isActive: true
+        isActive: true,
+        organization: {
+          select: {
+            name: true
+          }
+        }
       }
     });
     

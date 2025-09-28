@@ -23,7 +23,6 @@ const ResetPasswordPage = () => {
     try {
       const data = await getMemberById(id);
       console.log('++++++Member data:', data);
-      // Sửa: truy cập vào data.member thay vì data trực tiếp
       setMember(data.member);
     } catch (error) {
       console.error('>>>?Error fetching member:', error);
@@ -41,7 +40,6 @@ const ResetPasswordPage = () => {
       [name]: value
     }));
     
-    // Clear error when user starts typing
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
@@ -53,15 +51,14 @@ const ResetPasswordPage = () => {
   const validateForm = () => {
     const newErrors = {};
     
-    // Bỏ tất cả validation - chỉ kiểm tra có nhập hay không
     if (!formData.newPassword) {
-      newErrors.newPassword = 'Vui lòng nhập mật khẩu mới';
+      newErrors.newPassword = 'Please enter new password';
     }
     
     if (!formData.confirmPassword) {
-      newErrors.confirmPassword = 'Vui lòng xác nhận mật khẩu';
+      newErrors.confirmPassword = 'Please confirm password';
     } else if (formData.newPassword !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Mật khẩu xác nhận không khớp';
+      newErrors.confirmPassword = 'Password confirmation does not match';
     }
     
     setErrors(newErrors);
@@ -90,7 +87,7 @@ const ResetPasswordPage = () => {
       });
       
       if (response.ok) {
-        alert('Reset mật khẩu thành công!');
+        alert('Password reset successfully!');
         navigate('/admin/members/list');
       } else {
         const errorData = await response.json();
@@ -109,7 +106,7 @@ const ResetPasswordPage = () => {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Đang tải...</p>
+          <p className="mt-4 text-gray-600">Loading...</p>
         </div>
       </div>
     );
@@ -119,7 +116,7 @@ const ResetPasswordPage = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-gray-600">Không tìm thấy thông tin thành viên</p>
+          <p className="text-gray-600">Member information not found</p>
         </div>
       </div>
     );
@@ -129,22 +126,19 @@ const ResetPasswordPage = () => {
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white shadow-lg rounded-lg overflow-hidden">
-          {/* Header */}
           <div className="bg-blue-600 px-6 py-4">
-            <h1 className="text-2xl font-bold text-white">Reset Mật Khẩu Thành Viên</h1>
+            <h1 className="text-2xl font-bold text-white">Reset Member Password</h1>
           </div>
           
-          {/* Content */}
           <div className="p-6">
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Member Info */}
               <div className="bg-gray-50 p-4 rounded-lg">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">Thông Tin Thành Viên</h2>
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">Member Information</h2>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Tên người dùng
+                      Full Name
                     </label>
                     <input
                       type="text"
@@ -168,13 +162,12 @@ const ResetPasswordPage = () => {
                 </div>
               </div>
               
-              {/* Password Fields */}
               <div className="space-y-4">
-                <h2 className="text-lg font-semibold text-gray-900">Đặt Mật Khẩu Mới</h2>
+                <h2 className="text-lg font-semibold text-gray-900">Set New Password</h2>
                 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Mật khẩu mới *
+                    New Password *
                   </label>
                   <input
                     type="password"
@@ -184,7 +177,7 @@ const ResetPasswordPage = () => {
                     className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                       errors.newPassword ? 'border-red-500' : 'border-gray-300'
                     }`}
-                    placeholder="Nhập mật khẩu mới"
+                    placeholder="Enter new password"
                   />
                   {errors.newPassword && (
                     <p className="mt-1 text-sm text-red-600">{errors.newPassword}</p>
@@ -193,7 +186,7 @@ const ResetPasswordPage = () => {
                 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Xác nhận mật khẩu *
+                    Confirm Password *
                   </label>
                   <input
                     type="password"
@@ -203,7 +196,7 @@ const ResetPasswordPage = () => {
                     className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                       errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
                     }`}
-                    placeholder="Nhập lại mật khẩu mới"
+                    placeholder="Re-enter new password"
                   />
                   {errors.confirmPassword && (
                     <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>
@@ -211,14 +204,13 @@ const ResetPasswordPage = () => {
                 </div>
               </div>
               
-              {/* Action Buttons */}
               <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200">
                 <button
                   type="button"
                   onClick={() => navigate('/admin/members/list')}
                   className="px-6 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                 >
-                  Hủy
+                  Cancel
                 </button>
                 
                 <button
@@ -226,7 +218,7 @@ const ResetPasswordPage = () => {
                   disabled={submitting}
                   className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
-                  {submitting ? 'Đang xử lý...' : 'Xác nhận reset'}
+                  {submitting ? 'Processing...' : 'Confirm Reset'}
                 </button>
               </div>
             </form>

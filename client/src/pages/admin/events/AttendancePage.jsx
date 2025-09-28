@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import EventSelect from "../../../components/admin/attendance/EventSelect";
 import MemberTable from "../../../components/admin/attendance/MemberTable";
 import SaveButton from "../../../components/admin/attendance/SaveButton";
-import { getOngoingEvents } from "../../../services/admin/event/eventService";
+import { getOngoingEvents } from "../../../services/admin/event/attendanceService";
 import { getRegistrations, updateAttendance } from "../../../services/admin/event/attendanceService";
 import { showErrorAlert } from "../../../utils/admin/errorHandler";
 
@@ -33,18 +33,16 @@ function AttendancePage() {
     fetchEvents();
   }, []);
 
-  // Lấy danh sách đăng ký khi chọn event
   useEffect(() => {
     const fetchRegistrations = async () => {
       if (selectedEvent) {
         try {
           setLoading(true);
           const response = await getRegistrations(selectedEvent);
-          // Chuyển đổi format để phù hợp với component
           const formattedRegs = response.registrations.map(reg => ({
             id: reg.id,
             user: reg.user,
-            attended: reg.attendance || false  // Sử dụng reg.attendance từ database
+            attended: reg.attendance || false
           }));
           setRegistrations(formattedRegs);
         } catch (error) {
@@ -71,14 +69,13 @@ function AttendancePage() {
   const handleSave = async () => {
     try {
       setLoading(true);
-      // Chuẩn bị dữ liệu để gửi lên server
       const updates = registrations.map(reg => ({
         registrationId: reg.id,
         attended: reg.attended
       }));
       
-      await updateAttendance(updates);  // Không cần truyền eventId
-      alert('Đã lưu điểm danh thành công!');
+      await updateAttendance(updates);
+      alert('Attendance saved successfully!');
     } catch (error) {
       console.error('Error saving attendance:', error);
       showErrorAlert(error);
@@ -90,7 +87,7 @@ function AttendancePage() {
   if (loading) {
     return (
       <div className="p-6">
-        <div className="text-center">Đang tải...</div>
+        <div className="text-center">Loading...</div>
       </div>
     );
   }
@@ -101,7 +98,7 @@ function AttendancePage() {
 
       {events.length === 0 ? (
         <div className="text-center text-gray-500 py-8">
-          Không có event nào đang diễn ra (ONGOING)
+          No ongoing events available
         </div>
       ) : (
         <>

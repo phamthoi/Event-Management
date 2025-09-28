@@ -19,23 +19,12 @@ const EditEventPage = () => {
   const loadEvent = async () => {
     try {
       const response = await getEventById(id);
-      // const testTime = new Date("2025-10-05T01:00:00.000Z");
-      // console.log("🪣  Test: " + testTime);
-      // const formatted = testTime.toLocaleString('sv-SE', { hour12: false }).replace(' ', 'T');
-      // console.log("🪣 Test (sau khi toLocaleString): " + formatted);
-  
-      console.log(`🪣[CLIENT → (page)] Event ID: ${id} | Dữ liệu nhận từ server:`, JSON.stringify({
-        startAt: response.event?.startAt,
-        endAt: response.event?.endAt,
-      }, null, 2));
-      
+
       if (response.success) {
-        // Format dates for datetime-local input với đầy đủ giây
         const formatDateTime = (dateString) => {
           if (!dateString) return '';
           const date = new Date(dateString);
           
-          // Chuyển về local timezone và format
           const localISOTime = new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
             .toISOString()
             .slice(0, 19);
@@ -51,7 +40,7 @@ const EditEventPage = () => {
           registrationEndAt: formatDateTime(response.event.registrationEndAt),
         };
         
-        console.log('🪣 Formatted eventData:', eventData);
+
         setEvent(eventData);
       }
       setLoading(false);
@@ -69,26 +58,25 @@ const EditEventPage = () => {
     e.preventDefault();
     setMsg('');
 
-    // Enhanced validation
     if (!event.title?.trim()) {
-      setMsg('Tên event là bắt buộc');
+      setMsg('Event title is required');
       return;
     }
 
     if (event.startAt && event.endAt && new Date(event.startAt) >= new Date(event.endAt)) {
-      setMsg('Thời gian bắt đầu phải trước thời gian kết thúc');
+      setMsg('Start time must be before end time');
       return;
     }
 
     if (event.registrationStartAt && event.registrationEndAt && 
         new Date(event.registrationStartAt) >= new Date(event.registrationEndAt)) {
-      setMsg('Thời gian bắt đầu đăng ký phải trước thời gian kết thúc đăng ký');
+      setMsg('Registration start time must be before registration end time');
       return;
     }
 
     if (event.minAttendees && event.maxAttendees && 
         parseInt(event.minAttendees) > parseInt(event.maxAttendees)) {
-      setMsg('Số lượng tối thiểu không được lớn hơn số lượng tối đa');
+      setMsg('Minimum attendees cannot be greater than maximum attendees');
       return;
     }
 
@@ -100,17 +88,12 @@ const EditEventPage = () => {
         deposit: event.deposit ? parseFloat(event.deposit) : 0.0,
       };
 
-      console.log(`🎉 [CLIENT SUBMIT(page)] Event ID: ${id} | Dữ liệu thời gian trước khi gửi lên server:`, JSON.stringify({
-        startAt: payload.startAt,
-        endAt: payload.endAt,
-      }, null, 2));
-
       const response = await updateEvent(id, payload);
       if (response.success) {
-        setMsg('Cập nhật event thành công!');
+        setMsg('Event updated successfully!');
         setTimeout(() => navigate('/admin/events/list'), 2000);
       } else {
-        setMsg('Cập nhật thất bại: ' + (response.message || 'Lỗi không xác định'));
+        setMsg('Update failed: ' + (response.message || 'Unknown error'));
       }
     } catch (err) {
       console.error('Error updating event:', err);
