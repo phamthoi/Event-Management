@@ -3,7 +3,7 @@ export class DashboardController {
     try {
       res.json({
         success: true,
-        user: req.user // user đã được decode từ token trong middleware
+        user: req.user 
       });
     } catch (error) {
       res.status(500).json({ success: false, message: error.message });

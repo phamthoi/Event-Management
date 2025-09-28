@@ -11,7 +11,6 @@ function MemberDashboardPage(){
 
   return (
     <DashboardLayoutMember>
-      {/* Render các route con */}
       <Outlet />
     </DashboardLayoutMember>
   );

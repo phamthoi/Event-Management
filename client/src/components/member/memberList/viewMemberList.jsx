@@ -9,32 +9,18 @@ function ViewMemberList() {
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
 
-  // luôn cố định chỉ lấy member đang active
   const [filters, setFilters] = useState({
     email: "",
     fullName: "",
     isActive: "true",
   });
 
-  // input tạm cho filter
   const [tempFilters, setTempFilters] = useState({
     email: "",
     fullName: "",
   });
 
   const limit = 5;
-  /*
-  //============ Fake API =============
-  // Fake member data
-  const fakeMembers = Array.from({ length: 23 }, (_, i) => ({
-    id: i + 1,
-    email: `member${i + 1}@example.com`,
-    fullName: `Member ${i + 1}`,
-    phoneNumber: `0900${i.toString().padStart(4, "0")}`,
-    isActive: true,
-  }));
-  //============= End Fake API ============
-*/
   
   const loadMembers = async () => {
     try {
@@ -52,45 +38,13 @@ function ViewMemberList() {
       setTotal(response.total || 0);
     } catch (err) {
       showErrorAlert(err);
-      setMsg("Lỗi khi tải danh sách member");
-      setMembers([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-  
-/*
-  //===========loadmembers Fake API =============
-   const loadMembers = async () => {
-    try {
-      setLoading(true);
-      setMsg("");
-
-      // fake filter
-      let filtered = fakeMembers.filter(
-        (m) =>
-          m.isActive === true &&
-          m.email.includes(filters.email) &&
-          m.fullName.includes(filters.fullName)
-      );
-
-      setTotal(filtered.length);
-
-      // fake pagination
-      const start = (page - 1) * limit;
-      const end = start + limit;
-      setMembers(filtered.slice(start, end));
-    } catch (err) {
-      console.error("Error loading members:", err);
-      setMsg("Lỗi khi tải danh sách member");
+      setMsg("Error loading member list");
       setMembers([]);
     } finally {
       setLoading(false);
     }
   };
 
-  //==============End=============
-*/
   useEffect(() => {
     loadMembers();
   }, [page, filters]);
@@ -104,7 +58,7 @@ function ViewMemberList() {
     const emptyFilters = {
       email: "",
       fullName: "",
-      isActive: "true", // luôn giữ isActive = true
+      isActive: "true",
     };
     setTempFilters({ email: "", fullName: "" });
     setFilters(emptyFilters);
@@ -116,14 +70,13 @@ function ViewMemberList() {
   if (loading) {
     return (
       <div className="text-center py-4">
-        <div>Đang tải...</div>
+        <div>Loading...</div>
       </div>
     );
   }
 
   return (
     <div>
-      {/* Filter */}
       <div className="mb-4 flex flex-wrap gap-2">
         <input
           type="text"
@@ -149,17 +102,16 @@ function ViewMemberList() {
           onClick={handleFilter}
           className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700"
         >
-          Tìm kiếm
+          Search
         </button>
         <button
           onClick={handleClearFilter}
           className="bg-gray-500 text-white px-4 py-1 rounded hover:bg-gray-600"
         >
-          Xóa bộ lọc
+          Clear Filter
         </button>
       </div>
 
-      {/* Table */}
       <table className="w-full border-collapse border border-gray-300">
         <thead>
           <tr className="bg-gray-200">
@@ -173,7 +125,7 @@ function ViewMemberList() {
           {members.length === 0 ? (
             <tr>
               <td colSpan={4} className="text-center p-3 text-gray-500">
-                Không có member nào
+                No members found
               </td>
             </tr>
           ) : (
@@ -191,7 +143,6 @@ function ViewMemberList() {
         </tbody>
       </table>
 
-      {/* Pagination */}
       <div className="flex justify-between items-center mt-4">
         <button
           disabled={page === 1}
@@ -201,7 +152,7 @@ function ViewMemberList() {
           Previous
         </button>
         <span>
-          Page {page} of {totalPages} (Total: {total} members)
+          Page {page} / {totalPages}
         </span>
         <button
           disabled={page >= totalPages}
@@ -212,7 +163,7 @@ function ViewMemberList() {
         </button>
       </div>
 
-      {msg && <div className="mt-2 text-red-500">{msg}</div>}
+      {msg && <div className="mt-4 text-red-600">{msg}</div>}
     </div>
   );
 }

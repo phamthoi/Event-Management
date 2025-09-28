@@ -2,20 +2,6 @@ import React, { useState } from "react";
 import { updateMemberPassword } from "../../../services/member/profile/profileService";
 import { showErrorAlert } from "../../../utils/member/errorHandler";
 
-//===========Fake API=========== 
-// const updateMemberPassword = async (currentPassword, newPassword) => {
-//   // Fake delay như call API
-//   await new Promise((resolve) => setTimeout(resolve, 500));
-//   
-//   // Fake validation - giả sử mật khẩu hiện tại là "123456"
-//   if (currentPassword !== "123456") {
-//     throw new Error("Mật khẩu hiện tại không đúng");
-//   }
-//   
-//   return { message: "Đổi mật khẩu thành công" };
-// };
-//==========end fake API==========
-
 const ChangePasswordPage = () => {
   const [current, setCurrent] = useState("");
   const [newPass, setNewPass] = useState("");
@@ -48,7 +34,6 @@ const ChangePasswordPage = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
       <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md space-y-6">
-        {/* Header */}
         <div className="flex flex-col items-center">
           <div className="w-20 h-20 bg-blue-500 rounded-full flex items-center justify-center text-white text-3xl font-bold">
             🔒
@@ -56,7 +41,6 @@ const ChangePasswordPage = () => {
           <h1 className="mt-4 text-2xl font-bold text-gray-800 text-center">Change Password</h1>
         </div>
 
-        {/* Feedback Messages */}
         {error && (
           <div className="flex items-center bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded-lg">
             {error}
@@ -68,7 +52,6 @@ const ChangePasswordPage = () => {
           </div>
         )}
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block mb-1 font-medium text-gray-700">Current Password</label>

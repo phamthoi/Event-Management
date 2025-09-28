@@ -1,33 +1,8 @@
-// client/src/pages/member/memberProfilePage.jsx
 import React, { useEffect, useState } from "react";
 import ProfileView from "../../../components/profile/ProfileView";
 import ProfileForm from "../../../components/profile/ProfileForm";
 import {getProfile, updateProfile} from "../../../services/member/profile/profileService";
 import { showErrorAlert } from "../../../utils/member/errorHandler";
-
-//===========Fake API=========== 
-// const fakeProfile = {
-//   id: 1,
-//   fullName: "Nguyen Van A",
-//   email: "member@test.com",
-//   phoneNumber: "0123456789",
-//   role: "MEMBER",
-//   organizationId: 123,
-// };
-
-// const getProfile = async () => {
-//   // Fake delay như call API
-//   await new Promise((resolve) => setTimeout(resolve, 500));
-//   return fakeProfile;
-// };
-
-// const updateProfile = async (updatedData) => {
-//   await new Promise((resolve) => setTimeout(resolve, 500));
-//   // Merge dữ liệu fake
-//   Object.assign(fakeProfile, updatedData);
-//   return fakeProfile;
-// };
-//==========end fake API========== 
 
 const MemberProfilePage = () => {
   const [profile, setProfile] = useState(null);

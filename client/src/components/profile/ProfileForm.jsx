@@ -18,7 +18,6 @@ const ProfileForm = ({ profile, onCancel, onSave }) => {
   return (
     <div className="max-w-md mx-auto w-full">
       <div className="bg-white shadow-lg rounded-xl p-6">
-        {/* Avatar */}
         <div className="flex flex-col items-center mb-6">
           <div className="w-20 h-20 bg-blue-500 rounded-full flex items-center justify-center text-white text-3xl font-bold">
             {fullName ? fullName.charAt(0).toUpperCase() : "U"}

@@ -1,7 +1,5 @@
-// controllers/Member/member.controller.js
 import * as memberService from '../../services/Member/member.service.js';
 
-// GET /member/profile - Lấy thông tin profile
 export const getProfile = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -13,7 +11,6 @@ export const getProfile = async (req, res) => {
   }
 };
 
-// PUT /member/profile - Cập nhật profile
 export const updateProfile = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -35,7 +32,6 @@ export const updateProfile = async (req, res) => {
   }
 };
 
-// PUT /member/profile/password - Đổi mật khẩu
 export const changePassword = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -45,7 +41,6 @@ export const changePassword = async (req, res) => {
       return res.status(400).json({ message: 'Current password and new password are required' });
     }
     
-    // Thêm phần code này:
     const result = await memberService.changeMemberPassword(userId, currentPassword, newPassword);
     res.json(result);
   } catch (error) {
@@ -54,7 +49,6 @@ export const changePassword = async (req, res) => {
   }
 };
 
-// GET /member/members - Lấy danh sách members cùng organization
 export const getMembers = async (req, res) => {
   try {
     const organizationId = req.user.organizationId;
@@ -74,7 +68,6 @@ export const getMembers = async (req, res) => {
   }
 };
 
-// GET /member/events - Lấy events đã đăng ký
 export const getMyEvents = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -86,7 +79,6 @@ export const getMyEvents = async (req, res) => {
   }
 };
 
-// GET /member/events/upcoming - Lấy upcoming events
 export const getUpcomingEvents = async (req, res) => {
   try {
     const organizationId = req.user.organizationId;
@@ -102,7 +94,6 @@ export const getUpcomingEvents = async (req, res) => {
   }
 };
 
-// POST /member/events/:eventId/register - Đăng ký event
 export const registerEvent = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -127,7 +118,6 @@ export const registerEvent = async (req, res) => {
   }
 };
 
-// DELETE /member/events/:eventId/register - Hủy đăng ký event
 export const cancelEventRegistration = async (req, res) => {
   try {
     const userId = req.user.id;
