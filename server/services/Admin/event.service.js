@@ -1,55 +1,10 @@
 import { PrismaClient } from "@prisma/client";
+import { calculateEventStatus } from "../../utils/eventStatus.js";
 
 const prisma = new PrismaClient();
 
 export class EventService {
-  static calculateEventStatus({
-    initialStatus,
-    registrationStartAt,
-    registrationEndAt,
-    startAt,
-    endAt,
-  }) {
-    const now = new Date();
-
-    if (registrationStartAt && now < new Date(registrationStartAt)) {
-      return "DRAFT";
-    }
-
-    if (
-      registrationStartAt &&
-      registrationEndAt &&
-      now >= new Date(registrationStartAt) &&
-      now <= new Date(registrationEndAt)
-    ) {
-      return "REGISTRATION";
-    }
-
-    if (
-      registrationEndAt &&
-      startAt &&
-      now > new Date(registrationEndAt) &&
-      now < new Date(startAt)
-    ) {
-      return "READY";
-    }
-
-    if (
-      startAt &&
-      endAt &&
-      now >= new Date(startAt) &&
-      now <= new Date(endAt)
-    ) {
-      return "ONGOING";
-    }
-
-    if (endAt && now > new Date(endAt)) {
-      return "COMPLETED";
-    }
-
-    return initialStatus || "DRAFT";
-  }
-
+  // ================= CREATE EVENT =================
   static async createEvent(eventData) {
     const {
       title,
@@ -66,15 +21,18 @@ export class EventService {
       organizationId,
       createdById,
     } = eventData;
-  
-    const correctStatus = this.calculateEventStatus({
-      initialStatus: status,  
+
+    // ✅ Tính status realtime ngay khi tạo, attendees rỗng
+    const correctStatus = calculateEventStatus({
+      initialStatus: status,
       registrationStartAt,
       registrationEndAt,
       startAt,
       endAt,
+      minAttendees,
+      attendees: [], // tạo event mới chưa có đăng ký
     });
-  
+
     const event = await prisma.event.create({
       data: {
         title,
@@ -95,21 +53,18 @@ export class EventService {
         organizationId,
         createdById,
       },
-      include: {  
+      include: {
         organization: true,
         createdBy: {
-          select: {
-            id: true,
-            fullName: true,
-            email: true
-          }
-        }
-      }
+          select: { id: true, fullName: true, email: true },
+        },
+      },
     });
-  
+
     return event;
   }
 
+  // ================= GET EVENTS LIST =================
   static async getEventsList(filters) {
     const {
       name,
@@ -122,59 +77,96 @@ export class EventService {
       createdById,
       organizationId,
     } = filters;
-  
+
     const where = {};
-  
-    if (createdById) {
-      where.createdById = createdById;
-    }
-    
-    // Thêm filter organizationId
-    if (organizationId) {
-      where.organizationId = organizationId;
-    }
-  
+
+    if (createdById) where.createdById = createdById;
+    if (organizationId) where.organizationId = organizationId;
     if (name) where.title = { contains: name, mode: "insensitive" };
     if (location) where.location = { contains: location, mode: "insensitive" };
-    if (status) where.status = status;
     if (startDate || endDate) where.startAt = {};
     if (startDate) where.startAt.gte = new Date(startDate);
     if (endDate) where.startAt.lte = new Date(endDate);
-  
+
     const events = await prisma.event.findMany({
       where,
       orderBy: { createdAt: "desc" },
       skip: (parseInt(page) - 1) * parseInt(limit),
       take: parseInt(limit),
-      select: {
-        id: true,
-        title: true,
-        location: true,
-        startAt: true,
-        endAt: true,
-        status: true,
-        deposit: true,
-      },
+      include: { registrations: true }, // để check minAttendees
     });
-  
+
+    // ✅ Tính lại status realtime và update DB nếu khác
+    const eventsWithStatus = await Promise.all(
+      events.map(async (ev) => {
+        const correctStatus = calculateEventStatus({
+          initialStatus: ev.status,
+          registrationStartAt: ev.registrationStartAt,
+          registrationEndAt: ev.registrationEndAt,
+          startAt: ev.startAt,
+          endAt: ev.endAt,
+          minAttendees: ev.minAttendees,
+          attendees: ev.registrations,
+        });
+
+        // ✅ Cập nhật DB nếu status thay đổi
+        if (ev.status !== correctStatus) {
+          await prisma.event.update({
+            where: { id: ev.id },
+            data: { status: correctStatus },
+          });
+        }
+
+        return { ...ev, status: correctStatus };
+      })
+    );
+
     const total = await prisma.event.count({ where });
-  
+
+    // ✅ Lọc theo status realtime sau khi tính lại
+    const filteredEvents = status
+      ? eventsWithStatus.filter((ev) => ev.status === status)
+      : eventsWithStatus;
+
     return {
-      events,
+      events: filteredEvents,
       total,
       page: parseInt(page),
       limit: parseInt(limit),
     };
   }
 
+  // ================= GET EVENT BY ID =================
   static async getEventById(eventId) {
     const event = await prisma.event.findUnique({
       where: { id: eventId },
+      include: { registrations: true }, // để check minAttendees
     });
 
-    return event;
+    if (!event) return null;
+
+    // ✅ Tính lại status realtime và update DB nếu khác
+    const correctStatus = calculateEventStatus({
+      initialStatus: event.status,
+      registrationStartAt: event.registrationStartAt,
+      registrationEndAt: event.registrationEndAt,
+      startAt: event.startAt,
+      endAt: event.endAt,
+      minAttendees: event.minAttendees,
+      attendees: event.registrations,
+    });
+
+    if (event.status !== correctStatus) {
+      await prisma.event.update({
+        where: { id: event.id },
+        data: { status: correctStatus },
+      });
+    }
+
+    return { ...event, status: correctStatus };
   }
 
+  // ================= UPDATE EVENT =================
   static async updateEvent(eventId, updateData) {
     const {
       title,
@@ -190,14 +182,22 @@ export class EventService {
       status,
     } = updateData;
 
-    const correctStatus = this.calculateEventStatus({
+    // ✅ Lấy registrations hiện tại
+    const existingEvent = await prisma.event.findUnique({
+      where: { id: eventId },
+      include: { registrations: true },
+    });
+
+    const correctStatus = calculateEventStatus({
       initialStatus: status,
       registrationStartAt,
       registrationEndAt,
       startAt,
       endAt,
+      minAttendees,
+      attendees: existingEvent.registrations,
     });
-  
+
     const event = await prisma.event.update({
       where: { id: eventId },
       data: {
@@ -217,38 +217,26 @@ export class EventService {
         deposit: deposit ? parseFloat(deposit) : 0,
         status: correctStatus,
       },
-      include: {  
+      include: {
         organization: true,
-        createdBy: {
-          select: {
-            id: true,
-            fullName: true,  
-            email: true
-          }
-        }
-      }
+        createdBy: { select: { id: true, fullName: true, email: true } },
+      },
     });
-  
+
     return event;
   }
 
+  // ================= DELETE EVENT =================
   static async deleteEvent(eventId) {
     await prisma.event.delete({ where: { id: eventId } });
   }
 
+  // ================= GET EVENT REGISTRATIONS =================
   static async getEventRegistrations(eventId) {
     try {
       const registrations = await prisma.registration.findMany({
         where: { eventId },
-        include: {
-          user: {
-            select: {
-              id: true,
-              fullName: true,
-              email: true,
-            },
-          },
-        },
+        include: { user: { select: { id: true, fullName: true, email: true } } },
       });
 
       return registrations;
@@ -257,6 +245,7 @@ export class EventService {
     }
   }
 
+  // ================= UPDATE ATTENDANCE =================
   static async updateAttendance(updates) {
     await Promise.all(
       updates.map((u) =>

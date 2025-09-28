@@ -1,7 +1,8 @@
 // components/EventList/EditEventForm.jsx
-import React, { useEffect } from "react";
+import React from "react";
 
 const EditEventForm = ({ event = {}, onChange, onSubmit }) => {
+  /*
   // Function to automatically update event status based on current time
   const updateEventStatus = () => {
     const now = new Date();
@@ -48,6 +49,7 @@ const EditEventForm = ({ event = {}, onChange, onSubmit }) => {
       updateEventStatus();
     }
   }, [event.registrationStartAt, event.registrationEndAt, event.startAt, event.endAt]);
+  */
 
   return (
     <form onSubmit={onSubmit} className="space-y-6">
@@ -97,13 +99,10 @@ const EditEventForm = ({ event = {}, onChange, onSubmit }) => {
         />
       </div>
 
-      {/* Event Status */}
+      {/* Event Status
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Event Status
-          <span className="text-xs text-gray-500 ml-2">
-            (Tự động cập nhật dựa trên thời gian)
-          </span>
         </label>
         <select
           name="status"
@@ -118,7 +117,7 @@ const EditEventForm = ({ event = {}, onChange, onSubmit }) => {
           <option value="COMPLETED">Completed</option>
           <option value="CANCELLED">Cancelled</option>
         </select>
-      </div>
+      </div> */}
 
       {/* Min & Max attendees */}
       <div className="grid grid-cols-2 gap-4">

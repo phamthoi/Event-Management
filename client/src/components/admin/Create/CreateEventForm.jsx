@@ -1,5 +1,5 @@
 //client/src/components/CreateEvent/CreateEventForm.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState/*, useEffect*/ } from 'react';
 import { createEvent } from '../../../services/admin/event/eventService';
 import { validateEventForm } from '../../../utils/validation';
 
@@ -15,11 +15,13 @@ const CreateEventForm = () => {
     endAt: "",
     registrationStartAt: "",
     registrationEndAt: "",
-    status: "DRAFT", // Thêm trường status với giá trị mặc định
+    status: "DRAFT", // mặc định cho admin chọn thủ công
   });
 
   const [msg, setMsg] = useState("");
 
+  /* 
+  // ================= Auto-update status (disabled) =================
   // Function to automatically update event status based on current time
   const updateEventStatus = (formData = null) => {
     const currentForm = formData || form;
@@ -43,21 +45,15 @@ const CreateEventForm = () => {
     
     // Check conditions in priority order
     if (now > eventEnd) {
-      // After event ends
       newStatus = "COMPLETED";
     } else if (now >= eventStart && now <= eventEnd) {
-      // During event period
       newStatus = "ONGOING";
     } else if (now >= oneDayBeforeEvent && now < eventStart) {
-      // One day before event start until event starts
       newStatus = "READY";
     } else if (now >= registrationStart && now <= registrationEnd) {
-      // During registration period
       newStatus = "REGISTRATION";
     }
-    // All other cases remain as DRAFT
     
-    // Update status if it has changed
     if (newStatus !== currentForm.status) {
       setForm(prevForm => ({
         ...prevForm,
@@ -77,17 +73,20 @@ const CreateEventForm = () => {
       updateEventStatus();
     }
   }, [form.registrationStartAt, form.registrationEndAt, form.startAt, form.endAt]);
+  // ================================================================
+  */
 
   const handleChange = (e) => {
     const updatedForm = { ...form, [e.target.id]: e.target.value };
     setForm(updatedForm);
-    
-    // Gọi updateEventStatus ngay sau khi cập nhật form nếu là field thời gian
+
+    /* 
+    // Nếu muốn auto-update ngay sau khi chỉnh thời gian
     const timeFields = ['registrationStartAt', 'registrationEndAt', 'startAt', 'endAt'];
     if (timeFields.includes(e.target.id)) {
-      // Truyền updatedForm để sử dụng dữ liệu mới nhất
       updateEventStatus(updatedForm);
     }
+    */
   };
 
   const handleSubmit = async (e) => {
@@ -122,7 +121,7 @@ const CreateEventForm = () => {
         endAt: "",
         registrationStartAt: "",
         registrationEndAt: "",
-        status: "DRAFT", // Reset về DRAFT khi tạo mới
+        status: "DRAFT",
       });
     } catch (err) {
       setMsg(`${err.response?.data?.message || err.message}`);
@@ -170,12 +169,12 @@ const CreateEventForm = () => {
           />
         </div>
 
-        {/* Event Status */}
+        {/*         
         <div>
           <label className="block text-sm font-semibold mb-2 text-blue-800">
             Event Status
             <span className="text-xs text-gray-500 ml-2">
-              (Tự động cập nhật dựa trên thời gian)
+              (Admin chọn thủ công)
             </span>
           </label>
           <select
@@ -191,7 +190,7 @@ const CreateEventForm = () => {
             <option value="COMPLETED">Completed</option>
             <option value="CANCELLED">Cancelled</option>
           </select>
-        </div>
+        </div> */}
 
         {/* Min & Max Attendees */}
         <div className="grid grid-cols-2 gap-4">

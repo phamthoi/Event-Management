@@ -1,5 +1,4 @@
-// utils/getEventStatus.js
-export function getEventStatus(event) {
+export function calculateEventStatus(event) {
   const now = new Date();
 
   const registrationStart = event.registrationStartAt
@@ -10,29 +9,20 @@ export function getEventStatus(event) {
     : null;
   const start = event.startAt ? new Date(event.startAt) : null;
   const end = event.endAt ? new Date(event.endAt) : null;
-
-  // Nếu backend có sẵn status thì ưu tiên
-  if (event.status) return event.status;
+  const attendees = event.attendees || [];
+  const minAttendees = event.minAttendees || 1;
 
   // 1️⃣ Chưa tới lúc mở đăng ký
   if (registrationStart && now < registrationStart) return "DRAFT";
 
   // 2️⃣ Trong thời gian đăng ký
-  if (
-    registrationStart &&
-    registrationEnd &&
-    now >= registrationStart &&
-    now < registrationEnd
-  ) {
+  if (registrationStart && registrationEnd && now >= registrationStart && now < registrationEnd) {
     return "REGISTRATION";
   }
 
-  // 3️⃣ Kết thúc đăng ký -> kiểm tra đủ minAttendees
+  // 3️⃣ Hết hạn đăng ký, chưa đến thời gian bắt đầu
   if (registrationEnd && now >= registrationEnd && start && now < start) {
-    if (event.attendees && event.attendees.length >= (event.minAttendees || 1)) {
-      return "READY";
-    }
-    return "CANCELLED";
+    return attendees.length >= minAttendees ? "READY" : "CANCELLED";
   }
 
   // 4️⃣ Đang diễn ra
@@ -41,5 +31,6 @@ export function getEventStatus(event) {
   // 5️⃣ Hoàn tất
   if (end && now >= end) return "COMPLETED";
 
+  // 6️⃣ Nếu chưa có thông tin thời gian, giữ trạng thái DRAFT
   return "DRAFT";
 }
