@@ -152,7 +152,7 @@ const MyEventsPage = () => {
                 key={ev.id}
                 event={ev}
                 registered={true}
-                remaining={ev.maxAttendees - 1}
+                remaining={ev.registeredCount}
                 onToggleRegister={() => handleCancel(ev)}
                 canCancel={canCancel}
               />

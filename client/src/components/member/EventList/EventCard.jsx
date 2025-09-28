@@ -21,7 +21,8 @@ const EventCard = ({ event, registered, remaining, onToggleRegister, canCancel, 
         <strong>Status:</strong> {event.status}
       </p>
       <p>
-        <strong>Slots remaining:</strong> {remaining} / {event.maxAttendees}
+        <strong>Slot còn lại:</strong> {event.maxAttendees - remaining} / {event.maxAttendees}
+        
       </p>
       <button
         onClick={() => onToggleRegister(event)}

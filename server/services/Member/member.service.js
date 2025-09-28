@@ -51,7 +51,12 @@ export const updateMemberProfile = async (userId, updateData) => {
         fullName: true,
         phoneNumber: true,
         role: true,
-        organizationId: true
+        organizationId: true,
+        organization: {
+          select: {
+            name: true
+          }
+        }
       }
     });
     
@@ -193,10 +198,22 @@ export const getMemberEvents = async (userId) => {
       }
     });
     
-    return registrations.map(reg => ({
-      ...reg.event,
-      registeredCount: reg.event._count.registrations
-    }));
+    const result = registrations.map(reg => {
+      const registeredCount = reg.event._count.registrations;
+      const remainingSlots = reg.event.maxAttendees - registeredCount;
+      
+      const eventWithCount = {
+        ...reg.event,
+        registeredCount: registeredCount,
+        remainingSlots: remainingSlots
+      };
+      
+      console.log(`Event ID ${reg.event.id}: registeredCount = ${registeredCount}, maxAttendees = ${reg.event.maxAttendees}, remainingSlots = ${remainingSlots}`);
+      
+      return eventWithCount;
+    });
+    
+    return result;
   } catch (error) {
     throw error;
   }
@@ -210,11 +227,14 @@ export const getUpcomingEvents = async (organizationId, userId, page = 1, limit 
     const events = await prisma.event.findMany({
       where: {
         organizationId: organizationId,
-        status: {
-          in: ['REGISTRATION', 'READY']
-        },
-        startAt: {
-          gte: new Date()
+        status: 'REGISTRATION',
+        NOT: {
+          registrations: {
+            some: {
+              userId: userId,
+              status: 'REGISTERED'
+            }
+          }
         }
       },
       include: {
@@ -225,15 +245,6 @@ export const getUpcomingEvents = async (organizationId, userId, page = 1, limit 
                 status: 'REGISTERED'
               }
             }
-          }
-        },
-        registrations: {
-          where: {
-            userId: userId,
-            status: 'REGISTERED'
-          },
-          select: {
-            id: true
           }
         }
       },
@@ -247,28 +258,41 @@ export const getUpcomingEvents = async (organizationId, userId, page = 1, limit 
     const total = await prisma.event.count({
       where: {
         organizationId: organizationId,
-        status: {
-          in: ['REGISTRATION', 'READY']
-        },
-        startAt: {
-          gte: new Date()
+        status: 'REGISTRATION',
+        NOT: {
+          registrations: {
+            some: {
+              userId: userId,
+              status: 'REGISTERED'
+            }
+          }
         }
       }
     });
     
-    const eventsWithRegistrationStatus = events.map(event => ({
-      id: event.id,
-      title: event.title,
-      description: event.description,
-      location: event.location,
-      startAt: event.startAt,
-      endAt: event.endAt,
-      registrationEndAt: event.registrationEndAt,
-      maxAttendees: event.maxAttendees,
-      status: event.status,
-      registeredCount: event._count.registrations,
-      isRegistered: event.registrations.length > 0
-    }));
+    const eventsWithRegistrationStatus = events.map(event => {
+      const registeredCount = event._count.registrations;
+      const remainingSlots = event.maxAttendees - registeredCount;
+      
+      const eventWithCount = {
+        id: event.id,
+        title: event.title,
+        description: event.description,
+        location: event.location,
+        startAt: event.startAt,
+        endAt: event.endAt,
+        registrationEndAt: event.registrationEndAt,
+        maxAttendees: event.maxAttendees,
+        status: event.status,
+        registeredCount: registeredCount,
+        remainingSlots: remainingSlots,
+        isRegistered: false
+      };
+      
+      console.log(`Upcoming Event ID ${event.id}: registeredCount = ${registeredCount}, maxAttendees = ${event.maxAttendees}, remainingSlots = ${remainingSlots}`);
+      
+      return eventWithCount;
+    });
     
     return {
       events: eventsWithRegistrationStatus,
@@ -309,9 +333,10 @@ export const registerForEvent = async (userId, eventId) => {
       throw new Error('Event registration is not open');
     }
     
-    if (event.registrationEndAt && new Date() > event.registrationEndAt) {
-      throw new Error('Registration period has ended');
-    }
+    // Tạm thời bỏ kiểm tra registrationEndAt
+    // if (event.registrationEndAt && new Date() > new Date(event.registrationEndAt)) {
+    //   throw new Error('Registration period has ended');
+    // }
     
     if (event.maxAttendees && event._count.registrations >= event.maxAttendees) {
       throw new Error('Event is full');

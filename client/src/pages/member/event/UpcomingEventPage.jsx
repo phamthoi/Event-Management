@@ -204,6 +204,9 @@ const UpcomingEventsPage = () => {
         alert("Không thể hủy sự kiện này");
         return;
       }
+      
+      // Reload cả danh sách sự kiện và registrations
+      await loadEvents();
       await loadRegistrations();
     } catch (err) {
       console.error("Registration error:", err);
@@ -251,7 +254,6 @@ const UpcomingEventsPage = () => {
         <div className="space-y-4">
           {events.map((ev) => {
             const registered = !!registrations[currentMemberId]?.[ev.id];
-            const remaining = ev.maxAttendees - (ev.registeredCount || 0);
             const canCancel =
               registered && new Date() <= new Date(ev.registrationEndAt);
 
@@ -260,7 +262,7 @@ const UpcomingEventsPage = () => {
                 key={ev.id}
                 event={ev}
                 registered={registered}
-                remaining={remaining}
+                remaining={ev.registeredCount}
                 onToggleRegister={handleToggleRegister}
                 canCancel={canCancel}
               />
