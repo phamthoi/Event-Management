@@ -10,7 +10,6 @@ export class EventService {
     startAt,
     endAt,
   }) {
-    // Nếu status là CANCELLED, giữ nguyên không tính toán lại
     if (initialStatus === "CANCELLED") {
       return "CANCELLED";
     }
@@ -116,9 +115,6 @@ export class EventService {
   }
 
   static async getEventsList(filters) {
-
-  // throw new Error();
-    
     const {
       name,
       location,
@@ -127,18 +123,11 @@ export class EventService {
       endDate,
       page = 1,
       limit = 10,
-      // createdById,
       organizationId,
     } = filters;
-    // console.log('++Filters:', filters);
   
     const where = {};
-  
-    // if (createdById) {
-    //   where.createdById = createdById;
-    // }
     
-    // Thêm filter organizationId
     if (organizationId) {
       where.organizationId = organizationId;
     }
@@ -179,7 +168,6 @@ export class EventService {
   
     const total = await prisma.event.count({ where });
 
-    // Thêm registeredCount vào mỗi event
     const eventsWithCount = events.map(event => ({
       ...event,
       registeredCount: event._count.registrations
@@ -194,14 +182,11 @@ export class EventService {
   }
 
   static async getEventById(eventId) {
-    // Raw query để xem thời gian gốc từ database
     const rawEvent = await prisma.$queryRaw`
       SELECT id, "startAt", "endAt" 
       FROM "Event" 
       WHERE id = ${eventId}
     `;
-    
-    // console.log('🪣 [RAW DATABASE] Thời gian gốc từ DB:', rawEvent[0]);
     
     const event = await prisma.event.findUnique({
       where: { id: eventId },
@@ -244,9 +229,6 @@ export class EventService {
       deposit,
       status,
     } = updateData;
-
-    
-    //console.log(`🎉 [SERVICE → DATABASE(trước khi lưu xuống database)] updateEvent - Event ID: ${eventId} | startAt: ${startAt}  | endAt: ${endAt}  `);
 
     const correctStatus = this.calculateEventStatus({
       initialStatus: status,

@@ -4,7 +4,7 @@ export class EventController {
   static async createEvent(req, res) {
     try {
       if (req.user.role !== "ADMIN") {
-        return res.status(403).json({ message: "Chỉ admin mới tạo event" });
+        return res.status(403).json({ message: "Only admin can create events" });
       }
 
       if (!req.user || !req.user.id) {
@@ -29,19 +29,14 @@ export class EventController {
 
   static async getEventsList(req, res) {
     try {
-
-
       const { page, limit } = req.query;
 
-   
       if (req.user.role !== "ADMIN") {
         return res.status(403).json({});
       }
 
- 
       const filters = {
         ...req.query,
-
         organizationId: req.user.organizationId,
       };
 
@@ -54,29 +49,15 @@ export class EventController {
 
   static async getEventById(req, res) {
     try {
-     
-
       if (req.user.role !== "ADMIN") {
-        return res.status(403).json({ message: "Chỉ admin mới truy cập" });
+        return res.status(403).json({ message: "Only admin can access" });
       }
 
       const event = await EventService.getEventById(parseInt(req.params.id));
 
       if (!event) {
-        return res.status(404).json({ message: "Event không tồn tại" });
+        return res.status(404).json({ message: "Event not found" });
       }
-
-      // console.log(
-      //   `🪣 [DATABASE → SERVER(controller)] Event ID: ${req.params.id} | Thời gian từ database:`,
-      //   JSON.stringify(
-      //     {
-      //       startAt: event.startAt,
-      //       endAt: event.endAt,
-      //     },
-      //     null,
-      //     2
-      //   )
-      // );
 
       res.json({ success: true, event });
     } catch (error) {
@@ -86,15 +67,11 @@ export class EventController {
 
   static async updateEvent(req, res) {
     try {
-     
-
       if (req.user.role !== "ADMIN") {
-        return res.status(403).json({ message: "Chỉ admin mới update event" });
+        return res.status(403).json({ message: "Only admin can update events" });
       }
 
       const eventId = parseInt(req.params.id);
-
-
 
       const event = await EventService.updateEvent(eventId, req.body);
 
@@ -107,7 +84,7 @@ export class EventController {
   static async deleteEvent(req, res) {
     try {
       if (req.user.role !== "ADMIN") {
-        return res.status(403).json({ message: "Chỉ admin mới xóa event" });
+        return res.status(403).json({ message: "Only admin can delete events" });
       }
 
       const eventId = parseInt(req.params.id);
@@ -122,7 +99,7 @@ export class EventController {
   static async getEventRegistrations(req, res) {
     try {
       if (req.user.role !== "ADMIN") {
-        return res.status(403).json({ message: "Chỉ admin mới truy cập" });
+        return res.status(403).json({ message: "Only admin can access" });
       }
 
       const eventId = parseInt(req.params.id);
@@ -142,7 +119,7 @@ export class EventController {
       if (req.user.role !== "ADMIN") {
         return res
           .status(403)
-          .json({ message: "Chỉ admin mới cập nhật attendance" });
+          .json({ message: "Only admin can update attendance" });
       }
 
       const { updates } = req.body;
@@ -157,7 +134,7 @@ export class EventController {
   static async getOngoingEvents(req, res) {
     try {
       if (req.user.role !== "ADMIN") {
-        return res.status(403).json({ message: "Chỉ admin mới truy cập" });
+        return res.status(403).json({ message: "Only admin can access" });
       }
 
       const events = await EventService.getOngoingEventsByOrganization(

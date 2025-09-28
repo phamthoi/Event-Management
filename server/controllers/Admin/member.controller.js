@@ -1,7 +1,6 @@
 import { MemberService } from '../../services/Admin/member.service.js';
 
 export class MemberController {
-  // Member profile methods
   static async getProfileMember(req, res) {
     try {
       const user = await MemberService.getProfile(req.user.id);
@@ -60,27 +59,10 @@ export class MemberController {
     }
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-  // Admin methods
   static async getMembersList(req, res) {
     try {
       if (req.user.role !== "ADMIN") {
-        return res.status(403).json({ message: "Chỉ admin mới truy cập" });
+        return res.status(403).json({ message: "Only admin can access" });
       }
 
       const filters = {
@@ -98,14 +80,14 @@ export class MemberController {
   static async getMemberById(req, res) {
     try {
       if (req.user.role !== "ADMIN") {
-        return res.status(403).json({ message: "Chỉ admin mới truy cập" });
+        return res.status(403).json({ message: "Only admin can access" });
       }
 
       const memberId = parseInt(req.params.id);
       const member = await MemberService.getMemberById(memberId, req.user.organizationId);
       
       if (!member) {
-        return res.status(404).json({ message: "Không tìm thấy member" });
+        return res.status(404).json({ message: "Member not found" });
       }
 
       res.json({ success: true, member });
@@ -117,7 +99,7 @@ export class MemberController {
   static async createMember(req, res) {
     try {
       if (req.user.role !== "ADMIN") {
-        return res.status(403).json({ message: "Chỉ admin mới tạo member" });
+        return res.status(403).json({ message: "Only admin can create members" });
       }
 
       const { fullName, email, password } = req.body;
@@ -139,7 +121,7 @@ export class MemberController {
       const member = await MemberService.createMember(memberData);
       res.json({ success: true, member });
     } catch (error) {
-      if (error.message === "Email đã tồn tại") {
+      if (error.message === "Email already exists") {
         return res.status(400).json({ message: error.message });
       }
       res.status(500).json({ success: false, message: error.message });
@@ -149,13 +131,13 @@ export class MemberController {
   static async lockMember(req, res) {
     try {
       if (req.user.role !== "ADMIN") {
-        return res.status(403).json({ message: "Chỉ admin mới truy cập" });
+        return res.status(403).json({ message: "Only admin can access" });
       }
 
       const memberId = parseInt(req.params.id);
       const member = await MemberService.lockMember(memberId);
       
-      res.json({ message: "Member đã bị khóa", member });
+      res.json({ message: "Member has been locked", member });
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
@@ -164,13 +146,13 @@ export class MemberController {
   static async unlockMember(req, res) {
     try {
       if (req.user.role !== "ADMIN") {
-        return res.status(403).json({ message: "Chỉ admin mới truy cập" });
+        return res.status(403).json({ message: "Only admin can access" });
       }
 
       const memberId = parseInt(req.params.id);
       const member = await MemberService.unlockMember(memberId);
       
-      res.json({ message: "Member đã được mở khóa", member });
+      res.json({ message: "Member has been unlocked", member });
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
@@ -179,13 +161,13 @@ export class MemberController {
   static async resetPassword(req, res) {
     try {
       if (req.user.role !== "ADMIN") {
-        return res.status(403).json({ message: "Chỉ admin mới reset password" });
+        return res.status(403).json({ message: "Only admin can reset password" });
       }
 
       const memberId = parseInt(req.params.id);
       await MemberService.resetPassword(memberId);
       
-      res.json({ message: "Password đã reset về 'Member@123'" });
+      res.json({ message: "Password has been reset to 'Member@123'" });
     } catch (error) {
       res.status(500).json({ message: error.message });
     }

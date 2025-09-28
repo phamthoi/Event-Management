@@ -1,7 +1,5 @@
-// controllers/Admin/profile.controller.js
 import * as profileService from '../../services/Admin/profile.service.js';
 
-// GET /admin/profile - Lấy thông tin profile
 export const getProfile = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -13,7 +11,6 @@ export const getProfile = async (req, res) => {
   }
 };
 
-// PUT /admin/profile - Cập nhật profile
 export const updateProfile = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -35,7 +32,6 @@ export const updateProfile = async (req, res) => {
   }
 };
 
-// PUT /admin/profile/password - Đổi mật khẩu
 export const changePassword = async (req, res) => {
   try {
     const userId = req.user.id;

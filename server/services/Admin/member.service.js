@@ -4,7 +4,6 @@ import bcrypt from "bcryptjs";
 const prisma = new PrismaClient();
 
 export class MemberService {
-  // Member profile methods
   static async getProfileMember(userId) {
     const user = await prisma.user.findUnique({
       where: { id: userId },
@@ -31,23 +30,19 @@ export class MemberService {
   }
 
   static async changePasswordMember(userId, currentPassword, newPassword) {
-    // Get user from db
     const user = await prisma.user.findUnique({ where: { id: userId } });
     if (!user) {
       throw new Error("User not found");
     }
 
-    // Check current password
     const valid = await bcrypt.compare(currentPassword, user.passwordHash);
     if (!valid) {
       throw new Error("Current password is incorrect");
     }
 
-    // Hash new password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(newPassword, salt);
 
-    // Update password in db
     await prisma.user.update({
       where: { id: userId },
       data: { passwordHash: hashedPassword }
@@ -55,17 +50,9 @@ export class MemberService {
   }
 
   static async registerEventMember(userId, eventId) {
-    // TODO: Implement event registration logic
-    // This would typically create an EventRegistration record
     throw new Error("Event registration not implemented yet");
   }
 
-
-
-
-
-
-  // Admin methods
   static async getMembersList(filters) {
     const { email, fullName, isActive, page = 1, limit = 10, organizationId } = filters;
     const where = { organizationId};
@@ -131,10 +118,9 @@ export class MemberService {
   static async createMember(memberData) {
     const { fullName, email, password, organizationId } = memberData;
 
-    // Kiểm tra email trùng
     const exists = await prisma.user.findUnique({ where: { email } });
     if (exists) {
-      throw new Error("Email đã tồn tại");
+      throw new Error("Email already exists");
     }
 
     const passwordHash = await bcrypt.hash(password, 10);

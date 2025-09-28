@@ -5,10 +5,8 @@ import jwt from "jsonwebtoken";
 const prisma = new PrismaClient();
 
 export class AuthService {
-
   static async login(email, password) {
     try {
-     
       const user = await prisma.user.findUnique({
         where: { email },
         include: { organization: true }
@@ -17,28 +15,25 @@ export class AuthService {
       if (!user) {
         return {
           success: false,
-          message: "Email không tồn tại"
+          message: "Email does not exist"
         };
       }
 
-     
       if (!user.isActive) {
         return {
           success: false,
-          message: "Tài khoản đã bị khóa"
+          message: "Account has been locked"
         };
       }
 
-    
       const isValidPassword = await bcrypt.compare(password, user.passwordHash);
       if (!isValidPassword) {
         return {
           success: false,
-          message: "Mật khẩu không đúng"
+          message: "Incorrect password"
         };
       }
 
-    
       const token = jwt.sign(
         {
           id: user.id,
@@ -52,7 +47,7 @@ export class AuthService {
 
       return {
         success: true,
-        message: "Đăng nhập thành công",
+        message: "Login successful",
         token,
         user: {
           id: user.id,
