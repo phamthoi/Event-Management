@@ -100,13 +100,8 @@ const CreateEventForm = () => {
 
         registrationStartAt: form.registrationStartAt ? new Date(form.registrationStartAt).toISOString() : null,
         registrationEndAt: form.registrationEndAt ? new Date(form.registrationEndAt).toISOString() : null,
-<<<<<<< HEAD
-        startAt: form.startAt ? new Date(form.startAt).toISOString(): null,
-        endAt: form.eventAt ? new Date(form.endAt).toISOString() : null,
-=======
         startAt: form.startAt ? new Date(form.startAt).toISOString() : null,
         endAt: form.endAt ? new Date(form.endAt).toISOString() : null,
->>>>>>> cd7ddff6bd2241bf5677bd884cd7f24c07fba54a
       };
 
       // console.log("🤯 payload when create event: " + JSON.stringify(payload));

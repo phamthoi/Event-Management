@@ -37,7 +37,7 @@ function Sidebar() {
       </div>
 
       <div>
-        <p className="font-semibold">Event ▾</p>
+        <p className="font-semibold">event other ▾</p>
         <div className="ml-3 flex flex-col gap-1">
           <Link to="/admin/upcoming-event">Upcoming Event</Link>
           <Link to="/admin/my-event">My Event</Link>

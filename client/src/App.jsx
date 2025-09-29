@@ -23,6 +23,8 @@ import ChangePasswordPage from "./pages/member/profileMember/ChangePasswordPage.
 import ViewMemberListPage from "./pages/member/memberList/ViewMemberListPage.jsx";
 import UpcomingEventsPage from "./pages/member/event/UpcomingEventPage.jsx";
 import MyEventsPage from "./pages/member/event/MyEventsPage.jsx";
+//import UpcomingEventsPage from "./pages/common/UpcommingEventsPage.jsx";
+//import MyEventsPage from "./pages/common/MyEventsPage.jsx";
 
 function App() {
   // 🔹 Gộp ProtectedRoute ngay trong App
