@@ -26,10 +26,10 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        // Thêm hash để cache busting
-        entryFileNames: '[name].[hash].js',
-        chunkFileNames: '[name].[hash].js',
-        assetFileNames: '[name].[hash].[ext]'
+        // Bỏ hash để không có timestamp
+        entryFileNames: '[name].js',
+        chunkFileNames: '[name].js', 
+        assetFileNames: '[name].[ext]'
       }
     }
   }

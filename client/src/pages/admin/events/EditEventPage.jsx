@@ -91,12 +91,13 @@ const EditEventPage = () => {
         registrationEndAt: event.registrationEndAt ? new Date(event.registrationEndAt).toISOString() : null,
         startAt: event.startAt ? new Date(event.startAt).toISOString(): null,
         endAt: event.endAt ? new Date(event.endAt).toISOString() : null
-      };
 
+      };
+      
       const response = await updateEvent(id, payload);
       if (response.success) {
         setMsg('Event updated successfully!');
-        setTimeout(() => navigate('/admin/events/list'), 2000);
+        setTimeout(() => navigate('/admin/events/list'), 1000);
       } else {
         setMsg('Update failed: ' + (response.message || 'Unknown error'));
       }

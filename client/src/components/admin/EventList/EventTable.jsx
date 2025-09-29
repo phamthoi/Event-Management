@@ -26,6 +26,8 @@ const EventTable = ({ events, onDelete, page, limit }) => {
             const endStr = ev.endAt ? new Date(ev.endAt).toLocaleString() : "-";
             const depositStr = ev.deposit != null ? Number(ev.deposit).toLocaleString("vi-VN") : "0 VND";
             const registeredCount = ev.registeredCount || 0;
+          
+            
             return (
               <tr key={ev.id}>
                 <td className="border px-3 py-2">{(page - 1) * limit + idx + 1}</td>
@@ -36,9 +38,19 @@ const EventTable = ({ events, onDelete, page, limit }) => {
                 <td className="border px-3 py-2 text-right">{depositStr}</td>
                 <td className="border px-3 py-2">{ev.status}</td>
                 <td className="border px-3 py-2">
-
                   <Link to={`/admin/events/edit/${ev.id}`} className="text-blue-600 hover:underline mr-2">Update</Link>
-                  <button onClick={() => onDelete(ev.id)} className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 transition-colors">Delete</button>
+                  <button 
+                    onClick={() => onDelete(ev.id)} 
+                    disabled={registeredCount > 0}
+                    className={`px-3 py-1 rounded transition-colors ${
+                      registeredCount > 0 
+                        ? 'bg-gray-400 text-white cursor-not-allowed' 
+                        : 'bg-red-600 text-white hover:bg-red-700'
+                    }`}
+                    title={registeredCount > 0 ? `Cannot delete: ${registeredCount} members registered` : 'Delete event'}
+                  >
+                    Delete
+                  </button>
                 </td>
               </tr>
             )

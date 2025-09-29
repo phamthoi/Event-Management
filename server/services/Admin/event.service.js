@@ -9,46 +9,56 @@ export class EventService {
     registrationEndAt,
     startAt,
     endAt,
+    registeredCount = 0,
+    minAttendees = 0,
+    maxAttendees = 0,
   }) {
     if (initialStatus === "CANCELLED") {
       return "CANCELLED";
     }
 
     const now = new Date();
+    const registrationStart = registrationStartAt ? new Date(registrationStartAt) : null;
+    const registrationEnd = registrationEndAt ? new Date(registrationEndAt) : null;
+    const eventStart = startAt ? new Date(startAt) : null;
+    const eventEnd = endAt ? new Date(endAt) : null;
 
-    if (registrationStartAt && now < new Date(registrationStartAt)) {
+
+    let oneDayBeforeEvent = null;
+    if (eventStart) {
+      oneDayBeforeEvent = new Date(eventStart);
+      oneDayBeforeEvent.setDate(oneDayBeforeEvent.getDate() - 1);
+    }
+
+    
+    if (registrationStart && now < registrationStart) {
       return "DRAFT";
     }
 
-    if (
-      registrationStartAt &&
-      registrationEndAt &&
-      now >= new Date(registrationStartAt) &&
-      now <= new Date(registrationEndAt)
-    ) {
+    
+    if (registrationStart && registrationEnd && now >= registrationStart && now <= registrationEnd) {
       return "REGISTRATION";
-    }
-
-    if (
-      registrationEndAt &&
-      startAt &&
-      now > new Date(registrationEndAt) &&
-      now < new Date(startAt)
-    ) {
-      return "READY";
-    }
-
-    if (
-      startAt &&
-      endAt &&
-      now >= new Date(startAt) &&
-      now <= new Date(endAt)
-    ) {
+    } else if (eventStart && eventEnd && now >= eventStart && now <= eventEnd) {
       return "ONGOING";
-    }
-
-    if (endAt && now > new Date(endAt)) {
-      return "COMPLETED";
+    } else if (registrationEnd && now > registrationEnd) {
+      
+      if (minAttendees > 0 && registeredCount < minAttendees) {
+        return "CANCELLED";
+      }
+      
+      
+      let status = "COMPLETED";
+      
+      if (oneDayBeforeEvent && eventStart && now >= oneDayBeforeEvent && now < eventStart) {
+        status = "READY";
+      }
+      
+      
+      if (eventEnd && now > eventEnd) {
+        status = "COMPLETED";
+      }
+      
+      return status;
     }
 
     return initialStatus || "DRAFT";
@@ -139,6 +149,60 @@ export class EventService {
     if (startDate) where.startAt.gte = new Date(startDate);
     if (endDate) where.startAt.lte = new Date(endDate);
   
+    
+    
+    const allEvents = await prisma.event.findMany({
+      where,
+      select: {
+        id: true,
+        status: true,
+        registrationStartAt: true,
+        registrationEndAt: true,
+        startAt: true,
+        endAt: true,
+        minAttendees: true,
+        maxAttendees: true,
+        _count: {
+          select: {
+            registrations: {
+              where: {
+                status: {
+                  in: ['REGISTERED', 'ATTENDED']
+                }
+              }
+            }
+          }
+        }
+      },
+    });
+
+    const updatePromises = allEvents.map(async (event) => {
+      const registeredCount = event._count.registrations;
+      
+      const correctStatus = this.calculateEventStatus({
+        initialStatus: event.status,
+        registrationStartAt: event.registrationStartAt,
+        registrationEndAt: event.registrationEndAt,
+        startAt: event.startAt,
+        endAt: event.endAt,
+        registeredCount: registeredCount,
+        minAttendees: event.minAttendees || 0,
+        maxAttendees: event.maxAttendees || 0,
+      });
+
+      if (correctStatus !== event.status) {
+        return prisma.event.update({
+          where: { id: event.id },
+          data: { status: correctStatus },
+        });
+      }
+      return null;
+    });
+  
+    
+    await Promise.all(updatePromises);
+  
+
     const events = await prisma.event.findMany({
       where,
       orderBy: { createdAt: "desc" },
@@ -150,6 +214,8 @@ export class EventService {
         location: true,
         startAt: true,
         endAt: true,
+        registrationStartAt: true,
+        registrationEndAt: true,
         status: true,
         deposit: true,
         _count: {
