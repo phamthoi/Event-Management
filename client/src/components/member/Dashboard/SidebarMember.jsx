@@ -29,7 +29,7 @@ function Sidebar(){
         <p className="font-semibold">Event ▾</p>
         <div className="ml-3 flex flex-col gap-1">
           <Link to="/member/upcoming-event">Upcoming Event</Link>
-          <Link to="/member/my-event">My Event</Link>
+          <Link to="/member/my-event">My Event</Link> 
         </div>
       </div>
 

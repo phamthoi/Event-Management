@@ -26,11 +26,19 @@ export function authMiddleware(req, res, next) {
 
 
 // Midedleware check role
-export function requireRole(role) {
+export function requireRole(roles) {
+  // return (req, res, next) => {
+  //   if(!req.user) return res.status(401).json({ message: "Unauthorized" });
+  //   if (req.user.role !== role) {
+  //     return res.status(403).json({ message: `Access denied: ${role} only` });
+  //   }
+  //   next();
+  // };
   return (req, res, next) => {
-    if(!req.user) return res.status(401).json({ message: "Unauthorized" });
-    if (req.user.role !== role) {
-      return res.status(403).json({ message: `Access denied: ${role} only` });
+    if (!req.user) return res.status(401).json({ message: "Unauthorized" });
+    const allowedRoles = Array.isArray(roles) ? roles : [roles];
+    if (!allowedRoles.includes(req.user.role)) {
+      return res.status(403).json({ message: `Access denied: ${allowedRoles.join(', ')}` });
     }
     next();
   };

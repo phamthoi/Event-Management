@@ -1,5 +1,4 @@
 import { PrismaClient } from "@prisma/client";
-import { calculateEventStatus } from "../../utils/eventStatus";
 
 const prisma = new PrismaClient();
 

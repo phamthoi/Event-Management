@@ -1,3 +1,4 @@
+//client/src/dashboard/sidebar.jsx
 import { Link } from "react-router-dom";
 
 function Sidebar() {
@@ -32,6 +33,14 @@ function Sidebar() {
         <div className="ml-3 flex flex-col gap-1">
           <Link to="/admin/members/create">Create Member</Link>
           <Link to="/admin/members/list">Member List</Link>
+        </div>
+      </div>
+
+      <div>
+        <p className="font-semibold">Event ▾</p>
+        <div className="ml-3 flex flex-col gap-1">
+          <Link to="/admin/upcoming-event">Upcoming Event</Link>
+          <Link to="/admin/my-event">My Event</Link>
         </div>
       </div>
 
