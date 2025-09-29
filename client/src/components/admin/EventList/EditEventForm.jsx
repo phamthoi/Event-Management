@@ -2,6 +2,11 @@ import React, { useEffect } from "react";
 
 const EditEventForm = ({ event = {}, onChange, onSubmit, onCancel }) => {
   const updateEventStatus = () => {
+  
+    if (event.status === "CANCELLED") {
+      return;
+    }
+
     const now = new Date();
     const registrationStart = new Date(event.registrationStartAt);
     const registrationEnd = new Date(event.registrationEndAt);
@@ -17,11 +22,13 @@ const EditEventForm = ({ event = {}, onChange, onSubmit, onCancel }) => {
       newStatus = "REGISTRATION";
     } else if (now >= eventStart && now <= eventEnd) {
       newStatus = "ONGOING";
-    } else if (now >= oneDayBeforeEvent && now < eventStart) {
+    } else if (now > registrationEnd && now >= oneDayBeforeEvent && now < eventStart) {
       newStatus = "READY";
-    } else if (now > eventEnd) {
-      newStatus = "COMPLETED";
-    }
+    } else if (now > registrationEnd && now < oneDayBeforeEvent) {
+      newStatus = "DRAFT";
+    } else if (now < registrationStart) {
+      newStatus = "DRAFT";
+    } 
 
     if (newStatus !== event.status) {
       onChange({
@@ -35,6 +42,7 @@ const EditEventForm = ({ event = {}, onChange, onSubmit, onCancel }) => {
 
   useEffect(() => {
     if (
+      event.status !== "CANCELLED" &&
       event.registrationStartAt &&
       event.registrationEndAt &&
       event.startAt &&
@@ -47,6 +55,7 @@ const EditEventForm = ({ event = {}, onChange, onSubmit, onCancel }) => {
     event.registrationEndAt,
     event.startAt,
     event.endAt,
+    event.status 
   ]);
 
   return (
@@ -235,12 +244,19 @@ const EditEventForm = ({ event = {}, onChange, onSubmit, onCancel }) => {
       <div className="flex gap-4">
         <button
           type="submit"
-          className="flex-1 bg-blue-600 text-white py-2 rounded hover:bg-blue-700 font-semibold transition"
+          disabled={event.status === 'CANCELLED'}
+          className={`flex-1 py-2 rounded font-semibold transition ${
+            event.status === 'CANCELLED'
+              ? 'bg-gray-400 text-white cursor-not-allowed'
+              : 'bg-blue-600 text-white hover:bg-blue-700'
+          }`}
+          title={event.status === 'CANCELLED' ? 'Cannot update cancelled event' : ''}
         >
           Update Event
         </button>
         
-        {event.status !== 'CANCELLED' && (event.registeredCount || 0) === 0 && (
+        
+        {event.status !== 'CANCELLED' && event.status !== 'ONGOING' && (
           <button
             type="button"
             onClick={onCancel}
@@ -250,12 +266,13 @@ const EditEventForm = ({ event = {}, onChange, onSubmit, onCancel }) => {
           </button>
         )}
         
-        {event.status !== 'CANCELLED' && (event.registeredCount || 0) > 0 && (
+        
+        {event.status !== 'CANCELLED' && event.status === 'ONGOING' && (
           <button
             type="button"
             disabled
             className="flex-1 bg-gray-400 text-white py-2 rounded cursor-not-allowed font-semibold"
-            title={`Cannot cancel event with ${event.registeredCount} registered members`}
+            title="Cannot cancel ongoing event"
           >
             Cancel Event
           </button>

@@ -38,15 +38,19 @@ const CreateEventForm = () => {
     
     let newStatus = "DRAFT"; 
     
-    if (now > eventEnd) {
-      newStatus = "COMPLETED";
+ 
+     if (now >= registrationStart && now <= registrationEnd) {
+      newStatus = "REGISTRATION";
     } else if (now >= eventStart && now <= eventEnd) {
       newStatus = "ONGOING";
-    } else if (now >= oneDayBeforeEvent && now < eventStart) {
+    } else if (now > registrationEnd && now >= oneDayBeforeEvent && now < eventStart) {
       newStatus = "READY";
-    } else if (now >= registrationStart && now <= registrationEnd) {
-      newStatus = "REGISTRATION";
-    }
+    } else if (now > registrationEnd && now < oneDayBeforeEvent) {
+      newStatus = "DRAFT";
+    } else if (now < registrationStart) {
+      newStatus = "DRAFT";
+    } 
+
     
     if (newStatus !== currentForm.status) {
       setForm(prevForm => ({
@@ -93,7 +97,14 @@ const CreateEventForm = () => {
         minAttendees: form.minAttendees ? parseInt(form.minAttendees) : null,
         maxAttendees: form.maxAttendees ? parseInt(form.maxAttendees) : null,
         deposit: form.deposit ? parseFloat(form.deposit) : 0.0,
+
+        registrationStartAt: form.registrationStartAt ? new Date(form.registrationStartAt).toISOString() : null,
+        registrationEndAt: form.registrationEndAt ? new Date(form.registrationEndAt).toISOString() : null,
+        startAt: form.startAt ? new Date(form.startAt).toISOString() : null,
+        endAt: form.endAt ? new Date(form.endAt).toISOString() : null,
       };
+
+      // console.log("🤯 payload when create event: " + JSON.stringify(payload));
 
       const data = await createEvent(payload);
 

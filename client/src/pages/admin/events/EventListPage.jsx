@@ -45,7 +45,23 @@ const EventListPage = () => {
   }, [page, filters]);
 
   const handleDelete = async (id) => {
+    
+    const eventToDelete = events.find(event => event.id === id);
+    
+    if (!eventToDelete) {
+      alert("❌ Event not found!");
+      return;
+    }
+    
+    
+    const registeredCount = eventToDelete.registeredCount || 0;
+    if (registeredCount > 0) {
+      alert(`❌ Cannot delete this event! There are ${registeredCount} registered members. Please cancel all registrations first.`);
+      return;
+    }
+    
     if (!window.confirm("Are you sure you want to delete this event?")) return;
+    
     try {
       await deleteEvent(id);
       alert("✅ Event deleted successfully!");
