@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { calculateEventStatus } from "../../utils/eventStatus";
 
 const prisma = new PrismaClient();
 
@@ -273,7 +274,24 @@ export class EventService {
   }
 
   static async deleteEvent(eventId) {
+    //lấy event kèm số đăng ký
+    const event = await prisma.event.findUnique({
+      where: {id: eventId},
+      include: { registrtions: true},
+    });
+
+    if(!event){
+      throw new Error("Event not found");
+    }
+
+    if (event.registrations.length > 0){
+      throw new Error(
+        `Cannot delete event. ${event.registrations.length} member(s) already registered.`
+      );
+    }
     await prisma.event.delete({ where: { id: eventId } });
+
+    return { success: true, message: "Event deleted successfully"};
   }
 
   static async getEventRegistrations(eventId) {

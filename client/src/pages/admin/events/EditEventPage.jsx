@@ -4,7 +4,7 @@ import { getEventById, updateEvent } from '../../../services/admin/event/eventSe
 import EditEventForm from '../../../components/admin/EventList/EditEventForm';
 import { validateEventForm } from '../../../utils/validation';
 import { showErrorAlert } from '../../../utils/admin/errorHandler';
-  
+
 const EditEventPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -86,6 +86,11 @@ const EditEventPage = () => {
         minAttendees: event.minAttendees ? parseInt(event.minAttendees) : null,
         maxAttendees: event.maxAttendees ? parseInt(event.maxAttendees) : null,
         deposit: event.deposit ? parseFloat(event.deposit) : 0.0,
+
+        registrationStartAt: event.registrationStartAt ? new Date(event.registrationStartAt).toISOString() : null,
+        registrationEndAt: event.registrationEndAt ? new Date(event.registrationEndAt).toISOString() : null,
+        startAt: event.startAt ? new Date(event.startAt).toISOString(): null,
+        endAt: event.endAt ? new Date(event.endAt).toISOString() : null
       };
 
       const response = await updateEvent(id, payload);
@@ -102,12 +107,6 @@ const EditEventPage = () => {
   };
 
   const handleCancel = async () => {
-    // Kiểm tra số người đăng ký
-    if ((event.registeredCount || 0) > 0) {
-      setMsg(`Cannot cancel event with ${event.registeredCount} registered members. Please contact members to unregister first.`);
-      return;
-    }
-
     if (window.confirm('Are you sure you want to cancel this event? This action cannot be undone.')) {
       try {
         const payload = {

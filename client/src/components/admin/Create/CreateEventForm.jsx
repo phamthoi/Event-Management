@@ -93,6 +93,11 @@ const CreateEventForm = () => {
         minAttendees: form.minAttendees ? parseInt(form.minAttendees) : null,
         maxAttendees: form.maxAttendees ? parseInt(form.maxAttendees) : null,
         deposit: form.deposit ? parseFloat(form.deposit) : 0.0,
+
+        registrationStartAt: form.registrationStartAt ? new Date(form.registrationStartAt).toISOString() : null,
+        registrationEndAt: form.registrationEndAt ? new Date(form.registrationEndAt).toISOString() : null,
+        startAt: form.startAt ? new Date(form.startAt).toISOString(): null,
+        endAt: form.eventAt ? new Date(form.endAt).toISOString() : null,
       };
 
       const data = await createEvent(payload);

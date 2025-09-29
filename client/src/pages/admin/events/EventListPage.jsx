@@ -45,7 +45,16 @@ const EventListPage = () => {
   }, [page, filters]);
 
   const handleDelete = async (id) => {
+    const event = events.find((ev) => ev.id === id);
+
+    // Nếu có người đăng ký thì không cho xóa
+    if ((event?.registeredCount || 0) > 0) {
+      alert(`❌ Cannot delete event. ${event.registeredCount} members have already registered.`);
+      return;
+    }
+
     if (!window.confirm("Are you sure you want to delete this event?")) return;
+
     try {
       await deleteEvent(id);
       alert("✅ Event deleted successfully!");
