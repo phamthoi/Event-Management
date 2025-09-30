@@ -21,10 +21,10 @@ import MemberDashboardPage from "./pages/member/MemberDashBoardPage.jsx";
 import MemberProfilePage from "./pages/member/profileMember/MemberProfilePage.jsx";
 import ChangePasswordPage from "./pages/member/profileMember/ChangePasswordPage.jsx";
 import ViewMemberListPage from "./pages/member/memberList/ViewMemberListPage.jsx";
-import UpcomingEventsPage from "./pages/member/event/UpcomingEventPage.jsx";
-import MyEventsPage from "./pages/member/event/MyEventsPage.jsx";
-//import UpcomingEventsPage from "./pages/common/UpcommingEventsPage.jsx";
-//import MyEventsPage from "./pages/common/MyEventsPage.jsx";
+//import UpcomingEventsPage from "./pages/member/event/UpcomingEventPage.jsx";
+//import MyEventsPage from "./pages/member/event/MyEventsPage.jsx";
+import UpcomingEventsPage from "./pages/common/UpcommingEventsPage.jsx";
+import MyEventsPage from "./pages/common/MyEventsPage.jsx";
 
 function App() {
   // 🔹 Gộp ProtectedRoute ngay trong App

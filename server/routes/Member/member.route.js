@@ -7,7 +7,7 @@ const router = express.Router();
 
 
 router.use(authMiddleware);
-router.use(requireRole('MEMBER'));
+//router.use(requireRole('MEMBER'));
 
 
 router.get('/profile', memberController.getProfile);
@@ -22,9 +22,9 @@ router.get('/members', memberController.getMembers);
 // router.get('/events/upcoming', memberController.getUpcomingEvents);
 // router.post('/events/:eventId/register', memberController.registerEvent);
 // router.delete('/events/:eventId/register', memberController.cancelEventRegistration);
-router.get('/events', authMiddleware, requireRole(['ADMIN', 'MEMBER']), memberController.getMyEvents);
-router.get('/events/upcoming', authMiddleware, requireRole(['ADMIN', 'MEMBER']), memberController.getUpcomingEvents);
-router.post('/events/:eventId/register', authMiddleware, requireRole(['ADMIN', 'MEMBER']), memberController.registerEvent);
-router.delete('/events/:eventId/register', authMiddleware, requireRole(['ADMIN', 'MEMBER']), memberController.cancelEventRegistration);
+router.get('/events', requireRole(['ADMIN', 'MEMBER']), memberController.getMyEvents);
+router.get('/events/upcoming', requireRole(['ADMIN', 'MEMBER']), memberController.getUpcomingEvents);
+router.post('/events/:eventId/register', requireRole(['ADMIN', 'MEMBER']), memberController.registerEvent);
+router.delete('/events/:eventId/register', requireRole(['ADMIN', 'MEMBER']), memberController.cancelEventRegistration);
 
 export default router;
