@@ -83,6 +83,10 @@ function AttendancePage() {
     }
   };
 
+  // Lấy status của event hiện tại để quyết định checkbox
+  const currentEventStatus = events.find(ev => ev.id === selectedEvent)?.status || "";
+
+
   if (loading) {
     return (
       <div className="p-6 text-center text-gray-500">
@@ -114,7 +118,8 @@ function AttendancePage() {
           <div className="mt-4 overflow-x-auto bg-white shadow rounded-lg p-4">
             <MemberTable
               registrations={registrations}
-              isOngoing={true}
+              //isOngoing={true}
+              isOngoing={currentEventStatus === "ONGOING"} // only enable attended if ongoing
               onToggle={handleToggle}
             />
           </div>
