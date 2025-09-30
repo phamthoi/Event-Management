@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import EventSelect from "../../../components/admin/attendance/EventSelect";
 import MemberTable from "../../../components/admin/attendance/MemberTable";
-import { getOngoingEvents, getRegistrations, updateAttendance } from "../../../services/admin/event/attendanceService";
+import { getOngoingEvents, getRegistrations, updateRegistrationStatus } from "../../../services/admin/event/attendanceService";
 import { showErrorAlert } from "../../../utils/admin/errorHandler";
 
 function AttendancePage() {
@@ -41,6 +41,7 @@ function AttendancePage() {
           id: reg.id,
           user: reg.user,
           attended: reg.attendance || false,
+          depositPaid: reg.depositPaid || false,
         }));
         setRegistrations(formattedRegs);
       } catch (error) {
@@ -53,11 +54,14 @@ function AttendancePage() {
     fetchRegistrations();
   }, [selectedEvent]);
 
-  const handleToggle = (regId) => {
+  const handleToggle = (regId, type) => {
     setRegistrations((prev) =>
-      prev.map((reg) =>
-        reg.id === regId ? { ...reg, attended: !reg.attended } : reg
-      )
+      prev.map((reg) => {
+        if (reg.id !== regId) return reg;
+        if (type === "attended") return { ...reg, attended: !reg.attended };
+        if (type === "depositPaid") return { ...reg, depositPaid: !reg.depositPaid };
+        return reg;
+      })
     );
   };
 
@@ -67,11 +71,12 @@ function AttendancePage() {
       const updates = registrations.map((reg) => ({
         registrationId: reg.id,
         attended: reg.attended,
+        depositPaid: reg.depositPaid,
       }));
-      await updateAttendance(updates);
-      alert("Attendance saved successfully!");
+      await updateRegistrationStatus(updates);
+      alert("Updates saved successfully!");
     } catch (error) {
-      console.error("Error saving attendance:", error);
+      console.error("Error saving updates:", error);
       showErrorAlert(error);
     } finally {
       setSaving(false);
@@ -89,7 +94,7 @@ function AttendancePage() {
   return (
     <div className="p-6 max-w-5xl mx-auto">
       <h1 className="text-2xl md:text-3xl font-bold mb-6 text-gray-800">
-        Attendance
+        Attendance & Deposit
       </h1>
 
       {events.length === 0 ? (
@@ -148,7 +153,7 @@ function AttendancePage() {
                     ></path>
                   </svg>
                 )}
-                {saving ? "Saving..." : "Save Attendance"}
+                {saving ? "Saving..." : "Save Updates"}
               </button>
             </div>
           )}

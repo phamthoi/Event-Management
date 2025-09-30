@@ -381,16 +381,37 @@ export class EventService {
     }
   }
 
-  static async updateAttendance(updates) {
+
+  // static async updateAttendance(updates) {
+  //   await Promise.all(
+  //     updates.map((u) =>
+  //       prisma.registration.update({
+  //         where: { id: parseInt(u.registrationId) },
+  //         data: { 
+  //           attendance: u.attended
+  //         },
+  //       })
+
+  //     )
+  //   );
+  // }
+
+  static async updateRegistrationStatus(updates) {
     await Promise.all(
       updates.map((u) =>
         prisma.registration.update({
           where: { id: parseInt(u.registrationId) },
-          data: { attendance: u.attended },
+          data: { 
+            attendance: u.attended,
+            depositPaid: u.depositPaid
+          },
         })
+
       )
     );
   }
+
+
 
   static async getOngoingEventsByOrganization(organizationId) {
     const events = await prisma.event.findMany({

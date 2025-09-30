@@ -13,9 +13,15 @@ export const getRegistrations = async (eventId) => {
 };
 
 
-export const updateAttendance = async (updates) => {
-  const res = await api.put(`/admin/events/attendance`, { updates });
+// export const updateAttendance = async (updates) => {
+//   const res = await api.put(`/admin/events/attendance`, { updates });
   
+//   return res.data;
+// };
+
+export const updateRegistrationStatus = async (updates) => {
+  // updates là array: [{ registrationId, depositPaid, attended }]
+  const res = await api.put(`/admin/events/registrations/update-status`, { updates });
   return res.data;
 };
 

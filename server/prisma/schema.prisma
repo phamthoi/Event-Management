@@ -48,6 +48,7 @@ model User {
   passwordHash String
   role         Role     @default(MEMBER)
   isActive     Boolean  @default(true)
+  avatarUrl    String?   // thêm trường avatar cho user
   createdAt    DateTime @default(now()) @db.Timestamptz(6)
   updatedAt    DateTime @updatedAt @db.Timestamptz(6)
 
@@ -95,6 +96,7 @@ model Registration {
   id         Int      @id @default(autoincrement())
   status     String   @default("REGISTERED")
   attendance Boolean  @default(false)
+  depositPaid   Boolean  @default(false)   // cột mới để điểm danh member nộp tiền 
   createdAt  DateTime @default(now()) @db.Timestamptz(6)
   updatedAt  DateTime @updatedAt @db.Timestamptz(6)
 
