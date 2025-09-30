@@ -1,7 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { createEvent } from '../../../services/admin/event/eventService';
-import { validateEventForm } from '../../../utils/validation';
-import { showErrorAlert } from '../../../utils/admin/errorHandler';
+// src/components/admin/events/CreateEventForm.jsx
+import React, { useState } from "react";
+import * as Select from "@radix-ui/react-select";
+import * as Toast from "@radix-ui/react-toast";
+import { createEvent } from "../../../services/admin/event/eventService";
+import { validateEventForm } from "../../../utils/validation";
+import { showErrorAlert } from "../../../utils/admin/errorHandler";
+import { CheckIcon, ChevronDownIcon } from "@radix-ui/react-icons";
 
 const CreateEventForm = () => {
   const [form, setForm] = useState({
@@ -15,79 +19,36 @@ const CreateEventForm = () => {
     endAt: "",
     registrationStartAt: "",
     registrationEndAt: "",
-    status: "DRAFT", 
   });
+  const [loading, setLoading] = useState(false);
+  const [toastOpen, setToastOpen] = useState(false);
+  const [toastMsg, setToastMsg] = useState("");
+  const [toastSuccess, setToastSuccess] = useState(true);
 
-  const [msg, setMsg] = useState("");
-
-  const updateEventStatus = (formData = null) => {
-    const currentForm = formData || form;
-    const now = new Date();
-    const registrationStart = new Date(currentForm.registrationStartAt);
-    const registrationEnd = new Date(currentForm.registrationEndAt);
-    const eventStart = new Date(currentForm.startAt);
-    const eventEnd = new Date(currentForm.endAt);
-    
-    if (!currentForm.registrationStartAt || !currentForm.registrationEndAt || 
-        !currentForm.startAt || !currentForm.endAt) {
-      return;
-    }
-    
-    const oneDayBeforeEvent = new Date(eventStart);
-    oneDayBeforeEvent.setDate(oneDayBeforeEvent.getDate() - 1);
-    
-    let newStatus = "DRAFT"; 
-    
- 
-     if (now >= registrationStart && now <= registrationEnd) {
-      newStatus = "REGISTRATION";
-    } else if (now >= eventStart && now <= eventEnd) {
-      newStatus = "ONGOING";
-    } else if (now > registrationEnd && now >= oneDayBeforeEvent && now < eventStart) {
-      newStatus = "READY";
-    } else if (now > registrationEnd && now < oneDayBeforeEvent) {
-      newStatus = "DRAFT";
-    } else if (now < registrationStart) {
-      newStatus = "DRAFT";
-    } 
-
-    
-    if (newStatus !== currentForm.status) {
-      setForm(prevForm => ({
-        ...prevForm,
-        status: newStatus
-      }));
-    }
+  const formatCurrency = (value) => {
+    if (!value) return "";
+    return new Intl.NumberFormat("vi-VN").format(value);
   };
-  
-  useEffect(() => {
-    updateEventStatus();
-  }, []);
-  
-  useEffect(() => {
-    if (form.registrationStartAt && form.registrationEndAt && 
-        form.startAt && form.endAt) {
-      updateEventStatus();
-    }
-  }, [form.registrationStartAt, form.registrationEndAt, form.startAt, form.endAt]);
 
   const handleChange = (e) => {
-    const updatedForm = { ...form, [e.target.id]: e.target.value };
-    setForm(updatedForm);
-    
-    const timeFields = ['registrationStartAt', 'registrationEndAt', 'startAt', 'endAt'];
-    if (timeFields.includes(e.target.id)) {
-      updateEventStatus(updatedForm);
-    }
+    setForm({ ...form, [e.target.id]: e.target.value });
+  };
+
+  const handleDepositChange = (e) => {
+    const raw = e.target.value.replace(/\D/g, "");
+    setForm({ ...form, deposit: raw ? parseInt(raw) : "" });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMsg("");
+    setLoading(true);
 
     const validationError = validateEventForm(form);
     if (validationError) {
-      setMsg(validationError);
+      setToastSuccess(false);
+      setToastMsg(validationError);
+      setToastOpen(true);
+      setLoading(false);
       return;
     }
 
@@ -97,18 +58,21 @@ const CreateEventForm = () => {
         minAttendees: form.minAttendees ? parseInt(form.minAttendees) : null,
         maxAttendees: form.maxAttendees ? parseInt(form.maxAttendees) : null,
         deposit: form.deposit ? parseFloat(form.deposit) : 0.0,
-
-        registrationStartAt: form.registrationStartAt ? new Date(form.registrationStartAt).toISOString() : null,
-        registrationEndAt: form.registrationEndAt ? new Date(form.registrationEndAt).toISOString() : null,
+        registrationStartAt: form.registrationStartAt
+          ? new Date(form.registrationStartAt).toISOString()
+          : null,
+        registrationEndAt: form.registrationEndAt
+          ? new Date(form.registrationEndAt).toISOString()
+          : null,
         startAt: form.startAt ? new Date(form.startAt).toISOString() : null,
         endAt: form.endAt ? new Date(form.endAt).toISOString() : null,
       };
 
-      // console.log("🤯 payload when create event: " + JSON.stringify(payload));
-
       const data = await createEvent(payload);
+      setToastSuccess(true);
+      setToastMsg(`Create event successful: ${data.event.title}`);
+      setToastOpen(true);
 
-      setMsg(`Create event successful: ${data.event.title}`);
       setForm({
         title: "",
         description: "",
@@ -120,19 +84,25 @@ const CreateEventForm = () => {
         endAt: "",
         registrationStartAt: "",
         registrationEndAt: "",
-        status: "DRAFT",
       });
     } catch (err) {
       showErrorAlert(err);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-10 rounded-3xl shadow-2xl w-full max-w-lg">
-      <h2 className="text-3xl font-extrabold mb-8 text-center text-blue-900">Create Event</h2>
+    <div className="max-w-2xl mx-auto p-8 bg-gradient-to-r from-blue-50 to-blue-100 rounded-3xl shadow-2xl">
+      <h2 className="text-3xl font-extrabold text-center text-blue-900 mb-8">
+        Create Event
+      </h2>
+
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label className="block text-sm font-semibold mb-2 text-blue-800">Event name</label>
+          <label className="block text-sm font-semibold mb-2 text-blue-800">
+            Event Name
+          </label>
           <input
             type="text"
             id="title"
@@ -144,18 +114,9 @@ const CreateEventForm = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-semibold mb-2 text-blue-800">Description</label>
-          <textarea
-            id="description"
-            value={form.description}
-            onChange={handleChange}
-            rows="4"
-            className="w-full px-4 py-3 border border-blue-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-semibold mb-2 text-blue-800">Location</label>
+          <label className="block text-sm font-semibold mb-2 text-blue-800">
+            Location
+          </label>
           <input
             type="text"
             id="location"
@@ -165,68 +126,12 @@ const CreateEventForm = () => {
           />
         </div>
 
-        <div>
-          <label className="block text-sm font-semibold mb-2 text-blue-800">
-            Event Status
-            <span className="text-xs text-gray-500 ml-2">
-              (Auto-updated based on time)
-            </span>
-          </label>
-          <select
-            id="status"
-            value={form.status}
-            onChange={handleChange}
-            disabled={true}
-            className="w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm bg-gray-100 text-gray-600 cursor-not-allowed"
-          >
-            <option value="DRAFT">Draft</option>
-            <option value="REGISTRATION">Registration Open</option>
-            <option value="READY">Ready</option>
-            <option value="ONGOING">Ongoing</option>
-            <option value="COMPLETED">Completed</option>
-            <option value="CANCELLED">Cancelled</option>
-          </select>
-        </div>
-
+        {/* Date/Time */}
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-semibold mb-2 text-blue-800">Min attendees</label>
-            <input
-              type="number"
-              id="minAttendees"
-              value={form.minAttendees}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border border-blue-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-semibold mb-2 text-blue-800">Max attendees</label>
-            <input
-              type="number"
-              id="maxAttendees"
-              value={form.maxAttendees}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border border-blue-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
-            />
-          </div>
-        </div>
-
-        <div>
-          <label className="block text-sm font-semibold mb-2 text-blue-800">Deposit (VND)</label>
-          <input
-            type="number"
-            id="deposit"
-            value={form.deposit}
-            onChange={handleChange}
-            step="0.01"
-            min="0"
-            className="w-full px-4 py-3 border border-blue-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
-          />
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-semibold mb-2 text-blue-800">Event start</label>
+            <label className="block text-sm font-semibold mb-2 text-blue-800">
+              Event Start
+            </label>
             <input
               type="datetime-local"
               id="startAt"
@@ -236,7 +141,9 @@ const CreateEventForm = () => {
             />
           </div>
           <div>
-            <label className="block text-sm font-semibold mb-2 text-blue-800">Event end</label>
+            <label className="block text-sm font-semibold mb-2 text-blue-800">
+              Event End
+            </label>
             <input
               type="datetime-local"
               id="endAt"
@@ -249,7 +156,9 @@ const CreateEventForm = () => {
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-semibold mb-2 text-blue-800">Registration start</label>
+            <label className="block text-sm font-semibold mb-2 text-blue-800">
+              Registration Start
+            </label>
             <input
               type="datetime-local"
               id="registrationStartAt"
@@ -259,7 +168,9 @@ const CreateEventForm = () => {
             />
           </div>
           <div>
-            <label className="block text-sm font-semibold mb-2 text-blue-800">Registration end</label>
+            <label className="block text-sm font-semibold mb-2 text-blue-800">
+              Registration End
+            </label>
             <input
               type="datetime-local"
               id="registrationEndAt"
@@ -270,19 +181,85 @@ const CreateEventForm = () => {
           </div>
         </div>
 
+        {/* Attendees */}
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-semibold mb-2 text-blue-800">
+              Min Attendees
+            </label>
+            <input
+              type="number"
+              id="minAttendees"
+              value={form.minAttendees}
+              onChange={handleChange}
+              className="w-full px-4 py-3 border border-blue-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-semibold mb-2 text-blue-800">
+              Max Attendees
+            </label>
+            <input
+              type="number"
+              id="maxAttendees"
+              value={form.maxAttendees}
+              onChange={handleChange}
+              className="w-full px-4 py-3 border border-blue-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-semibold mb-2 text-blue-800">
+            Deposit (VND)
+          </label>
+          <input
+            type="text"
+            id="deposit"
+            value={formatCurrency(form.deposit)}
+            onChange={handleDepositChange}
+            className="w-full px-4 py-3 border border-blue-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-semibold mb-2 text-blue-800">
+            Description
+          </label>
+          <textarea
+            id="description"
+            value={form.description}
+            onChange={handleChange}
+            rows="3"
+            className="w-full px-4 py-3 border border-blue-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+          />
+        </div>
+
+        {/* Submit */}
         <button
           type="submit"
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-2xl font-bold shadow-lg transition transform hover:-translate-y-1"
+          disabled={loading}
+          className={`w-full py-3 rounded-2xl font-bold shadow-lg transition transform hover:-translate-y-1 flex justify-center items-center ${
+            loading ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700 text-white"
+          }`}
         >
-          Create Event
+          {loading ? "Creating..." : "Create Event"}
         </button>
       </form>
 
-      {msg && (
-        <div className={`mt-4 text-center font-semibold ${msg.includes('successful') ? 'text-green-700' : 'text-red-600'}`}>
-          {msg}
-        </div>
-      )}
+      {/* Toast */}
+      <Toast.Provider swipeDirection="right">
+        <Toast.Root
+          open={toastOpen}
+          onOpenChange={setToastOpen}
+          className={`bg-white rounded-xl shadow-lg p-4 border-l-4 ${
+            toastSuccess ? "border-green-500" : "border-red-500"
+          }`}
+        >
+          <Toast.Title className="font-semibold">{toastMsg}</Toast.Title>
+        </Toast.Root>
+        <Toast.Viewport className="fixed bottom-4 right-4 w-96" />
+      </Toast.Provider>
     </div>
   );
 };

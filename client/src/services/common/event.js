@@ -1,22 +1,22 @@
-import "../axios";
+import api from "../axios";
 
 export const getMemberRegistrations = async () => {
-  const res = await api.get('/events/registrations/me');
+  const res = await api.get('member/events');
   return res.data;
 };
 
 export const getUpcomingEvents = async (page = 1, limit = 10) => {
-  const res = await api.get(`/events/upcoming?page=${page}&limit=${limit}`);
+  const res = await api.get(`/member/events/upcoming?page=${page}&limit=${limit}`);
   return res.data;
 };
 
 export const registerEvent = async (eventId) => {
-  const res = await api.post(`/events/${eventId}/register`);
+  const res = await api.post(`/member/events/${eventId}/register`);
   return res.data;
 };
 
 export const cancelRegistration = async (eventId) => {
-  const res = await api.delete(`/events/${eventId}/register`);
+  const res = await api.delete(`/member/events/${eventId}/register`);
   return res.data;
 };
 

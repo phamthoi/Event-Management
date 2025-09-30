@@ -1,16 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { getEventById, updateEvent } from '../../../services/admin/event/eventService';
-import EditEventForm from '../../../components/admin/EventList/EditEventForm';
-import { validateEventForm } from '../../../utils/validation';
-import { showErrorAlert } from '../../../utils/admin/errorHandler';
+// src/pages/admin/events/EditEventPage.jsx
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { getEventById, updateEvent } from "../../../services/admin/event/eventService";
+import EditEventForm from "../../../components/admin/EventList/EditEventForm";
+import { showErrorAlert } from "../../../utils/admin/errorHandler";
+
+// Radix UI imports
+import * as Toast from "@radix-ui/react-toast";
+import * as Dialog from "@radix-ui/react-dialog";
 
 const EditEventPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+
   const [event, setEvent] = useState({});
   const [loading, setLoading] = useState(true);
-  const [msg, setMsg] = useState('');
+  const [toast, setToast] = useState({ open: false, message: "", type: "success" });
+  const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
 
   useEffect(() => {
     loadEvent();
@@ -19,64 +25,60 @@ const EditEventPage = () => {
   const loadEvent = async () => {
     try {
       const response = await getEventById(id);
-
       if (response.success) {
         const formatDateTime = (dateString) => {
-          if (!dateString) return '';
+          if (!dateString) return "";
           const date = new Date(dateString);
-          
-          const localISOTime = new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
+          return new Date(date.getTime() - date.getTimezoneOffset() * 60000)
             .toISOString()
             .slice(0, 19);
-          
-          return localISOTime;
         };
-        
-        const eventData = {
+
+        setEvent({
           ...response.event,
           startAt: formatDateTime(response.event.startAt),
           endAt: formatDateTime(response.event.endAt),
           registrationStartAt: formatDateTime(response.event.registrationStartAt),
           registrationEndAt: formatDateTime(response.event.registrationEndAt),
-        };
-        
-
-        setEvent(eventData);
+        });
       }
-      setLoading(false);
     } catch (err) {
       showErrorAlert(err);
+    } finally {
       setLoading(false);
     }
   };
 
   const handleChange = (e) => {
-    setEvent({ ...event, [e.target.name]: e.target.value });
+    let { name, value } = e.target;
+    if (name === "deposit") {
+      const raw = value.replace(/\D/g, "");
+      value = raw ? parseInt(raw) : "";
+    }
+    setEvent({ ...event, [name]: value });
+  };
+
+  const formatDeposit = (value) => {
+    if (!value) return "";
+    return new Intl.NumberFormat("vi-VN").format(value);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMsg('');
 
     if (!event.title?.trim()) {
-      setMsg('Event title is required');
+      setToast({ open: true, message: "Event title is required", type: "error" });
       return;
     }
 
     if (event.startAt && event.endAt && new Date(event.startAt) >= new Date(event.endAt)) {
-      setMsg('Start time must be before end time');
+      setToast({ open: true, message: "Start time must be before end time", type: "error" });
       return;
     }
 
-    if (event.registrationStartAt && event.registrationEndAt && 
+    if (event.registrationStartAt && event.registrationEndAt &&
         new Date(event.registrationStartAt) >= new Date(event.registrationEndAt)) {
-      setMsg('Registration start time must be before registration end time');
-      return;
-    }
-
-    if (event.minAttendees && event.maxAttendees && 
-        parseInt(event.minAttendees) > parseInt(event.maxAttendees)) {
-      setMsg('Minimum attendees cannot be greater than maximum attendees');
+      setToast({ open: true, message: "Registration start must be before registration end", type: "error" });
       return;
     }
 
@@ -86,76 +88,106 @@ const EditEventPage = () => {
         minAttendees: event.minAttendees ? parseInt(event.minAttendees) : null,
         maxAttendees: event.maxAttendees ? parseInt(event.maxAttendees) : null,
         deposit: event.deposit ? parseFloat(event.deposit) : 0.0,
-
+        startAt: event.startAt ? new Date(event.startAt).toISOString() : null,
+        endAt: event.endAt ? new Date(event.endAt).toISOString() : null,
         registrationStartAt: event.registrationStartAt ? new Date(event.registrationStartAt).toISOString() : null,
         registrationEndAt: event.registrationEndAt ? new Date(event.registrationEndAt).toISOString() : null,
-        startAt: event.startAt ? new Date(event.startAt).toISOString(): null,
-        endAt: event.endAt ? new Date(event.endAt).toISOString() : null
-
       };
-      
+
       const response = await updateEvent(id, payload);
       if (response.success) {
-        setMsg('Event updated successfully!');
-        setTimeout(() => navigate('/admin/events/list'), 1000);
+        setToast({ open: true, message: "Event updated successfully!", type: "success" });
+        setTimeout(() => navigate("/admin/events/list"), 1200);
       } else {
-        setMsg('Update failed: ' + (response.message || 'Unknown error'));
+        setToast({ open: true, message: `Update failed: ${response.message || "Unknown error"}`, type: "error" });
       }
     } catch (err) {
-      console.error('Error updating event:', err);
       showErrorAlert(err);
     }
   };
 
-  const handleCancel = async () => {
-    if (window.confirm('Are you sure you want to cancel this event? This action cannot be undone.')) {
-      try {
-        const payload = {
-          ...event,
-          status: 'CANCELLED'
-        };
-
-        const response = await updateEvent(id, payload);
-        if (response.success) {
-          setMsg('Event cancelled successfully!');
-          setEvent({ ...event, status: 'CANCELLED' });
-        } else {
-          setMsg('Cancel failed: ' + (response.message || 'Unknown error'));
-        }
-      } catch (err) {
-        console.error('Error cancelling event:', err);
-        showErrorAlert(err);
+  const handleCancelEvent = async () => {
+    try {
+      const payload = { ...event, status: "CANCELLED" };
+      const response = await updateEvent(id, payload);
+      if (response.success) {
+        setEvent({ ...event, status: "CANCELLED" });
+        setToast({ open: true, message: "Event cancelled successfully!", type: "success" });
+      } else {
+        setToast({ open: true, message: `Cancel failed: ${response.message || "Unknown error"}`, type: "error" });
       }
+    } catch (err) {
+      showErrorAlert(err);
+    } finally {
+      setCancelDialogOpen(false);
     }
   };
 
+  if (loading) return <div className="text-center p-8 text-gray-500">Loading...</div>;
+
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
-      <div className="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow">
-        <h1 className="text-2xl font-bold mb-6">Edit Event</h1>
-        
-        <EditEventForm 
-          event={event}
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 flex flex-col items-center pt-12 px-4">
+      <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl p-8">
+        <h1 className="text-3xl font-extrabold text-blue-900 mb-6 text-center">
+          Edit Event
+        </h1>
+
+        <EditEventForm
+          event={{ ...event, deposit: formatDeposit(event.deposit) }}
           onChange={handleChange}
           onSubmit={handleSubmit}
-          onCancel={handleCancel}
+          onCancel={() => setCancelDialogOpen(true)}
         />
-        
-        {msg && (
-          <div className={`mt-4 text-center font-semibold ${
-            msg.includes('successfully') ? 'text-green-700' : 'text-red-600'
-          }`}>
-            {msg}
-          </div>
-        )}
-        
-        <button
-          onClick={() => navigate('/admin/events/list')}
-          className="mt-4 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
-        >
-          Back to Event List
-        </button>
+
+        <div className="mt-6 flex gap-4">
+          <button
+            onClick={() => navigate("/admin/events/list")}
+            className="flex-1 py-2 bg-gray-500 text-white rounded-xl hover:bg-gray-600 transition"
+          >
+            Back to Event List
+          </button>
+        </div>
       </div>
+
+      {/* Radix Toast */}
+      <Toast.Provider swipeDirection="right">
+        <Toast.Root
+          open={toast.open}
+          onOpenChange={(open) => setToast({ ...toast, open })}
+          className={`fixed bottom-6 right-6 p-4 rounded-lg shadow-md border ${
+            toast.type === "success"
+              ? "bg-green-50 text-green-700 border-green-200"
+              : "bg-red-50 text-red-700 border-red-200"
+          }`}
+        >
+          <Toast.Title className="font-bold">{toast.message}</Toast.Title>
+          <Toast.Close className="absolute top-2 right-2 text-gray-500 cursor-pointer">✕</Toast.Close>
+        </Toast.Root>
+        <Toast.Viewport />
+      </Toast.Provider>
+
+      {/* Radix Dialog for cancel */}
+      <Dialog.Root open={cancelDialogOpen} onOpenChange={setCancelDialogOpen}>
+        <Dialog.Overlay className="fixed inset-0 bg-black/30" />
+        <Dialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white p-6 rounded-xl shadow-lg w-96">
+          <Dialog.Title className="text-xl font-bold mb-4">Cancel Event?</Dialog.Title>
+          <Dialog.Description className="mb-6">This action cannot be undone. Are you sure?</Dialog.Description>
+          <div className="flex justify-end gap-4">
+            <button
+              onClick={() => setCancelDialogOpen(false)}
+              className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400"
+            >
+              No
+            </button>
+            <button
+              onClick={handleCancelEvent}
+              className="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700"
+            >
+              Yes, Cancel
+            </button>
+          </div>
+        </Dialog.Content>
+      </Dialog.Root>
     </div>
   );
 };

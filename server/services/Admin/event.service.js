@@ -218,6 +218,7 @@ export class EventService {
         registrationEndAt: true,
         status: true,
         deposit: true,
+        maxAttendees: true, 
         _count: {
           select: {
             registrations: {
