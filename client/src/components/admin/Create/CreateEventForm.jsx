@@ -1,11 +1,9 @@
 // src/components/admin/events/CreateEventForm.jsx
 import React, { useState } from "react";
-import * as Select from "@radix-ui/react-select";
 import * as Toast from "@radix-ui/react-toast";
 import { createEvent } from "../../../services/admin/event/eventService";
 import { validateEventForm } from "../../../utils/validation";
 import { showErrorAlert } from "../../../utils/admin/errorHandler";
-import { CheckIcon, ChevronDownIcon } from "@radix-ui/react-icons";
 
 const CreateEventForm = () => {
   const [form, setForm] = useState({

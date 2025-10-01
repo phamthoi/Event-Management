@@ -38,7 +38,7 @@ function Sidebar() {
       <div className="p-6 border-b border-gray-800 flex items-center justify-between">
         <div className="flex items-center gap-2">
           🌟
-          {!collapsed && <span className="text-2xl font-bold">MEMBER PANEL</span>}
+          {!collapsed && <span className="text-2xl font-bold">NEXPANDO</span>}
         </div>
         <button
           className="text-gray-400 hover:text-white transition"

@@ -12,6 +12,7 @@ export const getAdminProfile = async (userId) => {
         email: true,
         fullName: true,
         phoneNumber: true,
+        avatarUrl: true,
         role: true,
         organizationId: true,
         isActive: true,
@@ -35,19 +36,21 @@ export const getAdminProfile = async (userId) => {
 
 export const updateAdminProfile = async (userId, updateData) => {
   try {
-    const { fullName, phoneNumber } = updateData;
+    const { fullName, phoneNumber, avatarUrl } = updateData;
     
     const updatedUser = await prisma.user.update({
       where: { id: userId },
       data: {
         fullName,
-        phoneNumber
+        phoneNumber,
+        ...(avatarUrl && { avatarUrl }), // chỉ update nếu có
       },
       select: {
         id: true,
         email: true,
         fullName: true,
         phoneNumber: true,
+        avatarUrl,
         role: true,
         organizationId: true,
         isActive: true,

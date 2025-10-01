@@ -61,9 +61,6 @@ function App() {
             />
           }
         >
-          {/* Nested routes */}
-          <Route index element={<p>Welcome to Admin Dashboard</p>} />
-
           {/*profile*/}
           <Route path="profile" element={<AdminProfilePage/>}/>
           <Route path="profile/changepass" element={<AdminChangePasswordPage/>}/>
@@ -103,8 +100,6 @@ function App() {
             />
           }  
         >
-          {/* Nested routes */}
-          <Route index element={<p>Welcome to member Dashboard</p>} />
 
           {/**member profile */}
           <Route path="profile/update" element={<MemberProfilePage />} />
