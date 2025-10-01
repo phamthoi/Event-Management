@@ -84,8 +84,7 @@ function AttendancePage() {
   };
 
   // Lấy status của event hiện tại để quyết định checkbox
-  const currentEventStatus = events.find(ev => ev.id === selectedEvent)?.status || "";
-
+  const currentEventStatus = events.find(ev => ev.id === Number(selectedEvent))?.status || "";
 
   if (loading) {
     return (

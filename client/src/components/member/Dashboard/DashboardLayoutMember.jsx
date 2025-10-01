@@ -32,18 +32,17 @@ const DashboardLayoutMember = ({ children }) => {
     }
 
     // Optional: lấy stats từ API (bỏ comment và chỉnh endpoint nếu bạn có)
-    /*
+    
     fetch("/api/member/stats")
       .then(res => res.json())
       .then(data => {
         setStats({
-          events: data.totalEvents || 0,
           registrations: data.myRegistrations || 0,
           upcoming: data.upcoming || 0,
         });
       })
       .catch(err => console.log(err));
-    */
+    
   }, []);
 
   const handleLogout = () => {
@@ -128,12 +127,9 @@ const DashboardLayoutMember = ({ children }) => {
 
             {/* Stats cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-white shadow rounded-lg p-4">
-                <h3 className="text-gray-500 text-sm">Total Events</h3>
-                <p className="text-2xl font-bold">{stats.events}</p>
-              </div>
 
-              <div className="bg-white shadow rounded-lg p-4">
+
+              {/* <div className="bg-white shadow rounded-lg p-4">
                 <h3 className="text-gray-500 text-sm">My Registrations</h3>
                 <p className="text-2xl font-bold">{stats.registrations}</p>
               </div>
@@ -141,7 +137,7 @@ const DashboardLayoutMember = ({ children }) => {
               <div className="bg-white shadow rounded-lg p-4">
                 <h3 className="text-gray-500 text-sm">Upcoming</h3>
                 <p className="text-2xl font-bold">{stats.upcoming}</p>
-              </div>
+              </div> */}
             </div>
           </section>
         )}

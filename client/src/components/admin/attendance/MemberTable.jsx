@@ -2,6 +2,7 @@
 import React from "react";
 
 function MemberTable({ registrations, isOngoing, onToggle }) {
+   console.log("MemberTable render:", { isOngoing, registrations });
   return (
     <div className="overflow-x-auto border rounded-lg shadow-sm">
       <table className="w-full border-collapse text-sm">

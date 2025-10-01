@@ -19,7 +19,7 @@ function Sidebar() {
       { name: "Update Information", path: "/member/profile/update" },
       { name: "Change Password", path: "/member/profile/change-password" }
     ]},
-    { name: "Members Management", icon: "👥", links: [
+    { name: "Members List", icon: "👥", links: [
       { name: "View Member", path: "/member/list-member" }
     ]},
     { name: "Events Registration", icon: "📝", links: [
