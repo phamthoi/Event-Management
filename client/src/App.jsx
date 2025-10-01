@@ -21,12 +21,27 @@ import MemberDashboardPage from "./pages/member/MemberDashBoardPage.jsx";
 import MemberProfilePage from "./pages/member/profileMember/MemberProfilePage.jsx";
 import ChangePasswordPage from "./pages/member/profileMember/ChangePasswordPage.jsx";
 import ViewMemberListPage from "./pages/member/memberList/ViewMemberListPage.jsx";
-import UpcomingEventsPage from "./pages/member/event/UpcomingEventPage.jsx";
-import MyEventsPage from "./pages/member/event/MyEventsPage.jsx";
+//import UpcomingEventsPage from "./pages/member/event/UpcomingEventPage.jsx";
+//import MyEventsPage from "./pages/member/event/MyEventsPage.jsx";
+import UpcomingEventsPage from "./pages/common/UpcommingEventsPage.jsx";
+import MyEventsPage from "./pages/common/MyEventsPage.jsx";
 
 function App() {
-  const token = localStorage.getItem("token");
-  const role = localStorage.getItem("role");
+  // 🔹 Gộp ProtectedRoute ngay trong App
+  const ProtectedRoute = ({ element, allowedRoles }) => {
+    const token = localStorage.getItem("token");
+    const role = localStorage.getItem("role");
+
+    if (!token) {
+      return <Navigate to="/login" />;
+    }
+
+    if (!allowedRoles.includes(role)) {
+      return <Navigate to="/login" />;
+    }
+
+    return element;
+  };
 
   return (
     <BrowserRouter>
@@ -40,10 +55,10 @@ function App() {
           element={
             // ===== TẮT REDIRECT ĐỂ TEST LỖI 401 =====
             // token && role === "admin" ? (
-              <AdminDashboardPage />
-            // ) : (
-            //   <Navigate to="/login" />
-            // )
+             <ProtectedRoute
+              element={<AdminDashboardPage />}
+              allowedRoles={["admin"]}
+            />
           }
         >
           {/* Nested routes */}
@@ -65,6 +80,10 @@ function App() {
           <Route path="members/list" element={<MemberListPage />} />
           <Route path="members/:id" element={<MemberDetailPage />} />
           <Route path="members/:id/reset-password" element={<ResetPasswordPage />} />
+          
+           {/* 🔹 Admin cũng dùng được UpcomingEvents & MyEvents */}
+          <Route path="upcoming-event" element={<UpcomingEventsPage />} />
+          <Route path="my-event" element={<MyEventsPage />} />
 
           {/* Notification */}
           <Route
@@ -78,11 +97,10 @@ function App() {
           path="/member/*"
           element={
             // ===== TẮT REDIRECT ĐỂ TEST LỖI 401 =====
-            // token && role === "member" ? (
-              <MemberDashboardPage />
-            // ) : (
-            //   <Navigate to="/login" />
-            // )
+            <ProtectedRoute
+              element={<MemberDashboardPage />}
+              allowedRoles={["member"]}
+            />
           }  
         >
           {/* Nested routes */}

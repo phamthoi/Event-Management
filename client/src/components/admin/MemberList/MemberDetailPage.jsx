@@ -54,7 +54,7 @@ const MemberDetailPage = () => {
     };
     
     return (
-      <span className={`px-3 py-1 rounded-full text-sm font-medium ${roleColors[role] || 'bg-gray-100 text-gray-800'}`}>
+      <span className={`px-2 py-1 rounded-full text-sm font-medium ${roleColors[role] || 'bg-gray-100 text-gray-800'}`}>
         {role}
       </span>
     );

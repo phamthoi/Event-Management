@@ -26,9 +26,9 @@ router.get("/ongoing", authMiddleware, EventController.getOngoingEvents);
 router.get("/registrations/:id", authMiddleware, EventController.getEventRegistrations);
 
 
-router.put("/attendance", authMiddleware, EventController.updateAttendance);
+//router.put("/attendance", authMiddleware, EventController.updateAttendance);
 
 
-
+router.put("/registrations/update-status", authMiddleware, EventController.updateRegistrationStatus);
 
 export default router;

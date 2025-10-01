@@ -3,6 +3,68 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export class EventService {
+  // static calculateEventStatus({
+  //   initialStatus,
+  //   registrationStartAt,
+  //   registrationEndAt,
+  //   startAt,
+  //   endAt,
+  //   registeredCount = 0,
+  //   minAttendees = 0,
+  //   maxAttendees = 0,
+  // }) {
+  //   if (initialStatus === "CANCELLED") {
+  //     return "CANCELLED";
+  //   }
+
+  //   const now = new Date();
+  //   const registrationStart = registrationStartAt ? new Date(registrationStartAt) : null;
+  //   const registrationEnd = registrationEndAt ? new Date(registrationEndAt) : null;
+  //   const eventStart = startAt ? new Date(startAt) : null;
+  //   const eventEnd = endAt ? new Date(endAt) : null;
+
+
+  //   let oneDayBeforeEvent = null;
+  //   if (eventStart) {
+  //     oneDayBeforeEvent = new Date(eventStart);
+  //     oneDayBeforeEvent.setDate(oneDayBeforeEvent.getDate() - 1);
+  //   }
+
+    
+  //   if (registrationStart && now < registrationStart) {
+  //     return "DRAFT";
+  //   }
+
+    
+  //   if (registrationStart && registrationEnd && now >= registrationStart && now <= registrationEnd) {
+  //     return "REGISTRATION";
+  //   } else if (eventStart && eventEnd && now >= eventStart && now <= eventEnd) {
+  //     return "ONGOING";
+  //   } else if (registrationEnd && now > registrationEnd) {
+      
+  //     if (minAttendees > 0 && registeredCount < minAttendees) {
+  //       return "CANCELLED";
+  //     }
+      
+      
+  //     let status = "COMPLETED";
+      
+  //     if (oneDayBeforeEvent && eventStart && now >= oneDayBeforeEvent && now < eventStart) {
+  //       status = "READY";
+  //     }
+      
+      
+  //     if (eventEnd && now > eventEnd) {
+  //       status = "COMPLETED";
+  //     }
+      
+  //     return status;
+  //   }
+
+  //   return initialStatus || "DRAFT";
+  // }
+
+
   static calculateEventStatus({
     initialStatus,
     registrationStartAt,
@@ -23,44 +85,35 @@ export class EventService {
     const eventStart = startAt ? new Date(startAt) : null;
     const eventEnd = endAt ? new Date(endAt) : null;
 
-
-    let oneDayBeforeEvent = null;
-    if (eventStart) {
-      oneDayBeforeEvent = new Date(eventStart);
-      oneDayBeforeEvent.setDate(oneDayBeforeEvent.getDate() - 1);
-    }
-
-    
+    // Trạng thái trước khi bắt đầu đăng ký
     if (registrationStart && now < registrationStart) {
       return "DRAFT";
     }
 
-    
+    // Trạng thái đang trong thời gian đăng ký
     if (registrationStart && registrationEnd && now >= registrationStart && now <= registrationEnd) {
       return "REGISTRATION";
-    } else if (eventStart && eventEnd && now >= eventStart && now <= eventEnd) {
-      return "ONGOING";
-    } else if (registrationEnd && now > registrationEnd) {
-      
+    }
+
+    // Trạng thái sau khi kết thúc đăng ký nhưng chưa diễn ra sự kiện
+    if (registrationEnd && now > registrationEnd && eventStart && now < eventStart) {
       if (minAttendees > 0 && registeredCount < minAttendees) {
         return "CANCELLED";
       }
-      
-      
-      let status = "COMPLETED";
-      
-      if (oneDayBeforeEvent && eventStart && now >= oneDayBeforeEvent && now < eventStart) {
-        status = "READY";
-      }
-      
-      
-      if (eventEnd && now > eventEnd) {
-        status = "COMPLETED";
-      }
-      
-      return status;
+      return "READY";
     }
 
+    // Trạng thái sự kiện đang diễn ra
+    if (eventStart && eventEnd && now >= eventStart && now <= eventEnd) {
+      return "ONGOING";
+    }
+
+    // Trạng thái sau khi sự kiện kết thúc
+    if (eventEnd && now > eventEnd) {
+      return "COMPLETED";
+    }
+
+    // Trả về trạng thái mặc định
     return initialStatus || "DRAFT";
   }
 
@@ -218,6 +271,7 @@ export class EventService {
         registrationEndAt: true,
         status: true,
         deposit: true,
+        maxAttendees: true, 
         _count: {
           select: {
             registrations: {
@@ -339,7 +393,24 @@ export class EventService {
   }
 
   static async deleteEvent(eventId) {
+    //lấy event kèm số đăng ký
+    const event = await prisma.event.findUnique({
+      where: {id: eventId},
+      include: { registrtions: true},
+    });
+
+    if(!event){
+      throw new Error("Event not found");
+    }
+
+    if (event.registrations.length > 0){
+      throw new Error(
+        `Cannot delete event. ${event.registrations.length} member(s) already registered.`
+      );
+    }
     await prisma.event.delete({ where: { id: eventId } });
+
+    return { success: true, message: "Event deleted successfully"};
   }
 
   static async getEventRegistrations(eventId) {
@@ -363,22 +434,43 @@ export class EventService {
     }
   }
 
-  static async updateAttendance(updates) {
+
+  // static async updateAttendance(updates) {
+  //   await Promise.all(
+  //     updates.map((u) =>
+  //       prisma.registration.update({
+  //         where: { id: parseInt(u.registrationId) },
+  //         data: { 
+  //           attendance: u.attended
+  //         },
+  //       })
+
+  //     )
+  //   );
+  // }
+
+  static async updateRegistrationStatus(updates) {
     await Promise.all(
       updates.map((u) =>
         prisma.registration.update({
           where: { id: parseInt(u.registrationId) },
-          data: { attendance: u.attended },
+          data: { 
+            attendance: u.attended,
+            depositPaid: u.depositPaid
+          },
         })
+
       )
     );
   }
+
+
 
   static async getOngoingEventsByOrganization(organizationId) {
     const events = await prisma.event.findMany({
       where: {
         organizationId: organizationId,
-        status: 'ONGOING'
+        status: { in: ['ONGOING', 'READY'] } // thêm ready để điểm danh ai đã nộp tiền. 
       },
       orderBy: { createdAt: "desc" },
       select: {

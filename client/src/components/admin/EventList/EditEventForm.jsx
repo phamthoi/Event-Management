@@ -1,65 +1,9 @@
-import React, { useEffect } from "react";
+import React from "react";
 
 const EditEventForm = ({ event = {}, onChange, onSubmit, onCancel }) => {
-  const updateEventStatus = () => {
-  
-    if (event.status === "CANCELLED") {
-      return;
-    }
-
-    const now = new Date();
-    const registrationStart = new Date(event.registrationStartAt);
-    const registrationEnd = new Date(event.registrationEndAt);
-    const eventStart = new Date(event.startAt);
-    const eventEnd = new Date(event.endAt);
-
-    const oneDayBeforeEvent = new Date(eventStart);
-    oneDayBeforeEvent.setDate(oneDayBeforeEvent.getDate() - 1);
-
-    let newStatus = event.status;
-
-    if (now >= registrationStart && now <= registrationEnd) {
-      newStatus = "REGISTRATION";
-    } else if (now >= eventStart && now <= eventEnd) {
-      newStatus = "ONGOING";
-    } else if (now > registrationEnd && now >= oneDayBeforeEvent && now < eventStart) {
-      newStatus = "READY";
-    } else if (now > registrationEnd && now < oneDayBeforeEvent) {
-      newStatus = "DRAFT";
-    } else if (now < registrationStart) {
-      newStatus = "DRAFT";
-    } 
-
-    if (newStatus !== event.status) {
-      onChange({
-        target: {
-          name: "status",
-          value: newStatus,
-        },
-      });
-    }
-  };
-
-  useEffect(() => {
-    if (
-      event.status !== "CANCELLED" &&
-      event.registrationStartAt &&
-      event.registrationEndAt &&
-      event.startAt &&
-      event.endAt
-    ) {
-      updateEventStatus();
-    }
-  }, [
-    event.registrationStartAt,
-    event.registrationEndAt,
-    event.startAt,
-    event.endAt,
-    event.status 
-  ]);
-
   return (
     <form onSubmit={onSubmit} className="space-y-6">
+      {/* Event name */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Event name
@@ -75,20 +19,7 @@ const EditEventForm = ({ event = {}, onChange, onSubmit, onCancel }) => {
         />
       </div>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Description
-        </label>
-        <textarea
-          name="description"
-          value={event.description || ""}
-          onChange={onChange}
-          rows="3"
-          placeholder="Enter event description"
-          className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-      </div>
-
+      {/* Location */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Location
@@ -103,70 +34,8 @@ const EditEventForm = ({ event = {}, onChange, onSubmit, onCancel }) => {
         />
       </div>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Event Status
-          <span className="text-xs text-gray-500 ml-2">
-            (Auto-updated based on time)
-          </span>
-        </label>
-        <select
-          name="status"
-          value={event.status || "DRAFT"}
-          onChange={onChange}
-          disabled
-          className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-100 text-gray-600 cursor-not-allowed"
-        >
-          <option value="DRAFT">Draft</option>
-          <option value="REGISTRATION">Registration Open</option>
-          <option value="READY">Ready</option>
-          <option value="ONGOING">Ongoing</option>
-          <option value="COMPLETED">Completed</option>
-          <option value="CANCELLED">Cancelled</option>
-        </select>
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Min attendees
-          </label>
-          <input
-            type="number"
-            name="minAttendees"
-            value={event.minAttendees || ""}
-            onChange={onChange}
-            placeholder="0"
-            className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Max attendees
-          </label>
-          <input
-            type="number"
-            name="maxAttendees"
-            value={event.maxAttendees || ""}
-            onChange={onChange}
-            placeholder="100"
-            className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Number of registered users
-        </label>
-        <input
-          type="number"
-          value={event.registeredCount || 0}
-          readOnly
-          className="w-full px-3 py-2 border rounded bg-gray-100 text-gray-600 cursor-not-allowed"
-        />
-      </div>
-
+      
+      {/* Event times */}
       <div className="grid grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -196,6 +65,7 @@ const EditEventForm = ({ event = {}, onChange, onSubmit, onCancel }) => {
         </div>
       </div>
 
+      {/* Registration times */}
       <div className="grid grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -225,6 +95,50 @@ const EditEventForm = ({ event = {}, onChange, onSubmit, onCancel }) => {
         </div>
       </div>
 
+      {/* Min & Max attendees */}
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Min attendees
+          </label>
+          <input
+            type="number"
+            name="minAttendees"
+            value={event.minAttendees || ""}
+            onChange={onChange}
+            placeholder="0"
+            className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Max attendees
+          </label>
+          <input
+            type="number"
+            name="maxAttendees"
+            value={event.maxAttendees || ""}
+            onChange={onChange}
+            placeholder="100"
+            className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+      </div>
+
+      {/* Registered users */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Number of registered users
+        </label>
+        <input
+          type="number"
+          value={event.registeredCount || 0}
+          readOnly
+          className="w-full px-3 py-2 border rounded bg-gray-100 text-gray-600 cursor-not-allowed"
+        />
+      </div>
+
+      {/* Deposit */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Deposit (VND)
@@ -241,42 +155,39 @@ const EditEventForm = ({ event = {}, onChange, onSubmit, onCancel }) => {
         />
       </div>
 
+      
+      {/* Description */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Description
+        </label>
+        <textarea
+          name="description"
+          value={event.description || ""}
+          onChange={onChange}
+          rows="3"
+          placeholder="Enter event description"
+          className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+
+
+      {/* Action buttons */}
       <div className="flex gap-4">
         <button
           type="submit"
-          disabled={event.status === 'CANCELLED'}
-          className={`flex-1 py-2 rounded font-semibold transition ${
-            event.status === 'CANCELLED'
-              ? 'bg-gray-400 text-white cursor-not-allowed'
-              : 'bg-blue-600 text-white hover:bg-blue-700'
-          }`}
-          title={event.status === 'CANCELLED' ? 'Cannot update cancelled event' : ''}
+          className="flex-1 py-2 rounded font-semibold transition bg-blue-600 text-white hover:bg-blue-700"
         >
           Update Event
         </button>
-        
-        
-        {event.status !== 'CANCELLED' && event.status !== 'ONGOING' && (
-          <button
-            type="button"
-            onClick={onCancel}
-            className="flex-1 bg-red-600 text-white py-2 rounded hover:bg-red-700 font-semibold transition"
-          >
-            Cancel Event
-          </button>
-        )}
-        
-        
-        {event.status !== 'CANCELLED' && event.status === 'ONGOING' && (
-          <button
-            type="button"
-            disabled
-            className="flex-1 bg-gray-400 text-white py-2 rounded cursor-not-allowed font-semibold"
-            title="Cannot cancel ongoing event"
-          >
-            Cancel Event
-          </button>
-        )}
+
+        <button
+          type="button"
+          onClick={onCancel}
+          className="flex-1 bg-red-600 text-white py-2 rounded hover:bg-red-700 font-semibold transition"
+        >
+          Cancel Event
+        </button>
       </div>
     </form>
   );

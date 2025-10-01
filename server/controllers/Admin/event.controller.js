@@ -114,22 +114,36 @@ export class EventController {
     }
   }
 
-  static async updateAttendance(req, res) {
-    try {
-      if (req.user.role !== "ADMIN") {
-        return res
-          .status(403)
-          .json({ message: "Only admin can update attendance" });
-      }
+  // static async updateAttendance(req, res) {
+  //   try {
+  //     if (req.user.role !== "ADMIN") {
+  //       return res
+  //         .status(403)
+  //         .json({ message: "Only admin can update attendance" });
+  //     }
+  //     const { updates } = req.body;
+  //     await EventService.updateAttendance(updates);
 
-      const { updates } = req.body;
-      await EventService.updateAttendance(updates);
+  //     res.json({ success: true });
+  //   } catch (error) {
+  //     res.status(400).json({ success: false, message: error.message });
+  //   }
+  // }
 
-      res.json({ success: true });
-    } catch (error) {
-      res.status(400).json({ success: false, message: error.message });
+  static async updateRegistrationStatus(req, res) {
+  try {
+    if (req.user.role !== "ADMIN") {
+      return res.status(403).json({ message: "Only admin can update registrations" });
     }
+
+    const { updates } = req.body; // [{ registrationId, depositPaid, attended }, ...]
+    await EventService.updateRegistrationStatus(updates);
+
+    res.json({ success: true });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
   }
+}
 
   static async getOngoingEvents(req, res) {
     try {
