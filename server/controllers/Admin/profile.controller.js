@@ -14,7 +14,7 @@ export const getProfile = async (req, res) => {
 export const updateProfile = async (req, res) => {
   try {
     const userId = req.user.id;
-    const { fullName, phoneNumber } = req.body;
+    const { fullName, phoneNumber, avatarUrl } = req.body;
     
     if (!fullName) {
       return res.status(400).json({ message: 'Full name is required' });
@@ -22,7 +22,8 @@ export const updateProfile = async (req, res) => {
     
     const updatedProfile = await profileService.updateAdminProfile(userId, {
       fullName,
-      phoneNumber
+      phoneNumber,
+      avatarUrl
     });
     
     res.json(updatedProfile);

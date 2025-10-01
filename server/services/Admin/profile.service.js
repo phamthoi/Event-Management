@@ -12,10 +12,10 @@ export const getAdminProfile = async (userId) => {
         email: true,
         fullName: true,
         phoneNumber: true,
-        avatarUrl: true,
         role: true,
         organizationId: true,
         isActive: true,
+        avatarUrl: true,  
         organization: {
           select: {
             name: true
@@ -43,15 +43,15 @@ export const updateAdminProfile = async (userId, updateData) => {
       data: {
         fullName,
         phoneNumber,
-        ...(avatarUrl && { avatarUrl }), // chỉ update nếu có
+        ...(avatarUrl !== undefined && { avatarUrl })
       },
       select: {
         id: true,
         email: true,
         fullName: true,
         phoneNumber: true,
-        avatarUrl,
         role: true,
+        avatarUrl: true,  
         organizationId: true,
         isActive: true,
         organization: {

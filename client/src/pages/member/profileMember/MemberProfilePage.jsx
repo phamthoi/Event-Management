@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 import ProfileView from "../../../components/profile/ProfileView";
 import ProfileForm from "../../../components/profile/ProfileForm";
-import {getProfile, updateProfile} from "../../../services/member/profile/profileService";
+import {
+  getProfile,
+  updateProfile,
+} from "../../../services/member/profile/profileService";
 import { showErrorAlert } from "../../../utils/member/errorHandler";
 
 const MemberProfilePage = () => {
@@ -33,13 +36,30 @@ const MemberProfilePage = () => {
     fetchProfile();
   }, []);
 
-  const handleSave = async (updatedData) => {
+  const handleSave = async (updatedProfile) => {
     try {
-      const data = await updateProfile(updatedData);
+      let profileData = {
+        fullName: updatedProfile.fullName,
+        phoneNumber: updatedProfile.phoneNumber,
+      };
+
+      if (updatedProfile.avatar && updatedProfile.avatar instanceof File) {
+        profileData.avatarUrl = updatedProfile.avatar.name;
+      }
+
+      const data = await updateProfile(profileData);
       if (data) {
         alert("Profile updated successfully");
         setProfile(data);
         setIsEditing(false);
+
+        const currentUser = JSON.parse(
+          localStorage.getItem("currentUser") || "{}"
+        );
+        const updatedUser = { ...currentUser, ...data };
+        localStorage.setItem("currentUser", JSON.stringify(updatedUser));
+
+        window.location.reload();
       } else {
         alert("Failed to update profile");
       }
@@ -51,7 +71,7 @@ const MemberProfilePage = () => {
 
   if (!profile) return <p className="text-center mt-10">Loading...</p>;
 
-   return (
+  return (
     <div className="min-h-screen bg-gray-100 flex items-start justify-center py-8">
       <div className="w-full max-w-3xl">
         {!isEditing ? (
