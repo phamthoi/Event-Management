@@ -4,10 +4,11 @@ import { Link, useLocation } from "react-router-dom";
 import Sidebar from "./SidebarMember";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { BellIcon } from "@radix-ui/react-icons";
+import { getProfile } from "../../../services/member/profile/profileService";
 
 const DashboardLayoutMember = ({ children }) => {
   const location = useLocation();
-  const [user, setUser] = useState({ fullName: "", avatar: "" });
+  const [user, setUser] = useState({ fullName: "", avatarUrl: "" });
   const [stats, setStats] = useState({
     events: 0,
     registrations: 0,
@@ -15,21 +16,40 @@ const DashboardLayoutMember = ({ children }) => {
   });
 
   useEffect(() => {
-    try {
-      const userData = JSON.parse(localStorage.getItem("user"));
-      if (userData) {
+    const loadUserProfile = async () => {
+      try {
+        
+        const currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
+        if (currentUser.fullName && currentUser.role === "MEMBER") {
+          setUser({
+            fullName: currentUser.fullName || "",
+            avatarUrl: currentUser.avatarUrl ? `/images/${currentUser.avatarUrl}` : "",
+          });
+        } else {
+          
+          const response = await getProfile();
+          if (response) {
+            const profileData = response;
+            setUser({
+              fullName: profileData.fullName || "",
+              avatarUrl: profileData.avatarUrl ? `/images/${profileData.avatarUrl}` : "",
+            });
+            
+            const updatedUser = { ...currentUser, ...profileData };
+            localStorage.setItem("currentUser", JSON.stringify(updatedUser));
+          }
+        }
+      } catch (err) {
+        console.error("Error loading user profile:", err);
+        
         setUser({
-          fullName: userData.fullName || "",
-          avatar:
-            userData.avatar ||
-            `https://ui-avatars.com/api/?name=${encodeURIComponent(
-              userData.fullName || "Guest"
-            )}&background=0D8ABC&color=fff`,
+          fullName: "Guest",
+          avatarUrl: "",
         });
       }
-    } catch (err) {
-      console.error("Invalid user in localStorage", err);
-    }
+    };
+
+    loadUserProfile();
 
     // Optional: lấy stats từ API (bỏ comment và chỉnh endpoint nếu bạn có)
     
@@ -47,7 +67,7 @@ const DashboardLayoutMember = ({ children }) => {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    localStorage.removeItem("user");
+    localStorage.removeItem("currentUser");
     window.location.href = "/login";
   };
 
@@ -65,24 +85,27 @@ const DashboardLayoutMember = ({ children }) => {
           <h1 className="text-xl font-bold text-gray-800">Member Dashboard</h1>
 
           <div className="flex items-center gap-4">
-            <button className="relative p-2 rounded-full hover:bg-gray-200">
-              <BellIcon className="w-6 h-6 text-gray-600" />
+            <button className="relative p-2 rounded-full hover:bg-yellow-100 bg-yellow-400">
+              <BellIcon className="w-6 h-6 text-black" />
               <span className="absolute -top-1 -right-1 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold leading-none text-white bg-red-600 rounded-full">
                 2
               </span>
             </button>
 
             <DropdownMenu.Root>
-              <DropdownMenu.Trigger className="flex items-center gap-2 cursor-pointer">
-                <img
-                  src={
-                    user.avatar ||
-                    `https://ui-avatars.com/api/?name=Guest&background=0D8ABC&color=fff`
-                  }
-                  alt="avatar"
-                  className="w-10 h-10 rounded-full border"
-                />
-                <span className="text-gray-600 hidden md:inline">
+              <DropdownMenu.Trigger className="flex items-center gap-2 cursor-pointer bg-yellow-400 hover:bg-yellow-500 px-3 py-2 rounded-lg transition">
+                {user.avatarUrl ? (
+                  <img
+                    src={user.avatarUrl}
+                    alt="avatar"
+                    className="w-10 h-10 rounded-full border object-cover"
+                  />
+                ) : (
+                  <div className="w-10 h-10 rounded-full border bg-green-500 flex items-center justify-center text-white font-bold">
+                    {user.fullName ? user.fullName.charAt(0).toUpperCase() : "G"}
+                  </div>
+                )}
+                <span className="text-black font-medium hidden md:inline">
                   {user.fullName ? `Hello, ${user.fullName}` : "Hello, Guest"}
                 </span>
               </DropdownMenu.Trigger>

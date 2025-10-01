@@ -13,6 +13,7 @@ export const getMemberProfile = async (userId) => {
         fullName: true,
         phoneNumber: true,
         role: true,
+        avatarUrl: true,
         organizationId: true,
         organization: {
           select: {
@@ -34,13 +35,14 @@ export const getMemberProfile = async (userId) => {
 
 export const updateMemberProfile = async (userId, updateData) => {
   try {
-    const { fullName, phoneNumber } = updateData;
+    const { fullName, phoneNumber, avatarUrl } = updateData;
     
     const updatedUser = await prisma.user.update({
       where: { id: userId },
       data: {
         fullName,
-        phoneNumber
+        phoneNumber,
+        ...(avatarUrl !== undefined && { avatarUrl })
       },
       select: {
         id: true,
@@ -48,6 +50,7 @@ export const updateMemberProfile = async (userId, updateData) => {
         fullName: true,
         phoneNumber: true,
         role: true,
+        avatarUrl: true,
         organizationId: true,
         organization: {
           select: {

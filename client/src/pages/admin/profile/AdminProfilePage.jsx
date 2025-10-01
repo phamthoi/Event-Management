@@ -1,20 +1,27 @@
 import React, { useEffect, useState } from "react";
 import ProfileView from "../../../components/profile/ProfileView";
 import ProfileForm from "../../../components/profile/ProfileForm";
-import { getAdminProfile, updateAdminProfile } from "../../../services/admin/profile/adminProfileService";
+import {
+  getAdminProfile,
+  updateAdminProfile,
+} from "../../../services/admin/profile/adminProfileService";
 import { showErrorAlert } from "../../../utils/admin/errorHandler";
 import * as Toast from "@radix-ui/react-toast";
 
 const AdminProfilePage = () => {
   const [profile, setProfile] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [toast, setToast] = useState({ open: false, message: "", type: "success" });
+  const [toast, setToast] = useState({
+    open: false,
+    message: "",
+    type: "success",
+  });
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
       setToast({ open: true, message: "You must login first", type: "error" });
-      setTimeout(() => window.location.href = "/login", 1000);
+      setTimeout(() => (window.location.href = "/login"), 1000);
       return;
     }
 
@@ -29,12 +36,35 @@ const AdminProfilePage = () => {
     fetchProfile();
   }, []);
 
-  const handleSave = async (updatedData) => {
+  const handleSave = async (updatedProfile) => {
     try {
-      const data = await updateAdminProfile(updatedData);
+      let profileData = {
+        fullName: updatedProfile.fullName,
+        phoneNumber: updatedProfile.phoneNumber,
+      };
+
+      if (updatedProfile.avatar && updatedProfile.avatar instanceof File) {
+        profileData.avatarUrl = updatedProfile.avatar.name;
+      }
+
+      const data = await updateAdminProfile(profileData);
       setProfile(data);
       setIsEditing(false);
-      setToast({ open: true, message: "Profile updated successfully!", type: "success" });
+      setToast({
+        open: true,
+        message: "Profile updated successfully!",
+        type: "success",
+      });
+
+      const currentUser = JSON.parse(
+        localStorage.getItem("currentUser") || "{}"
+      );
+      const updatedUser = { ...currentUser, ...data };
+      localStorage.setItem("currentUser", JSON.stringify(updatedUser));
+
+      
+        window.location.reload();
+      
     } catch (err) {
       showErrorAlert(err);
     }
@@ -73,7 +103,9 @@ const AdminProfilePage = () => {
           }`}
         >
           <Toast.Title className="font-bold">{toast.message}</Toast.Title>
-          <Toast.Close className="absolute top-2 right-2 text-gray-500 cursor-pointer">✕</Toast.Close>
+          <Toast.Close className="absolute top-2 right-2 text-gray-500 cursor-pointer">
+            ✕
+          </Toast.Close>
         </Toast.Root>
         <Toast.Viewport />
       </Toast.Provider>

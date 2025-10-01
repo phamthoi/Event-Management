@@ -4,24 +4,40 @@ import { CheckIcon, Cross2Icon, CameraIcon } from "@radix-ui/react-icons";
 const ProfileForm = ({ profile, onCancel, onSave }) => {
   const [fullName, setFullName] = useState(profile.fullName || "");
   const [phoneNumber, setPhoneNumber] = useState(profile.phoneNumber || "");
-  const [avatar, setAvatar] = useState(profile.avatar || null);
-  const [preview, setPreview] = useState(profile.avatar || null);
+  const [avatar, setAvatar] = useState(null);
+  const [preview, setPreview] = useState(null);
 
   useEffect(() => {
     setFullName(profile.fullName || "");
     setPhoneNumber(profile.phoneNumber || "");
-    setAvatar(profile.avatar || null);
-    setPreview(profile.avatar || null);
+    setAvatar(null);
+    
+
+    if (profile.avatarUrl) {
+      setPreview(`/images/${profile.avatarUrl}`);
+    } else {
+      setPreview(null);
+    }
   }, [profile]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     onSave({ fullName, phoneNumber, avatar });
+    
   };
 
   const handleAvatarChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+      if (!allowedTypes.includes(file.type)) {
+        alert('Chỉ chấp nhận file ảnh (JPEG, PNG, GIF)');
+        return;
+      }
+
+ 
+
       setAvatar(file);
       const reader = new FileReader();
       reader.onload = () => setPreview(reader.result);
@@ -33,21 +49,23 @@ const ProfileForm = ({ profile, onCancel, onSave }) => {
     <div className="max-w-md mx-auto w-full">
       <div className="bg-white shadow-lg rounded-2xl p-6 transition hover:shadow-xl">
         {/* Avatar */}
-        <div className="flex flex-col items-center mb-6 relative">
-          <div className="w-24 h-24 rounded-full overflow-hidden flex items-center justify-center bg-gradient-to-r from-blue-400 to-purple-500 shadow-lg">
-            {preview ? (
-              <img src={preview} alt="Avatar" className="w-full h-full object-cover" />
-            ) : (
-              <span className="text-white text-4xl font-bold">
-                {fullName ? fullName.charAt(0).toUpperCase() : "U"}
-              </span>
-            )}
+        <div className="flex flex-col items-center mb-6">
+          <div className="relative">
+            <div className="w-24 h-24 rounded-full overflow-hidden flex items-center justify-center bg-gradient-to-r from-blue-400 to-purple-500 shadow-lg">
+              {preview ? (
+                <img src={preview} alt="Avatar" className="w-full h-full object-cover" />
+              ) : (
+                <span className="text-white text-4xl font-bold">
+                  {fullName ? fullName.charAt(0).toUpperCase() : "U"}
+                </span>
+              )}
+            </div>
+            {/* Upload button */}
+            <label className="absolute -bottom-1 -right-1 bg-gray-800 text-white rounded-full p-2 cursor-pointer hover:bg-gray-700 transition border-2 border-white shadow-lg">
+              <CameraIcon className="w-4 h-4" />
+              <input type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} />
+            </label>
           </div>
-          {/* Upload button */}
-          <label className="absolute bottom-0 right-0 bg-gray-800 text-white rounded-full p-1 cursor-pointer hover:bg-gray-700 transition">
-            <CameraIcon className="w-5 h-5" />
-            <input type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} />
-          </label>
           <h2 className="mt-3 text-xl font-semibold text-gray-800">{fullName || "User"}</h2>
         </div>
 

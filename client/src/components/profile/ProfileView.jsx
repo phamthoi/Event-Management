@@ -39,9 +39,17 @@ const ProfileView = ({ profile, onEdit }) => {
         {/* Avatar & Name */}
         <div className="flex flex-col items-center md:items-start space-y-3">
           <div className="w-20 h-20 rounded-full flex items-center justify-center text-3xl font-bold text-white 
-                          bg-gradient-to-r from-blue-400 to-purple-500 shadow-lg 
+                          bg-gradient-to-r from-blue-400 to-purple-500 shadow-lg overflow-hidden
                           transform transition-transform hover:scale-110">
-            {profile.fullName ? profile.fullName.charAt(0).toUpperCase() : "U"}
+            {profile.avatarUrl ? (
+              <img 
+                src={`/images/${profile.avatarUrl}`} 
+                alt="Avatar" 
+                className="w-full h-full object-cover" 
+              />
+            ) : (
+              profile.fullName ? profile.fullName.charAt(0).toUpperCase() : "U"
+            )}
           </div>
           <div className="text-center md:text-left">
             <h3 className="text-xl font-semibold text-gray-800">{profile.fullName || "-"}</h3>
@@ -50,22 +58,29 @@ const ProfileView = ({ profile, onEdit }) => {
           {getRoleBadge(profile.role)}
         </div>
 
-        {/* Contact & Organization Info */}
-        <div className="col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-gray-50 rounded-xl p-4 shadow-inner hover:shadow-md transition transform hover:-translate-y-1">
-            <p className="text-gray-500 text-sm">Phone</p>
-            <p className="font-medium text-gray-800">{profile.phoneNumber || "-"}</p>
-          </div>
-          <div className="bg-gray-50 rounded-xl p-4 shadow-inner hover:shadow-md transition transform hover:-translate-y-1">
-            <p className="text-gray-500 text-sm">Organization ID</p>
-            <p className="font-medium text-gray-800">{profile.organizationId || "-"}</p>
-          </div>
-          {profile.organization && (
-            <div className="bg-gray-50 rounded-xl p-4 shadow-inner hover:shadow-md transition transform hover:-translate-y-1 md:col-span-2">
-              <p className="text-gray-500 text-sm">Organization Name</p>
-              <p className="font-medium text-gray-800">{profile.organization.name}</p>
+        {/* Profile Details */}
+        <div className="md:col-span-2 space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-500 mb-1">Full Name</label>
+              <p className="text-gray-800 font-medium">{profile.fullName || "-"}</p>
             </div>
-          )}
+            <div>
+              <label className="block text-sm font-medium text-gray-500 mb-1">Phone Number</label>
+              <p className="text-gray-800 font-medium">{profile.phoneNumber || "-"}</p>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-500 mb-1">Email</label>
+              <p className="text-gray-800 font-medium">{profile.email || "-"}</p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-500 mb-1">Organization</label>
+              <p className="text-gray-800 font-medium">{profile.organization?.name || "-"}</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
