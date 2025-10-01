@@ -43,6 +43,8 @@ out/
 # ===== FRONTEND SPECIFIC =====
 # Vite
 *.local
+client/node_modules/
+client/package-lock.json
 
 # React/JSX
 .eslintcache
@@ -103,6 +105,7 @@ pids/
 
 # ===== PRISMA =====
 .prisma/
+server/prisma/migrations/
 
 # ===== DOCKER =====
 Dockerfile.prod

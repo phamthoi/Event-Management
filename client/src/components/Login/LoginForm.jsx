@@ -21,10 +21,10 @@ function LoginForm({ onLogin, onForgot, error }) {
 
         <form className="space-y-6" onSubmit={handleSubmit}>
           {/* Email */}
-          <div className="relative">
-            <Label.Root className="absolute -top-3 left-3 px-1 bg-white text-gray-700 text-sm font-medium">
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">
               Email
-            </Label.Root>
+            </label>
             <div className="relative">
               <HiOutlineMail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
               <input
@@ -39,10 +39,10 @@ function LoginForm({ onLogin, onForgot, error }) {
           </div>
 
           {/* Password */}
-          <div className="relative">
-            <Label.Root className="absolute -top-3 left-3 px-1 bg-white text-gray-700 text-sm font-medium">
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">
               Password
-            </Label.Root>
+            </label>
             <div className="relative">
               <HiOutlineLockClosed className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
               <input
