@@ -1,7 +1,7 @@
 // src/components/admin/EventList/EventTable.jsx
 import React from "react";
 import { Link } from "react-router-dom";
-import { Pencil1Icon, TrashIcon, Cross2Icon } from "@radix-ui/react-icons";
+import { Pencil1Icon, Cross2Icon } from "@radix-ui/react-icons";
 
 const EventTable = ({ events, onDelete, page, limit }) => {
   const formatDateTime = (dateStr) => {

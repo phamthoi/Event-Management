@@ -3,67 +3,6 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export class EventService {
-  // static calculateEventStatus({
-  //   initialStatus,
-  //   registrationStartAt,
-  //   registrationEndAt,
-  //   startAt,
-  //   endAt,
-  //   registeredCount = 0,
-  //   minAttendees = 0,
-  //   maxAttendees = 0,
-  // }) {
-  //   if (initialStatus === "CANCELLED") {
-  //     return "CANCELLED";
-  //   }
-
-  //   const now = new Date();
-  //   const registrationStart = registrationStartAt ? new Date(registrationStartAt) : null;
-  //   const registrationEnd = registrationEndAt ? new Date(registrationEndAt) : null;
-  //   const eventStart = startAt ? new Date(startAt) : null;
-  //   const eventEnd = endAt ? new Date(endAt) : null;
-
-
-  //   let oneDayBeforeEvent = null;
-  //   if (eventStart) {
-  //     oneDayBeforeEvent = new Date(eventStart);
-  //     oneDayBeforeEvent.setDate(oneDayBeforeEvent.getDate() - 1);
-  //   }
-
-    
-  //   if (registrationStart && now < registrationStart) {
-  //     return "DRAFT";
-  //   }
-
-    
-  //   if (registrationStart && registrationEnd && now >= registrationStart && now <= registrationEnd) {
-  //     return "REGISTRATION";
-  //   } else if (eventStart && eventEnd && now >= eventStart && now <= eventEnd) {
-  //     return "ONGOING";
-  //   } else if (registrationEnd && now > registrationEnd) {
-      
-  //     if (minAttendees > 0 && registeredCount < minAttendees) {
-  //       return "CANCELLED";
-  //     }
-      
-      
-  //     let status = "COMPLETED";
-      
-  //     if (oneDayBeforeEvent && eventStart && now >= oneDayBeforeEvent && now < eventStart) {
-  //       status = "READY";
-  //     }
-      
-      
-  //     if (eventEnd && now > eventEnd) {
-  //       status = "COMPLETED";
-  //     }
-      
-  //     return status;
-  //   }
-
-  //   return initialStatus || "DRAFT";
-  // }
-
 
   static calculateEventStatus({
     initialStatus,
