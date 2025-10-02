@@ -3,7 +3,7 @@ import Sidebar from "./Sidebar";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { BellIcon } from "@radix-ui/react-icons";
 import { Link, useLocation } from "react-router-dom";
-import { getAdminProfile } from "../../../services/admin/profile/adminProfileService";
+import { profileService } from "../../../services/common/profile/profileService";
 
 const DashboardLayout = ({ children }) => {
   const location = useLocation();
@@ -23,7 +23,7 @@ const DashboardLayout = ({ children }) => {
           });
         } else {
           
-          const response = await getAdminProfile();
+          const response = await profileService.getProfile();
           
           if (response) {
             const profileData = response;

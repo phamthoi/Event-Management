@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import * as Toast from "@radix-ui/react-toast";
 import { createMember } from "../../../services/admin/member/memberService";
-import { showErrorAlert } from "../../../utils/admin/errorHandler";
+import { showErrorAlert } from "../../../utils/errorHandler";
 
 const CreateMemberForm = () => {
   const [form, setForm] = useState({

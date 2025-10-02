@@ -1,4 +1,4 @@
-import api from "../../axios";
+import api from "../../common/axios";
 
 
 export const createMember = async (memberData) => {

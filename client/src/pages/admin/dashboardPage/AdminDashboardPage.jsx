@@ -1,6 +1,6 @@
 // client/src/pages/AdminDashboardPage.jsx
 import { Navigate, Outlet } from "react-router-dom";
-import DashboardLayout from "../../components/admin/Dashboard/DashboardLayout";
+import DashboardLayout from "../../../components/admin/Dashboard/DashboardLayout";
 
 function AdminDashboardPage() {
   const token = localStorage.getItem("token");

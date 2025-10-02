@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
-import EventCard from "../../components/member/EventList/EventCard";
-import { getUpcomingEvents, registerEvent, cancelRegistration, getMemberRegistrations } from "../../services/common/event.js";
-import { getEventStatus } from "../../utils/getEventStatus";
-import { showErrorAlert } from "../../utils/member/errorHandler";
+import React, { useState, useEffect } from "react";
+import EventCard from "../../../components/common/eventList/EventCard";
+import { eventService } from "../../../services/common/event/event.js";
+import { showErrorAlert } from "../../../utils/errorHandler";
 import * as Toast from "@radix-ui/react-toast";
 
 const UpcomingEventsPage = () => {
@@ -21,8 +20,8 @@ const UpcomingEventsPage = () => {
     try {
       setLoading(true);
       const [eventsRes, regsRes] = await Promise.all([
-        getUpcomingEvents(page, limit),
-        getMemberRegistrations()
+        eventService.getUpcomingEvents(page, limit),
+        eventService.getMyEvents()
       ]);
 
       const filteredEvents = eventsRes.events.map(ev => ({ ...ev, status: getEventStatus(ev) }));
@@ -57,14 +56,14 @@ const UpcomingEventsPage = () => {
 
     try {
       if (registered && canCancel) {
-        await cancelRegistration(event.id);
+        await eventService.cancelRegistration(event.id);
         setToast({ open: true, message: "Registration cancelled", type: "success" });
       } else if (!registered) {
         if (event.status === "DRAFT") {
           setToast({ open: true, message: "Event registration not open", type: "error" });
           return;
         }
-        await registerEvent(event.id);
+        await eventService.registerEvent(event.id);
         setToast({ open: true, message: "Registration successful", type: "success" });
       } else {
         setToast({ open: true, message: "Cannot cancel this event", type: "error" });

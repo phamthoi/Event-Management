@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getMembers } from "../../../services/member/member/memberService";
-import { showErrorAlert } from "../../../utils/member/errorHandler";
+import { showErrorAlert } from "../../../utils/errorHandler";
 
 function ViewMemberList() {
   const [members, setMembers] = useState([]);

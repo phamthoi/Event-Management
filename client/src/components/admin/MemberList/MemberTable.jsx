@@ -10,7 +10,7 @@ import {
   ReloadIcon,
 } from "@radix-ui/react-icons";
 import { getMembers, MemberLock, MemberUnlock } from "../../../services/admin/member/memberService";
-import { showErrorAlert } from "../../../utils/admin/errorHandler";
+import { showErrorAlert } from "../../../utils/errorHandler";
 
 function MemberTable({ role = "admin" }) {
   const navigate = useNavigate();

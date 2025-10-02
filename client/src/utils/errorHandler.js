@@ -1,7 +1,4 @@
-/**
- * Utility functions for handling API errors in member pages
- * Provides centralized error handling with user-friendly Vietnamese messages
- */
+
 
 /**
  * Handles API errors and returns appropriate error messages
@@ -19,7 +16,7 @@ export const handleApiError = (err) => {
 
     switch (statusCode) {
       case 400:
-        errorMessage = `❌ Dữ liệu không hợp lệ (${statusCode})\n\nVui lòng kiểm tra lại thông tin và thử lại.`;
+        errorMessage = `❌ Lỗi dữ liệu không hợp lệ (${statusCode})\n\nVui lòng kiểm tra lại thông tin và thử lại.`;
         break;
       case 401:
         errorMessage = `🔐 Phiên đăng nhập hết hạn (${statusCode})\n\nVui lòng đăng nhập lại để tiếp tục.`;
@@ -28,7 +25,7 @@ export const handleApiError = (err) => {
         errorMessage = `🚫 Không có quyền truy cập (${statusCode})\n\nBạn không có quyền thực hiện thao tác này.`;
         break;
       case 404:
-        errorMessage = `🔍 Không tìm thấy dữ liệu (${statusCode})\n\nThông tin không tồn tại hoặc đã bị thay đổi.`;
+        errorMessage = `🔍 Không tìm thấy dữ liệu (${statusCode})\n\nDữ liệu không tồn tại hoặc đã bị xóa.`;
         break;
       case 500:
         errorMessage = `⚠️ Lỗi hệ thống (${statusCode})\n\nHệ thống đang gặp sự cố. Vui lòng thử lại sau ít phút.`;
@@ -61,7 +58,7 @@ export const showErrorAlert = (err) => {
 /**
  * Handles delete operation errors with specific messages
  * @param {Error} err - The error object from delete API call
- * @param {string} itemType - Type of item being deleted (e.g., 'sự kiện', 'thông tin')
+ * @param {string} itemType - Type of item being deleted (e.g., 'sự kiện', 'thành viên')
  * @returns {string} - Formatted error message for delete operations
  */
 export const handleDeleteError = (err, itemType = 'mục') => {

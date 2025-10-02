@@ -1,4 +1,4 @@
-// utils/getEventStatus.js
+
 export function getEventStatus(event) {
   const now = new Date();
 

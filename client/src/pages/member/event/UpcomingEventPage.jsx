@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { getUpcomingEvents, registerEvent, cancelRegistration, getMemberRegistrations } from "../../../services/member/event/activeOfMemberService";
+import { eventService } from "../../../services/common/event/event.js";
 import { getEventStatus } from "../../../utils/getEventStatus";
-import EventCard from "../../../components/member/EventList/EventCard";
-import { showErrorAlert } from "../../../utils/member/errorHandler";
+import EventCard from "../../../components/common/eventList/EventCard";
+import { showErrorAlert } from "../../../utils/errorHandler";
 
 const UpcomingEventsPage = () => {
   const [events, setEvents] = useState([]);
@@ -18,7 +18,7 @@ const UpcomingEventsPage = () => {
   const loadEvents = async () => {
     try {
       setLoading(true);
-      const res = await getUpcomingEvents(page, limit);
+      const res = await eventService.getUpcomingEvents(page, limit);
       const filteredEvents = res.events.map(ev => ({ ...ev, status: getEventStatus(ev) }));
       setEvents(filteredEvents);
       setTotal(res.total);
@@ -32,7 +32,7 @@ const UpcomingEventsPage = () => {
 
   const loadRegistrations = async () => {
     try {
-      const res = await getMemberRegistrations();
+      const res = await eventService.getMyEvents();
       const regMap = res.reduce((acc, r) => {
         acc[r.eventId] = true;
         return acc;
@@ -60,14 +60,14 @@ const UpcomingEventsPage = () => {
 
     try {
       if (registered && canCancel) {
-        await cancelRegistration(event.id);
+        await eventService.cancelRegistration(event.id);
         alert("Registration cancelled");
       } else if (!registered) {
         if (event.status === "DRAFT") {
           alert("Event registration is not open yet");
           return;
         }
-        await registerEvent(event.id);
+        await eventService.registerEvent(event.id);
         alert("Registration successful");
       } else {
         alert("Cannot cancel this event");

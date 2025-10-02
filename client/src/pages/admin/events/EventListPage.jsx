@@ -4,7 +4,7 @@ import EventTable from "../../../components/admin/EventList/EventTable";
 import Pagination from "../../../components/admin/EventList/Pagination";
 import { getEventStatus } from "../../../utils/getEventStatus";
 import { useNavigate } from "react-router-dom";
-import { showErrorAlert, showDeleteErrorAlert } from "../../../utils/admin/errorHandler";
+import { showErrorAlert, showDeleteErrorAlert } from "../../../utils/errorHandler";
 import { getEvents, deleteEvent } from "../../../services/admin/event/eventService";
 import { PlusIcon, Pencil1Icon, TrashIcon } from "@radix-ui/react-icons";
 

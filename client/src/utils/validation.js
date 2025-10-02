@@ -1,4 +1,4 @@
-// client/src/utils/validation.js
+
 
 export const validateEventForm = (form) => {
   if (!form.title.trim()) return "Event title is required";

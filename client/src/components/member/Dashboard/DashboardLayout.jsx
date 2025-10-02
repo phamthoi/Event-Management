@@ -4,7 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 import Sidebar from "./SidebarMember";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { BellIcon } from "@radix-ui/react-icons";
-import { getProfile } from "../../../services/member/profile/profileService";
+import { profileService } from "../../../services/common/profile/profileService";
 
 const DashboardLayoutMember = ({ children }) => {
   const location = useLocation();
@@ -27,7 +27,7 @@ const DashboardLayoutMember = ({ children }) => {
           });
         } else {
           
-          const response = await getProfile();
+          const response = await profileService.getProfile();
           if (response) {
             const profileData = response;
             setUser({

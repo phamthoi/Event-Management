@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { getMemberRegistrations, cancelRegistration } from "../../services/common/event.js";
-import { showErrorAlert } from "../../utils/member/errorHandler";
+import React, { useState, useEffect } from "react";
+import { eventService } from "../../../services/common/event/event.js";
+import EventCard from "../../../components/common/eventList/EventCard";
+import { showErrorAlert } from "../../../utils/errorHandler";
 
 const MyEventsPage = () => {
   const [events, setEvents] = useState([]);
@@ -9,7 +10,7 @@ const MyEventsPage = () => {
   const loadEvents = async () => {
     try {
       setLoading(true);
-      const myEvents = await getMemberRegistrations();
+      const myEvents = await eventService.getMyEvents();
       setEvents(myEvents);
     } catch (err) {
       console.error("Load events error:", err);
@@ -34,7 +35,7 @@ const MyEventsPage = () => {
     }
 
     try {
-      await cancelRegistration(event.id);
+      await eventService.cancelRegistration(event.id);
       alert("Registration cancelled successfully");
       loadEvents();
     } catch (err) {

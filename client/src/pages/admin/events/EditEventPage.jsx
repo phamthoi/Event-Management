@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getEventById, updateEvent } from "../../../services/admin/event/eventService";
 import EditEventForm from "../../../components/admin/EventList/EditEventForm";
-import { showErrorAlert } from "../../../utils/admin/errorHandler";
+import { showErrorAlert } from "../../../utils/errorHandler";
 
 // Radix UI imports
 import * as Toast from "@radix-ui/react-toast";
