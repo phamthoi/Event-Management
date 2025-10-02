@@ -3,12 +3,26 @@ import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import Sidebar from "./SidebarMember";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { BellIcon } from "@radix-ui/react-icons";
 import { getProfile } from "../../../services/member/profile/profileService";
+import ThemeToggle from "../../common/ThemeToggle";
+import { 
+  FiBell, 
+  FiUser, 
+  FiLogOut, 
+  FiSettings, 
+  FiChevronDown,
+  FiCalendar,
+  FiUsers,
+  FiTrendingUp,
+  FiActivity,
+  FiClock,
+  FiCheckCircle
+} from "react-icons/fi";
 
 const DashboardLayoutMember = ({ children }) => {
   const location = useLocation();
   const [user, setUser] = useState({ fullName: "", avatarUrl: "" });
+  const [notifications, setNotifications] = useState(2);
   const [stats, setStats] = useState({
     events: 0,
     registrations: 0,
@@ -18,7 +32,6 @@ const DashboardLayoutMember = ({ children }) => {
   useEffect(() => {
     const loadUserProfile = async () => {
       try {
-        
         const currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
         if (currentUser.fullName && currentUser.role === "MEMBER") {
           setUser({
@@ -26,7 +39,6 @@ const DashboardLayoutMember = ({ children }) => {
             avatarUrl: currentUser.avatarUrl ? `/images/${currentUser.avatarUrl}` : "",
           });
         } else {
-          
           const response = await getProfile();
           if (response) {
             const profileData = response;
@@ -41,7 +53,6 @@ const DashboardLayoutMember = ({ children }) => {
         }
       } catch (err) {
         console.error("Error loading user profile:", err);
-        
         setUser({
           fullName: "Guest",
           avatarUrl: "",
@@ -52,7 +63,6 @@ const DashboardLayoutMember = ({ children }) => {
     loadUserProfile();
 
     // Optional: lấy stats từ API (bỏ comment và chỉnh endpoint nếu bạn có)
-    
     fetch("/api/member/stats")
       .then(res => res.json())
       .then(data => {
@@ -62,7 +72,6 @@ const DashboardLayoutMember = ({ children }) => {
         });
       })
       .catch(err => console.log(err));
-    
   }, []);
 
   const handleLogout = () => {
@@ -71,58 +80,95 @@ const DashboardLayoutMember = ({ children }) => {
     window.location.href = "/login";
   };
 
-  // Chỉ hiện Welcome khi đang ở /member (root của member dashboard)
-  const isMemberHome =
-    location.pathname === "/member" || location.pathname === "/member/";
+  const isMemberHome = location.pathname === "/member" || location.pathname === "/member/";
+
+  // Mock stats data for member
+  const memberStats = [
+    { label: "My Events", value: "8", icon: FiCalendar, change: "+2", color: "primary" },
+    { label: "Registrations", value: "12", icon: FiCheckCircle, change: "+3", color: "accent" },
+    { label: "Upcoming", value: "4", icon: FiClock, change: "+1", color: "warning" },
+    { label: "Completed", value: "6", icon: FiActivity, change: "+2", color: "success" },
+  ];
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-secondary-50">
       <Sidebar />
 
-      <div className="flex flex-col flex-1">
+      <div className="flex flex-col flex-1 overflow-hidden">
         {/* Header */}
-        <header className="h-16 bg-white shadow flex items-center justify-between px-6">
-          <h1 className="text-xl font-bold text-gray-800">Member Dashboard</h1>
+        <header className="h-16 bg-white dark:bg-secondary-800 border-b border-secondary-200 dark:border-secondary-700 flex items-center justify-between px-6 shadow-soft">
+          <div className="flex items-center gap-4">
+            <h1 className="text-2xl font-display font-bold text-secondary-900 dark:text-secondary-100">
+              Member Dashboard
+            </h1>
+            <div className="hidden md:flex items-center gap-2 text-sm text-secondary-500 dark:text-secondary-400">
+              <span>•</span>
+              <span>Welcome back, {user.fullName ? user.fullName.split(" ")[0] : "Member"}</span>
+            </div>
+          </div>
 
           <div className="flex items-center gap-4">
-            <button className="relative p-2 rounded-full hover:bg-yellow-100 bg-yellow-400">
-              <BellIcon className="w-6 h-6 text-black" />
-              <span className="absolute -top-1 -right-1 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold leading-none text-white bg-red-600 rounded-full">
-                2
-              </span>
+            {/* Theme Toggle */}
+            <ThemeToggle variant="simple" size="default" />
+            
+            {/* Notification */}
+            <button className="relative p-3 text-secondary-600 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-xl transition-all duration-200 group">
+              <FiBell className="w-5 h-5" />
+              {notifications > 0 && (
+                <span className="absolute -top-1 -right-1 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-danger-500 rounded-full min-w-[20px] h-5">
+                  {notifications}
+                </span>
+              )}
             </button>
 
+            {/* Profile dropdown */}
             <DropdownMenu.Root>
-              <DropdownMenu.Trigger className="flex items-center gap-2 cursor-pointer bg-yellow-400 hover:bg-yellow-500 px-3 py-2 rounded-lg transition">
+              <DropdownMenu.Trigger className="flex items-center gap-3 cursor-pointer p-2 hover:bg-secondary-50 rounded-xl transition-all duration-200 group">
                 {user.avatarUrl ? (
                   <img
                     src={user.avatarUrl}
                     alt="avatar"
-                    className="w-10 h-10 rounded-full border object-cover"
+                    className="w-10 h-10 rounded-xl object-cover border-2 border-secondary-200 group-hover:border-accent-300 transition-colors"
                   />
                 ) : (
-                  <div className="w-10 h-10 rounded-full border bg-green-500 flex items-center justify-center text-white font-bold">
-                    {user.fullName ? user.fullName.charAt(0).toUpperCase() : "G"}
+                  <div className="w-10 h-10 rounded-xl bg-gradient-accent flex items-center justify-center text-white font-bold shadow-glow">
+                    {user.fullName ? user.fullName.charAt(0).toUpperCase() : "M"}
                   </div>
                 )}
-                <span className="text-black font-medium hidden md:inline">
-                  {user.fullName ? `Hello, ${user.fullName}` : "Hello, Guest"}
-                </span>
+                <div className="hidden md:block text-left">
+                  <p className="text-sm font-medium text-secondary-900">
+                    {user.fullName || "Member"}
+                  </p>
+                  <p className="text-xs text-secondary-500">Community Member</p>
+                </div>
+                <FiChevronDown className="w-4 h-4 text-secondary-400 group-hover:text-secondary-600" />
               </DropdownMenu.Trigger>
 
-              <DropdownMenu.Content className="bg-white rounded-md shadow-md py-2 w-48">
+              <DropdownMenu.Content className="bg-white rounded-2xl shadow-large border border-secondary-200 py-2 w-56 animate-fade-in">
                 <DropdownMenu.Item asChild>
-                  <Link
-                    to="/member/profile/update"
-                    className="block px-4 py-2 hover:bg-gray-100"
+                  <Link 
+                    to="/member/profile/update" 
+                    className="flex items-center gap-3 px-4 py-3 hover:bg-secondary-50 text-secondary-700 transition-colors"
                   >
-                    Profile
+                    <FiUser className="w-4 h-4" />
+                    Profile Settings
                   </Link>
                 </DropdownMenu.Item>
+                <DropdownMenu.Item asChild>
+                  <Link 
+                    to="/member/profile/change-password" 
+                    className="flex items-center gap-3 px-4 py-3 hover:bg-secondary-50 text-secondary-700 transition-colors"
+                  >
+                    <FiSettings className="w-4 h-4" />
+                    Change Password
+                  </Link>
+                </DropdownMenu.Item>
+                <DropdownMenu.Separator className="my-2 border-secondary-100" />
                 <DropdownMenu.Item
                   onClick={handleLogout}
-                  className="px-4 py-2 hover:bg-gray-100"
+                  className="flex items-center gap-3 px-4 py-3 hover:bg-danger-50 text-danger-600 transition-colors"
                 >
+                  <FiLogOut className="w-4 h-4" />
                   Logout
                 </DropdownMenu.Item>
               </DropdownMenu.Content>
@@ -132,41 +178,65 @@ const DashboardLayoutMember = ({ children }) => {
 
         {/* Welcome chỉ hiện ở trang /member */}
         {isMemberHome && (
-          <section className="p-6">
-            <div className="bg-gradient-to-r from-green-500 to-emerald-600 text-white p-6 rounded-lg shadow-md mb-6 flex items-center justify-between">
-              <div>
-                <h2 className="text-2xl font-bold">
-                  Welcome Back,{" "}
-                  {user.fullName ? user.fullName.split(" ")[0] : "Member"}!
-                </h2>
-                <p className="mt-1">Check your upcoming events and registrations.</p>
+          <section className="p-6 animate-fade-in">
+            {/* Welcome banner */}
+            <div className="card p-8 mb-8 bg-gradient-to-r from-accent-600 to-accent-700 text-white">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-3xl font-display font-bold mb-2">
+                    Welcome Back, {user.fullName ? user.fullName.split(" ")[0] : "Member"}! 🎉
+                  </h2>
+                  <p className="text-accent-100 text-lg">
+                    Stay updated with your upcoming events and activities.
+                  </p>
+                </div>
+                <div className="hidden lg:block">
+                  <div className="w-24 h-24 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                    <FiUsers className="w-12 h-12 text-white" />
+                  </div>
+                </div>
               </div>
-              <img
-                src="https://cdn-icons-png.flaticon.com/512/4128/4128150.png"
-                alt="illustration"
-                className="w-20 h-20"
-              />
             </div>
 
-            {/* Stats cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-
-
-              {/* <div className="bg-white shadow rounded-lg p-4">
-                <h3 className="text-gray-500 text-sm">My Registrations</h3>
-                <p className="text-2xl font-bold">{stats.registrations}</p>
-              </div>
-
-              <div className="bg-white shadow rounded-lg p-4">
-                <h3 className="text-gray-500 text-sm">Upcoming</h3>
-                <p className="text-2xl font-bold">{stats.upcoming}</p>
-              </div> */}
+            {/* Stats grid */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
+              {memberStats.map((stat, index) => {
+                const Icon = stat.icon;
+                const colorClasses = {
+                  primary: { bg: '#dbeafe', text: '#2563eb', badge: '#eff6ff' },
+                  accent: { bg: '#dcfce7', text: '#16a34a', badge: '#f0fdf4' },
+                  warning: { bg: '#fef3c7', text: '#d97706', badge: '#fffbeb' },
+                  success: { bg: '#dcfce7', text: '#16a34a', badge: '#f0fdf4' }
+                };
+                const colors = colorClasses[stat.color] || colorClasses.primary;
+                
+                return (
+                  <div key={index} className="card" style={{ padding: '1.5rem', transition: 'all 0.3s ease' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                      <div style={{ padding: '0.75rem', borderRadius: '0.75rem', backgroundColor: colors.bg, transition: 'background-color 0.3s ease' }}>
+                        <Icon style={{ width: '1.5rem', height: '1.5rem', color: colors.text }} />
+                      </div>
+                      <span style={{ fontSize: '0.875rem', fontWeight: '500', color: colors.text, backgroundColor: colors.badge, padding: '0.25rem 0.5rem', borderRadius: '0.5rem' }}>
+                        {stat.change}
+                      </span>
+                    </div>
+                    <div>
+                      <p style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#0f172a', marginBottom: '0.25rem' }}>{stat.value}</p>
+                      <p style={{ fontSize: '0.875rem', color: '#475569' }}>{stat.label}</p>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </section>
         )}
 
         {/* Main content */}
-        <main className="flex-1 p-6 overflow-y-auto">{children}</main>
+        <main className="flex-1 p-6 overflow-y-auto bg-secondary-50 dark:bg-secondary-900">
+          <div className="max-w-7xl mx-auto">
+            {children}
+          </div>
+        </main>
       </div>
     </div>
   );

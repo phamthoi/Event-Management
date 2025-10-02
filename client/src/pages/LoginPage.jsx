@@ -117,7 +117,7 @@ const LoginPage = () => {
       error={error}
     />
   ) : (
-    <LoginForm onLogin={handleLogin} onForgot={handleForgot} error={error} />
+    <LoginForm onLogin={handleLogin} onForgot={handleForgot} error={error} loading={loading} />
   );
 };
 

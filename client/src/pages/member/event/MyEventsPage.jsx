@@ -48,7 +48,7 @@ const MyEventsPage = () => {
   if (loading) return <p className="text-center mt-10">Loading...</p>;
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
+    <div className="p-6 bg-gray-100 dark:bg-secondary-900 min-h-screen">
       <h1 className="text-2xl font-bold mb-4">My Events</h1>
       {events.length === 0 ? (
         <div className="text-gray-500">You haven't registered for any events yet</div>

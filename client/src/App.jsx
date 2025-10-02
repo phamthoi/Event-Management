@@ -1,5 +1,6 @@
 // client/src/App.jsx
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { ThemeProvider } from "./contexts/ThemeContext";
 import LoginPage from "./pages/LoginPage.jsx";
 
 // Admin
@@ -25,6 +26,7 @@ import ViewMemberListPage from "./pages/member/memberList/ViewMemberListPage.jsx
 //import MyEventsPage from "./pages/member/event/MyEventsPage.jsx";
 import UpcomingEventsPage from "./pages/common/UpcommingEventsPage.jsx";
 import MyEventsPage from "./pages/common/MyEventsPage.jsx";
+import DesignSystemPage from "./pages/DesignSystemPage.jsx";
 
 function App() {
   // 🔹 Gộp ProtectedRoute ngay trong App
@@ -44,10 +46,14 @@ function App() {
   };
 
   return (
-    <BrowserRouter>
-      <Routes>
+    <ThemeProvider>
+      <BrowserRouter>
+        <Routes>
         {/* Login */}
         <Route path="/login" element={<LoginPage />} />
+        
+        {/* Design System Demo */}
+        <Route path="/design-system" element={<DesignSystemPage />} />
 
         {/* Admin Dashboard */}
         <Route
@@ -112,8 +118,9 @@ function App() {
 
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/login" />} />
-      </Routes>
-    </BrowserRouter>
+        </Routes>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
 

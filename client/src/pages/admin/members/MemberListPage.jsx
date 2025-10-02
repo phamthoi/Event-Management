@@ -7,15 +7,21 @@ function MemberListPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
+    <div className="p-6 bg-gray-50 dark:bg-secondary-900 min-h-screen">
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-        <h1 className="text-3xl font-bold text-gray-900 drop-shadow-sm">
+        {/* chỉnh text để hỗ trợ dark mode */}
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white drop-shadow-sm">
           👥 Member Management
         </h1>
+
         <button
           onClick={() => navigate("/admin/members/create")}
-          className="flex items-center gap-2 px-5 py-2 bg-gradient-to-r from-blue-600 to-blue-500 text-white font-semibold rounded-xl shadow hover:from-blue-700 hover:to-blue-600 transition"
+          className="flex items-center gap-2 px-5 py-2 
+                     bg-gradient-to-r from-blue-600 to-blue-500 
+                     text-white font-semibold rounded-xl shadow 
+                     hover:from-blue-700 hover:to-blue-600 
+                     transition"
         >
           <PlusIcon className="w-4 h-4" />
           Create Member
@@ -23,7 +29,11 @@ function MemberListPage() {
       </div>
 
       {/* Table Card */}
-      <div className="bg-white shadow-lg rounded-2xl p-4 overflow-x-auto">
+      <div
+        className="bg-white dark:bg-secondary-800 
+                   shadow-lg rounded-2xl p-4 overflow-x-auto
+                   border border-gray-200 dark:border-secondary-700"
+      >
         <MemberTable />
       </div>
     </div>

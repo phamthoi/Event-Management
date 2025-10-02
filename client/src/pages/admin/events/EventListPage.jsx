@@ -1,12 +1,16 @@
+// client/src/pages/admin/events/EventListPage.jsx
 import React, { useEffect, useState } from "react";
 import EventFilter from "../../../components/admin/EventList/EventFilter";
 import EventTable from "../../../components/admin/EventList/EventTable";
 import Pagination from "../../../components/admin/EventList/Pagination";
 import { getEventStatus } from "../../../utils/getEventStatus";
 import { useNavigate } from "react-router-dom";
-import { showErrorAlert, showDeleteErrorAlert } from "../../../utils/admin/errorHandler";
+import {
+  showErrorAlert,
+  showDeleteErrorAlert,
+} from "../../../utils/admin/errorHandler";
 import { getEvents, deleteEvent } from "../../../services/admin/event/eventService";
-import { PlusIcon, Pencil1Icon, TrashIcon } from "@radix-ui/react-icons";
+import { PlusIcon } from "@radix-ui/react-icons";
 
 const EventListPage = () => {
   const [events, setEvents] = useState([]);
@@ -43,7 +47,9 @@ const EventListPage = () => {
     const eventToDelete = events.find((event) => event.id === id);
     if (!eventToDelete) return alert("❌ Event not found!");
     if ((eventToDelete.registeredCount || 0) > 0) {
-      return alert(`❌ Cannot delete this event! There are ${eventToDelete.registeredCount} registered members.`);
+      return alert(
+        `❌ Cannot delete this event! There are ${eventToDelete.registeredCount} registered members.`
+      );
     }
     if (!window.confirm("Are you sure you want to delete this event?")) return;
 
@@ -65,18 +71,22 @@ const EventListPage = () => {
   const handlePageChange = (newPage) => setPage(newPage);
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
+    <div className="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen">
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-800 flex items-center gap-2">
+          <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2">
             📅 Event Management
           </h1>
-          <p className="text-gray-500 mt-1">Manage all your events efficiently</p>
+          <p className="text-gray-500 dark:text-gray-400 mt-1">
+            Manage all your events efficiently
+          </p>
         </div>
+
+        {/* 🔥 Sửa lại button Create Event */}
         <button
           onClick={() => navigate("/admin/events/create")}
-          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700 transition"
+          className="flex items-center gap-2 bg-secondary-600 text-white px-4 py-2 rounded-xl shadow hover:bg-secondary-500 transition-all duration-200"
         >
           <PlusIcon className="w-5 h-5" />
           Create Event
@@ -84,12 +94,14 @@ const EventListPage = () => {
       </div>
 
       {/* Filter Section */}
-      <div className="bg-white shadow-md rounded-xl p-4 mb-6">
+      {/* 🔥 đổi bg + style filter card */}
+      <div className="bg-white dark:bg-gray-800 shadow-lg rounded-2xl p-4 mb-6 border border-gray-200 dark:border-gray-700">
         <EventFilter onFilter={handleFilter} />
       </div>
 
       {/* Table Section */}
-      <div className="bg-white shadow-md rounded-xl overflow-x-auto">
+      {/* 🔥 đổi table card giống filter */}
+      <div className="bg-white dark:bg-gray-800 shadow-lg rounded-2xl overflow-x-auto border border-gray-200 dark:border-gray-700">
         <EventTable
           events={events}
           onDelete={handleDelete}
@@ -111,7 +123,7 @@ const EventListPage = () => {
 
       {/* Status Message */}
       {msg && (
-        <div className="mt-4 p-3 bg-red-100 text-red-700 rounded-lg shadow">
+        <div className="mt-4 p-3 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200 rounded-lg shadow">
           {msg}
         </div>
       )}

@@ -91,8 +91,10 @@ const CreateEventForm = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-8 bg-gradient-to-r from-blue-50 to-blue-100 rounded-3xl shadow-2xl">
-      <h2 className="text-3xl font-extrabold text-center text-blue-900 mb-8">
+    <div className="form-card">
+      <h2 className="text-3xl font-extrabold text-center 
+      text-blue-900 dark:text-gray-100
+      mb-8">
         Create Event
       </h2>
 
@@ -106,7 +108,8 @@ const CreateEventForm = () => {
             id="title"
             value={form.title}
             onChange={handleChange}
-            className="w-full px-4 py-3 border border-blue-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+            placeholder="Enter event name"
+            className="form-input"
             required
           />
         </div>
@@ -120,7 +123,9 @@ const CreateEventForm = () => {
             id="location"
             value={form.location}
             onChange={handleChange}
-            className="w-full px-4 py-3 border border-blue-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+            placeholder="Enter location"
+            className="form-input"
+            //className="w-full px-4 py-3 border border-blue-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
           />
         </div>
 
@@ -135,7 +140,8 @@ const CreateEventForm = () => {
               id="startAt"
               value={form.startAt}
               onChange={handleChange}
-              className="w-full px-4 py-3 border border-blue-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+              // className="w-full px-4 py-3 border border-blue-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+              className="form-input"
             />
           </div>
           <div>
@@ -147,7 +153,8 @@ const CreateEventForm = () => {
               id="endAt"
               value={form.endAt}
               onChange={handleChange}
-              className="w-full px-4 py-3 border border-blue-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+              // className="w-full px-4 py-3 border border-blue-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+              className="form-input"
             />
           </div>
         </div>
@@ -162,7 +169,8 @@ const CreateEventForm = () => {
               id="registrationStartAt"
               value={form.registrationStartAt}
               onChange={handleChange}
-              className="w-full px-4 py-3 border border-blue-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+              //className="w-full px-4 py-3 border border-blue-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+              className="form-input"
             />
           </div>
           <div>
@@ -174,7 +182,8 @@ const CreateEventForm = () => {
               id="registrationEndAt"
               value={form.registrationEndAt}
               onChange={handleChange}
-              className="w-full px-4 py-3 border border-blue-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+              //className="w-full px-4 py-3 border border-blue-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+              className="form-input"
             />
           </div>
         </div>
@@ -190,7 +199,9 @@ const CreateEventForm = () => {
               id="minAttendees"
               value={form.minAttendees}
               onChange={handleChange}
-              className="w-full px-4 py-3 border border-blue-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+              placeholder="Number"
+              //className="w-full px-4 py-3 border border-blue-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+              className="form-input"
             />
           </div>
           <div>
@@ -202,7 +213,9 @@ const CreateEventForm = () => {
               id="maxAttendees"
               value={form.maxAttendees}
               onChange={handleChange}
-              className="w-full px-4 py-3 border border-blue-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+              placeholder="Number"
+              //className="w-full px-4 py-3 border border-blue-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+              className="form-input"
             />
           </div>
         </div>
@@ -216,7 +229,9 @@ const CreateEventForm = () => {
             id="deposit"
             value={formatCurrency(form.deposit)}
             onChange={handleDepositChange}
-            className="w-full px-4 py-3 border border-blue-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+            placeholder="Enter deposit"
+            className="form-input"
+            //className="w-full px-4 py-3 border border-blue-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
           />
         </div>
 
@@ -228,8 +243,10 @@ const CreateEventForm = () => {
             id="description"
             value={form.description}
             onChange={handleChange}
+            placeholder="Enter Description"
             rows="3"
-            className="w-full px-4 py-3 border border-blue-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+            className="form-input"
+            //className="w-full px-4 py-3 border border-blue-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
           />
         </div>
 
@@ -250,8 +267,9 @@ const CreateEventForm = () => {
         <Toast.Root
           open={toastOpen}
           onOpenChange={setToastOpen}
-          className={`bg-white rounded-xl shadow-lg p-4 border-l-4 ${
-            toastSuccess ? "border-green-500" : "border-red-500"
+          className={`bg-white rounded-xl shadow-lg p-4 border-l-4 
+            dark:bg-gray-800
+            ${toastSuccess ? "border-green-500" : "border-red-500"
           }`}
         >
           <Toast.Title className="font-semibold">{toastMsg}</Toast.Title>

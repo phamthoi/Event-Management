@@ -62,9 +62,7 @@ const AdminProfilePage = () => {
       const updatedUser = { ...currentUser, ...data };
       localStorage.setItem("currentUser", JSON.stringify(updatedUser));
 
-      
-        window.location.reload();
-      
+      window.location.reload();
     } catch (err) {
       showErrorAlert(err);
     }
@@ -78,8 +76,9 @@ const AdminProfilePage = () => {
     );
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center py-12 px-4">
-      <div className="w-full max-w-3xl bg-white rounded-2xl shadow-lg p-6">
+    <div className=" min-h-screen bg-gradient-to-br from-primary-500 via-white to-accent-300 dark:from-secondary-400 dark:via-secondary-600 dark:to-secondary-900 flex items-center justify-center p-4 transition-all duration-300
+    ">
+      <div className="w-full max-w-3xl card p-6">
         {!isEditing ? (
           <ProfileView profile={profile} onEdit={() => setIsEditing(true)} />
         ) : (
@@ -96,14 +95,14 @@ const AdminProfilePage = () => {
         <Toast.Root
           open={toast.open}
           onOpenChange={(open) => setToast({ ...toast, open })}
-          className={`fixed bottom-6 right-6 p-4 rounded-lg shadow-md border ${
+          className={`fixed bottom-6 right-6 p-4 rounded-lg shadow-md border animate-fade-in ${
             toast.type === "success"
-              ? "bg-green-50 text-green-700 border-green-200"
-              : "bg-red-50 text-red-700 border-red-200"
+              ? "bg-green-50 text-green-700 border-green-200 dark:bg-green-800 dark:text-green-100 dark:border-green-700"
+              : "bg-red-50 text-red-700 border-red-200 dark:bg-red-800 dark:text-red-100 dark:border-red-700"
           }`}
         >
           <Toast.Title className="font-bold">{toast.message}</Toast.Title>
-          <Toast.Close className="absolute top-2 right-2 text-gray-500 cursor-pointer">
+          <Toast.Close className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100 cursor-pointer">
             ✕
           </Toast.Close>
         </Toast.Root>

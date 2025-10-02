@@ -51,14 +51,14 @@ function ViewMemberList() {
   return (
     <div className="space-y-6">
       {/* Filters */}
-      <div className="bg-white shadow rounded-lg p-4 flex flex-wrap gap-4">
+      <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-4 flex flex-wrap gap-4">
         <input
           type="text"
           placeholder="Email"
           value={tempFilters.email}
           onChange={(e) => setTempFilters({ ...tempFilters, email: e.target.value })}
           onKeyPress={(e) => e.key === "Enter" && handleFilter()}
-          className="flex-1 min-w-[200px] border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="flex-1 min-w-[200px] border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
         />
         <input
           type="text"
@@ -66,18 +66,18 @@ function ViewMemberList() {
           value={tempFilters.fullName}
           onChange={(e) => setTempFilters({ ...tempFilters, fullName: e.target.value })}
           onKeyPress={(e) => e.key === "Enter" && handleFilter()}
-          className="flex-1 min-w-[200px] border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="flex-1 min-w-[200px] border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
         />
         <div className="flex gap-2">
           <button
             onClick={handleFilter}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md flex items-center gap-2"
+            className="bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white px-4 py-2 rounded-md flex items-center gap-2 transition-all"
           >
             🔍 Search
           </button>
           <button
             onClick={handleClearFilter}
-            className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md flex items-center gap-2"
+            className="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white px-4 py-2 rounded-md flex items-center gap-2 transition-all"
           >
             ❌ Clear
           </button>
@@ -85,27 +85,27 @@ function ViewMemberList() {
       </div>
 
       {/* Table */}
-      <div className="bg-white shadow rounded-lg overflow-x-auto border border-gray-200">
+      <div className="bg-white dark:bg-gray-800 shadow rounded-lg overflow-x-auto border border-gray-200 dark:border-gray-700">
         {loading ? (
-          <div className="p-6 text-center text-gray-500">Loading...</div>
+          <div className="p-6 text-center text-gray-500 dark:text-gray-300">Loading...</div>
         ) : (
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <thead className="bg-gray-50 dark:bg-gray-700">
               <tr>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">#</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Email</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Full Name</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Phone</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">#</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Email</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Full Name</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Phone</th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
               {members.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="text-center py-6 text-gray-500">No members found</td>
+                  <td colSpan={4} className="text-center py-6 text-gray-500 dark:text-gray-300">No members found</td>
                 </tr>
               ) : (
                 members.map((m, idx) => (
-                  <tr key={m.id} className="hover:bg-gray-50 transition">
+                  <tr key={m.id} className="hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 dark:hover:from-gray-700 dark:hover:to-gray-600 transition">
                     <td className="px-4 py-3 text-sm">{(page - 1) * limit + idx + 1}</td>
                     <td className="px-4 py-3 text-sm">{m.email}</td>
                     <td className="px-4 py-3 text-sm">{m.fullName || "-"}</td>
@@ -125,23 +125,23 @@ function ViewMemberList() {
         <button
           disabled={page === 1}
           onClick={() => setPage(page - 1)}
-          className="flex items-center gap-1 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-md disabled:opacity-50"
+          className="flex items-center gap-1 px-4 py-2 rounded-lg bg-gradient-to-r from-gray-300 to-gray-400 dark:from-gray-700 dark:to-gray-600 hover:opacity-90 disabled:opacity-50 transition"
         >
           ◀ Previous
         </button>
-        <span className="text-sm font-medium">
+        <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
           Page {page} of {totalPages || 1}
         </span>
         <button
           disabled={page >= totalPages}
           onClick={() => setPage(page + 1)}
-          className="flex items-center gap-1 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-md disabled:opacity-50"
+          className="flex items-center gap-1 px-4 py-2 rounded-lg bg-gradient-to-r from-gray-300 to-gray-400 dark:from-gray-700 dark:to-gray-600 hover:opacity-90 disabled:opacity-50 transition"
         >
           Next ▶
         </button>
       </div>
 
-      {msg && <div className="text-red-600">{msg}</div>}
+      {msg && <div className="text-red-600 dark:text-red-400">{msg}</div>}
     </div>
   );
 }

@@ -1,11 +1,13 @@
 // components/LoginForm.jsx
 import React, { useState } from "react";
-import * as Label from "@radix-ui/react-label";
-import { HiOutlineMail, HiOutlineLockClosed } from "react-icons/hi";
+import { HiOutlineMail, HiOutlineLockClosed, HiOutlineEye, HiOutlineEyeOff } from "react-icons/hi";
+import { FiCalendar, FiUsers, FiSettings } from "react-icons/fi";
+import ThemeToggle from "../common/ThemeToggle";
 
-function LoginForm({ onLogin, onForgot, error }) {
+function LoginForm({ onLogin, onForgot, error, loading }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -13,81 +15,148 @@ function LoginForm({ onLogin, onForgot, error }) {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-100 to-indigo-100 px-4">
-      <div className="bg-white p-10 rounded-3xl shadow-2xl w-full max-w-md">
-        <h2 className="text-3xl font-bold text-center mb-8 text-gray-800">
-          Welcome Back
-        </h2>
+    <div className="min-h-screen bg-gradient-to-br from-primary-500 via-white to-accent-300 dark:from-secondary-400 dark:via-secondary-600 dark:to-secondary-900 flex items-center justify-center p-4 transition-all duration-300">
+      {/* Theme Toggle */}
+      <div className="absolute top-6 right-6 z-10">
+        <ThemeToggle variant="simple" size="default" />
+      </div>
+      
+      {/* Background decoration */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary-200 dark:bg-primary-800 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse-soft"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-accent-200 dark:bg-accent-800 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse-soft"></div>
+        <div className="absolute top-40 left-1/2 w-60 h-60 bg-warning-200 dark:bg-warning-800 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse-soft"></div>
+      </div>
 
-        <form className="space-y-6" onSubmit={handleSubmit}>
-          {/* Email */}
-          {/* Email */}
-          <div className="relative">
-            <input
-              type="email"
-              id="email"
-              placeholder=" "
-              className="peer w-full pl-10 pr-4 pt-5 pb-2 border border-gray-300 rounded-lg 
-                         focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <HiOutlineMail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-            <Label.Root
-              htmlFor="email"
-              className="absolute left-10 top-2 text-gray-500 text-sm transition-all
-                         peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2
-                         peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-base
-                         peer-focus:top-2 peer-focus:text-sm peer-focus:text-blue-600 bg-white px-1"
-            >
-              Email
-              </Label.Root>
+      <div className="relative w-full max-w-md">
+        {/* Main login card */}
+        <div className="card p-8 animate-fade-in">
+          {/* Logo and header */}
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-primary rounded-2xl mb-4 shadow-glow">
+              <FiCalendar className="w-8 h-8 text-gray dark:text-white" />
             </div>
-
-          {/* Password */}
-          <div className="relative">
-            <input
-              type="password"
-              id="password"
-              placeholder=" "
-              className="peer w-full pl-10 pr-4 pt-5 pb-2 border border-gray-300 rounded-lg 
-                         focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <HiOutlineLockClosed className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-            <Label.Root
-              htmlFor="password"
-              className="absolute left-10 top-2 text-gray-500 text-sm transition-all
-                         peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2
-                         peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-base
-                         peer-focus:top-2 peer-focus:text-sm peer-focus:text-blue-600 bg-white px-1"
-            >
-              Password
-              </Label.Root>
+            <h1 className="text-3xl font-display font-bold text-secondary-900 mb-2">
+              Welcome Back
+            </h1>
+            <p className="text-secondary-600">
+              Sign in to your Event Management account
+            </p>
           </div>
 
-          {/* Error */}
-          {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+          <form className="space-y-6" onSubmit={handleSubmit}>
+            {/* Email field */}
+            <div className="space-y-2">
+              <label htmlFor="email" className="form-label">
+                Email Address
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <HiOutlineMail className="h-5 w-5 text-secondary-400" />
+                </div>
+                <input
+                  type="email"
+                  id="email"
+                  className="form-input"
+                  style={{ paddingLeft: '3rem' }}
+                  placeholder="Enter your email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+            </div>
 
-          {/* Login button */}
-          <button
-            type="submit"
-            className="w-full py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors shadow-md"
-          >
-            Login
-          </button>
+            {/* Password field */}
+            <div className="space-y-2">
+              <label htmlFor="password" className="form-label">
+                Password
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <HiOutlineLockClosed className="h-5 w-5 text-secondary-400" />
+                </div>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  className="form-input"
+                  style={{ paddingLeft: '3rem', paddingRight: '3rem' }}
+                  placeholder="Enter your password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <button
+                  type="button"
+                  className="absolute inset-y-0 right-0 pr-4 flex items-center"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? (
+                    <HiOutlineEyeOff className="h-5 w-5 text-secondary-400 hover:text-secondary-600" />
+                  ) : (
+                    <HiOutlineEye className="h-5 w-5 text-secondary-400 hover:text-secondary-600" />
+                  )}
+                </button>
+              </div>
+            </div>
 
-          {/* Forgot password */}
-          <p
-            className="text-center mt-3 text-sm text-blue-600 hover:underline cursor-pointer"
-            onClick={onForgot}
-          >
-            Forgot Password?
-          </p>
-        </form>
+            {/* Error message */}
+            {error && (
+              <div className="bg-danger-50 border border-danger-200 rounded-xl p-4">
+                <p className="form-error text-center">{error}</p>
+              </div>
+            )}
+
+            {/* Login button */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full btn-primary py-3 text-base font-semibold shadow-glow hover:shadow-glow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? (
+                <div className="flex items-center justify-center">
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                  Signing in...
+                </div>
+              ) : (
+                "Sign In"
+              )}
+            </button>
+
+            {/* Forgot password */}
+            <div className="text-center">
+              <button
+                type="button"
+                onClick={onForgot}
+                className="text-primary-600 hover:text-primary-700 text-sm font-medium transition-colors duration-200"
+              >
+                Forgot your password?
+              </button>
+            </div>
+          </form>
+        </div>
+
+        {/* Features showcase */}
+        <div className="mt-8 grid grid-cols-3 gap-4 animate-fade-in">
+          <div className="text-center">
+            <div className="inline-flex items-center justify-center w-12 h-12 bg-primary-100 dark:bg-primary-800 rounded-xl mb-2">
+              <FiCalendar className="w-6 h-6 text-primary-600" />
+            </div>
+            <p className="text-xs text-secondary-600 font-medium">Event Management</p>
+          </div>
+          <div className="text-center">
+            <div className="inline-flex items-center justify-center w-12 h-12 bg-accent-100 dark:bg-accent-900 rounded-xl mb-2">
+              <FiUsers className="w-6 h-6 text-accent-600" />
+            </div>
+            <p className="text-xs text-secondary-600 font-medium">Member Portal</p>
+          </div>
+          <div className="text-center">
+            <div className="inline-flex items-center justify-center w-12 h-12 bg-warning-100 dark:bg-accent-800 rounded-xl mb-2">
+              <FiSettings className="w-6 h-6 text-warning-600" />
+            </div>
+            <p className="text-xs text-secondary-600 font-medium">Admin Tools</p>
+          </div>
+        </div>
       </div>
     </div>
   );

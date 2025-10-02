@@ -2,23 +2,30 @@
 import React from "react";
 
 function MemberTable({ registrations, isOngoing, onToggle }) {
-   console.log("MemberTable render:", { isOngoing, registrations });
+  console.log("MemberTable render:", { isOngoing, registrations });
   return (
-    <div className="overflow-x-auto border rounded-lg shadow-sm">
+    <div className="overflow-x-auto border rounded-lg shadow-sm border-gray-200 dark:border-gray-700">
       <table className="w-full border-collapse text-sm">
-        <thead className="bg-gray-100 text-gray-700 uppercase text-xs sticky top-0 z-10">
+        <thead className="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 uppercase text-xs sticky top-0 z-10">
           <tr>
-            <th className="border px-3 py-2">#</th>
-            <th className="border px-3 py-2">Name</th>
-            <th className="border px-3 py-2">Email</th>
-            <th className="border px-3 py-2 text-center">Deposit Paid</th>
-            <th className="border px-3 py-2 text-center">Attended</th>
+            <th className="border px-3 py-2 dark:border-gray-700">#</th>
+            <th className="border px-3 py-2 dark:border-gray-700">Name</th>
+            <th className="border px-3 py-2 dark:border-gray-700">Email</th>
+            <th className="border px-3 py-2 text-center dark:border-gray-700">
+              Deposit Paid
+            </th>
+            <th className="border px-3 py-2 text-center dark:border-gray-700">
+              Attended
+            </th>
           </tr>
         </thead>
         <tbody>
           {registrations.length === 0 ? (
             <tr>
-              <td colSpan="5" className="text-center p-4 text-gray-500 italic border">
+              <td
+                colSpan="5"
+                className="text-center p-4 text-gray-500 dark:text-gray-400 italic border dark:border-gray-700"
+              >
                 No members found
               </td>
             </tr>
@@ -26,14 +33,22 @@ function MemberTable({ registrations, isOngoing, onToggle }) {
             registrations.map((reg, idx) => (
               <tr
                 key={reg.id}
-                className="odd:bg-white even:bg-gray-50 hover:bg-gray-100 transition-colors"
+                className="odd:bg-white even:bg-gray-50 hover:bg-gray-100 
+                           dark:odd:bg-gray-900 dark:even:bg-gray-800 
+                           dark:hover:bg-gray-700 transition-colors"
               >
-                <td className="border px-3 py-2">{idx + 1}</td>
-                <td className="border px-3 py-2">{reg.user?.fullName || "Unknown"}</td>
-                <td className="border px-3 py-2">{reg.user?.email || "-"}</td>
-                
+                <td className="border px-3 py-2 dark:border-gray-700">
+                  {idx + 1}
+                </td>
+                <td className="border px-3 py-2 dark:border-gray-700">
+                  {reg.user?.fullName || "Unknown"}
+                </td>
+                <td className="border px-3 py-2 dark:border-gray-700">
+                  {reg.user?.email || "-"}
+                </td>
+
                 {/* Deposit Paid */}
-                <td className="border px-3 py-2 text-center">
+                <td className="border px-3 py-2 text-center dark:border-gray-700">
                   <input
                     type="checkbox"
                     checked={reg.depositPaid}
@@ -45,7 +60,7 @@ function MemberTable({ registrations, isOngoing, onToggle }) {
                 </td>
 
                 {/* Attended */}
-                <td className="border px-3 py-2 text-center">
+                <td className="border px-3 py-2 text-center dark:border-gray-700">
                   <input
                     type="checkbox"
                     checked={reg.attended}

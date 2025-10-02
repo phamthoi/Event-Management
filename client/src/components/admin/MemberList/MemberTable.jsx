@@ -9,7 +9,11 @@ import {
   LockOpen1Icon,
   ReloadIcon,
 } from "@radix-ui/react-icons";
-import { getMembers, MemberLock, MemberUnlock } from "../../../services/admin/member/memberService";
+import {
+  getMembers,
+  MemberLock,
+  MemberUnlock,
+} from "../../../services/admin/member/memberService";
 import { showErrorAlert } from "../../../utils/admin/errorHandler";
 
 function MemberTable({ role = "admin" }) {
@@ -88,7 +92,9 @@ function MemberTable({ role = "admin" }) {
     return (
       <span
         className={`px-2 py-1 text-xs font-semibold rounded-full shadow-sm ${
-          isActive ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
+          isActive
+            ? "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300"
+            : "bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300"
         }`}
       >
         {isActive ? "Active" : "Locked"}
@@ -96,19 +102,24 @@ function MemberTable({ role = "admin" }) {
     );
   };
 
-  if (loading) return <div className="text-center py-6 text-gray-500">Loading...</div>;
+  if (loading)
+    return (
+      <div className="text-center py-6 text-gray-500 dark:text-gray-400">
+        Loading...
+      </div>
+    );
 
   return (
     <div className="space-y-4">
-      {/* Filter Card */}
-      <div className="p-5 bg-white shadow-md rounded-2xl flex flex-wrap gap-3 items-center">
+      {/* Bộ lọc */}
+      <div className="p-5 bg-white dark:bg-gray-800 shadow-md rounded-2xl flex flex-wrap gap-3 items-center">
         <input
           type="text"
           placeholder="Email"
           value={tempFilters.email}
           onChange={(e) => setTempFilters({ ...tempFilters, email: e.target.value })}
           onKeyPress={(e) => e.key === "Enter" && handleFilter()}
-          className="border px-3 py-2 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500"
+          className="border px-3 py-2 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-200"
         />
         <input
           type="text"
@@ -116,13 +127,13 @@ function MemberTable({ role = "admin" }) {
           value={tempFilters.fullName}
           onChange={(e) => setTempFilters({ ...tempFilters, fullName: e.target.value })}
           onKeyPress={(e) => e.key === "Enter" && handleFilter()}
-          className="border px-3 py-2 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500"
+          className="border px-3 py-2 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-200"
         />
         {role === "admin" && (
           <select
             value={tempFilters.isActive}
             onChange={(e) => setTempFilters({ ...tempFilters, isActive: e.target.value })}
-            className="border px-3 py-2 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500"
+            className="border px-3 py-2 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-200"
           >
             <option value="">Status</option>
             <option value="true">Active</option>
@@ -143,11 +154,11 @@ function MemberTable({ role = "admin" }) {
         </button>
       </div>
 
-      {/* Table */}
-      <div className="overflow-x-auto bg-white shadow-lg rounded-2xl">
+      {/* Bảng thành viên */}
+      <div className="overflow-x-auto bg-white dark:bg-gray-800 shadow-lg rounded-2xl">
         <table className="w-full border-collapse text-sm">
-          <thead className="bg-gray-100 sticky top-0 z-10">
-            <tr className="text-gray-700 uppercase text-xs">
+          <thead className="bg-gray-100 dark:bg-gray-700 sticky top-0 z-10">
+            <tr className="text-gray-700 dark:text-gray-200 uppercase text-xs">
               <th className="border px-3 py-2 text-left">#</th>
               <th className="border px-3 py-2 text-left">Email</th>
               <th className="border px-3 py-2 text-left">Full Name</th>
@@ -161,24 +172,31 @@ function MemberTable({ role = "admin" }) {
               <tr>
                 <td
                   colSpan={role === "admin" ? 6 : 5}
-                  className="text-center p-4 text-gray-500"
+                  className="text-center p-4 text-gray-500 dark:text-gray-400"
                 >
                   No members found
                 </td>
               </tr>
             ) : (
               members.map((m, idx) => (
-                <tr key={m.id} className="hover:bg-gray-50 transition">
-                  <td className="border px-3 py-2">{(page - 1) * limit + idx + 1}</td>
+                <tr
+                  key={m.id}
+                  className="hover:bg-gray-50 dark:hover:bg-gray-700 transition"
+                >
+                  <td className="border px-3 py-2">
+                    {(page - 1) * limit + idx + 1}
+                  </td>
                   <td className="border px-3 py-2">{m.email}</td>
                   <td className="border px-3 py-2">{m.fullName || "-"}</td>
                   <td className="border px-3 py-2">{m.phoneNumber || "-"}</td>
-                  <td className="border px-3 py-2 text-center">{renderStatusBadge(m.isActive)}</td>
+                  <td className="border px-3 py-2 text-center">
+                    {renderStatusBadge(m.isActive)}
+                  </td>
                   {role === "admin" && (
                     <td className="border px-3 py-2 flex justify-center items-center gap-2">
                       <button
                         onClick={() => handleView(m.id)}
-                        className="p-2 rounded-full bg-gray-200 hover:bg-gray-300 transition"
+                        className="p-2 rounded-full bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 transition"
                         title="View Member"
                       >
                         <EyeOpenIcon />
@@ -212,12 +230,12 @@ function MemberTable({ role = "admin" }) {
         </table>
       </div>
 
-      {/* Pagination */}
-      <div className="flex justify-between items-center mt-4 text-sm">
+      {/* Phân trang */}
+      <div className="flex justify-between items-center mt-4 text-sm text-gray-600 dark:text-gray-300">
         <button
           disabled={page === 1}
           onClick={() => setPage(page - 1)}
-          className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50 transition"
+          className="px-3 py-1 rounded bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50 transition"
         >
           Previous
         </button>
@@ -227,7 +245,7 @@ function MemberTable({ role = "admin" }) {
         <button
           disabled={page >= totalPages}
           onClick={() => setPage(page + 1)}
-          className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50 transition"
+          className="px-3 py-1 rounded bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50 transition"
         >
           Next
         </button>

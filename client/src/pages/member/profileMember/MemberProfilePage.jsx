@@ -72,7 +72,7 @@ const MemberProfilePage = () => {
   if (!profile) return <p className="text-center mt-10">Loading...</p>;
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-start justify-center py-8">
+    <div className="min-h-screen bg-gray-100 dark:bg-secondary-900 flex items-start justify-center py-8">
       <div className="w-full max-w-3xl">
         {!isEditing ? (
           <ProfileView profile={profile} onEdit={() => setIsEditing(true)} />

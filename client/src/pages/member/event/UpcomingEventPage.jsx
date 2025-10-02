@@ -87,7 +87,7 @@ const UpcomingEventsPage = () => {
   const totalPages = Math.ceil(total / limit);
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
+    <div className="p-6 bg-gray-100 dark:bg-secondary-900 min-h-screen">
       <h1 className="text-2xl font-bold mb-4">Upcoming Events</h1>
       {events.length === 0 ? (
         <div className="text-gray-500">No upcoming events</div>

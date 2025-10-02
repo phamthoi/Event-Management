@@ -1,94 +1,174 @@
-// client/src/components/admin/Dashboard/Sidebar.jsx
+// src/components/admin/Dashboard/Sidebar.jsx
 import * as Accordion from "@radix-ui/react-accordion";
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
+import {
+  FiUser,
+  FiUsers,
+  FiCalendar,
+  FiClipboard,
+  FiBell,
+  FiLogOut,
+  FiChevronDown,
+  FiChevronRight,
+  FiMenu,
+  FiX,
+} from "react-icons/fi";
+
+const menuItems = [
+  {
+    name: "Profile",
+    icon: FiUser,
+    links: [
+      { name: "View & Update", path: "/admin/profile" },
+      { name: "Change Password", path: "/admin/profile/changepass" },
+    ],
+  },
+  {
+    name: "Events Management",
+    icon: FiCalendar,
+    links: [
+      { name: "Event List", path: "/admin/events/list" },
+      { name: "Attendance", path: "/admin/events/attendance" },
+    ],
+  },
+  {
+    name: "Members Management",
+    icon: FiUsers,
+    links: [{ name: "Member List", path: "/admin/members/list" }],
+  },
+  {
+    name: "Events Registration",
+    icon: FiClipboard,
+    links: [
+      { name: "Upcoming Event", path: "/admin/upcoming-event" },
+      { name: "My Event", path: "/admin/my-event" },
+    ],
+  },
+  {
+    name: "Notifications",
+    icon: FiBell,
+    links: [{ name: "Send Notification", path: "/admin/notifications/send", badge: 3 }],
+  },
+];
 
 function Sidebar() {
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
+  const [openItems, setOpenItems] = useState(["Events Management", "Profile"]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("currentUser");
     window.location.href = "/login";
   };
 
   const isActive = (path) => location.pathname === path;
 
-  const menuItems = [
-    { name: "Profile", icon: "👤", links: [
-      { name: "View & Update", path: "/admin/profile" },
-      { name: "Change Password", path: "/admin/profile/changepass" }
-    ]},
-    { name: "Events Management", icon: "📅", links: [
-      { name: "Event List", path: "/admin/events/list" },
-      { name: "Attendance", path: "/admin/events/attendance" }
-    ]},
-    { name: "Members Management", icon: "👥", links: [
-      { name: "Member List", path: "/admin/members/list" }
-    ]},
-    { name: "Events Registration", icon: "📝", links: [
-      { name: "Upcoming Event", path: "/admin/upcoming-event" },
-      { name: "My Event", path: "/admin/my-event" }
-    ]},
-    { name: "Notifications", icon: "🔔", links: [
-      { name: "Send Notification", path: "/admin/notifications/send", badge: 3 }
-    ]},
-  ];
+  const toggleItem = (itemName) => {
+    setOpenItems(prev => 
+      prev.includes(itemName) 
+        ? prev.filter(name => name !== itemName)
+        : [...prev, itemName]
+    );
+  };
 
   return (
-    <div className={`flex flex-col bg-gray-900 text-white shadow-lg h-screen transition-all duration-300 ${collapsed ? "w-20" : "w-64"}`}>
+    <div
+      className={`flex flex-col h-screen transition-all duration-300 ${
+        collapsed ? "w-20" : "w-72"
+      } bg-white dark:bg-secondary-800 border-r border-secondary-200 dark:border-secondary-700 shadow-large`}
+    >
       {/* Logo */}
-      <div className="p-6 border-b border-gray-800 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          🌟
-          {!collapsed && <span className="text-2xl font-bold">NEXPANDO</span>}
+      <div className="flex items-center justify-between p-6 border-b border-secondary-100 dark:border-secondary-700">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-gradient-primary rounded-xl flex items-center justify-center shadow-glow">
+            <FiCalendar className="w-6 h-6 text-white" />
+          </div>
+          {!collapsed && (
+            <div>
+              <h1 className="text-xl font-display font-bold text-secondary-900 dark:text-secondary-100">NEXPANDO</h1>
+              <p className="text-xs text-secondary-500 dark:text-secondary-400">Event Management</p>
+            </div>
+          )}
         </div>
         <button
-          className="text-gray-400 hover:text-white transition"
+          className="p-2 text-secondary-400 dark:text-secondary-500 hover:text-secondary-600 dark:hover:text-secondary-300 hover:bg-secondary-100 dark:hover:bg-secondary-700 rounded-lg transition-all duration-200"
           onClick={() => setCollapsed(!collapsed)}
         >
-          {collapsed ? "➡️" : "⬅️"}
+          {collapsed ? <FiMenu className="w-5 h-5" /> : <FiX className="w-5 h-5" />}
         </button>
       </div>
 
       {/* Menu */}
-      <Accordion.Root type="multiple" className="flex flex-col p-2 gap-1 flex-1 overflow-auto">
-        {menuItems.map((item) => (
-          <Accordion.Item key={item.name} value={item.name.toLowerCase()}>
-            <Accordion.Header>
-              <Accordion.Trigger className={`flex items-center gap-3 w-full text-left px-3 py-2 rounded transition 
-                hover:bg-gray-800 ${isActive(item.links[0].path) ? "bg-gradient-to-r from-blue-500 to-blue-600" : ""}`}>
-                <span className="text-xl">{item.icon}</span>
-                {!collapsed && <span className="font-semibold flex-1">{item.name}</span>}
-                {!collapsed && item.badge && (
-                  <span className="ml-auto bg-red-500 text-xs font-bold px-2 py-0.5 rounded-full">{item.badge}</span>
+      <div className="flex-1 overflow-auto p-4 space-y-2">
+        {menuItems.map((item) => {
+          const Icon = item.icon;
+          const isOpen = openItems.includes(item.name);
+          const hasActiveChild = item.links.some(link => isActive(link.path));
+          
+          return (
+            <div key={item.name} className="space-y-1">
+              {/* Main menu item */}
+              <button
+                onClick={() => toggleItem(item.name)}
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group ${
+                  hasActiveChild 
+                    ? "bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-400 border border-primary-200 dark:border-primary-700" 
+                    : "text-secondary-600 dark:text-secondary-400 hover:text-secondary-900 dark:hover:text-secondary-100 hover:bg-secondary-50 dark:hover:bg-secondary-700"
+                }`}
+              >
+                <Icon className={`w-5 h-5 ${hasActiveChild ? "text-primary-600 dark:text-primary-400" : "text-secondary-400 dark:text-secondary-500 group-hover:text-secondary-600 dark:group-hover:text-secondary-300"}`} />
+                {!collapsed && (
+                  <>
+                    <span className="flex-1 text-left font-medium">{item.name}</span>
+                    {item.links[0].badge && (
+                      <span className="bg-danger-500 text-white text-xs font-semibold px-2 py-1 rounded-full">
+                        {item.links[0].badge}
+                      </span>
+                    )}
+                    {isOpen ? (
+                      <FiChevronDown className="w-4 h-4 text-secondary-400 dark:text-secondary-500" />
+                    ) : (
+                      <FiChevronRight className="w-4 h-4 text-secondary-400 dark:text-secondary-500" />
+                    )}
+                  </>
                 )}
-              </Accordion.Trigger>
-            </Accordion.Header>
-            {!collapsed && (
-              <Accordion.Content className="ml-10 flex flex-col gap-1 mt-1 text-sm">
-                {item.links.map((link) => (
-                  <Link 
-                    key={link.name} 
-                    to={link.path} 
-                    className={`px-2 py-1 rounded hover:bg-gray-800 transition ${isActive(link.path) ? "bg-gray-700 text-blue-400" : ""}`}
-                  >
-                    {link.name}
-                  </Link>
-                ))}
-              </Accordion.Content>
-            )}
-          </Accordion.Item>
-        ))}
-      </Accordion.Root>
+              </button>
+
+              {/* Submenu */}
+              {!collapsed && isOpen && (
+                <div className="ml-8 space-y-1 animate-fade-in">
+                  {item.links.map((link) => (
+                    <Link
+                      key={link.name}
+                      to={link.path}
+                      className={`block px-4 py-2 text-sm rounded-lg transition-all duration-200 ${
+                        isActive(link.path)
+                          ? "bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 font-medium border-l-2 border-primary-600 dark:border-primary-400"
+                          : "text-secondary-500 dark:text-secondary-400 hover:text-secondary-700 dark:hover:text-secondary-200 hover:bg-secondary-50 dark:hover:bg-secondary-700"
+                      }`}
+                    >
+                      {link.name}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
 
       {/* Logout */}
-      <button
-        onClick={handleLogout}
-        className="m-4 p-2 text-red-500 font-semibold border border-red-500 rounded hover:bg-red-500 hover:text-white transition"
-      >
-        {!collapsed ? "Logout" : "⏏️"}
-      </button>
+      <div className="p-4 border-t border-secondary-100">
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center gap-3 px-4 py-3 text-danger-600 hover:text-danger-700 hover:bg-danger-50 rounded-xl transition-all duration-200 group"
+        >
+          <FiLogOut className="w-5 h-5" />
+          {!collapsed && <span className="font-medium">Logout</span>}
+        </button>
+      </div>
     </div>
   );
 }

@@ -5,7 +5,7 @@ const EditEventForm = ({ event = {}, onChange, onSubmit, onCancel }) => {
     <form onSubmit={onSubmit} className="space-y-6">
       {/* Event name */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="form-label">
           Event name
         </label>
         <input
@@ -14,7 +14,7 @@ const EditEventForm = ({ event = {}, onChange, onSubmit, onCancel }) => {
           value={event.title || ""}
           onChange={onChange}
           placeholder="Enter event name"
-          className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="form-input"
           required
         />
       </div>
@@ -30,7 +30,7 @@ const EditEventForm = ({ event = {}, onChange, onSubmit, onCancel }) => {
           value={event.location || ""}
           onChange={onChange}
           placeholder="Enter event location"
-          className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="form-input"
         />
       </div>
 
@@ -47,7 +47,8 @@ const EditEventForm = ({ event = {}, onChange, onSubmit, onCancel }) => {
             value={event.startAt || ""}
             onChange={onChange}
             step="1"
-            className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            // className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="form-input"
           />
         </div>
         <div>
@@ -60,7 +61,8 @@ const EditEventForm = ({ event = {}, onChange, onSubmit, onCancel }) => {
             value={event.endAt || ""}
             onChange={onChange}
             step="1"
-            className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            // className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="form-input"
           />
         </div>
       </div>
@@ -77,7 +79,8 @@ const EditEventForm = ({ event = {}, onChange, onSubmit, onCancel }) => {
             value={event.registrationStartAt || ""}
             onChange={onChange}
             step="1"
-            className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            // className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="form-input"
           />
         </div>
         <div>
@@ -90,7 +93,8 @@ const EditEventForm = ({ event = {}, onChange, onSubmit, onCancel }) => {
             value={event.registrationEndAt || ""}
             onChange={onChange}
             step="1"
-            className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            // className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="form-input"
           />
         </div>
       </div>
@@ -107,7 +111,8 @@ const EditEventForm = ({ event = {}, onChange, onSubmit, onCancel }) => {
             value={event.minAttendees || ""}
             onChange={onChange}
             placeholder="0"
-            className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            // className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="form-input"
           />
         </div>
         <div>
@@ -120,7 +125,8 @@ const EditEventForm = ({ event = {}, onChange, onSubmit, onCancel }) => {
             value={event.maxAttendees || ""}
             onChange={onChange}
             placeholder="100"
-            className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            // className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="form-input"
           />
         </div>
       </div>
@@ -134,7 +140,8 @@ const EditEventForm = ({ event = {}, onChange, onSubmit, onCancel }) => {
           type="number"
           value={event.registeredCount || 0}
           readOnly
-          className="w-full px-3 py-2 border rounded bg-gray-100 text-gray-600 cursor-not-allowed"
+          // className="w-full px-3 py-2 border rounded bg-gray-100 text-gray-600 cursor-not-allowed"
+          className="form-input"
         />
       </div>
 
@@ -149,7 +156,8 @@ const EditEventForm = ({ event = {}, onChange, onSubmit, onCancel }) => {
           value={event.deposit || ""}
           onChange={onChange}
           placeholder="0"
-          className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          // className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="form-input"
           step="0.01"
           min="0"
         />
@@ -167,7 +175,8 @@ const EditEventForm = ({ event = {}, onChange, onSubmit, onCancel }) => {
           onChange={onChange}
           rows="3"
           placeholder="Enter event description"
-          className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          // className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="form-input"
         />
       </div>
 
@@ -176,7 +185,10 @@ const EditEventForm = ({ event = {}, onChange, onSubmit, onCancel }) => {
       <div className="flex gap-4">
         <button
           type="submit"
-          className="flex-1 py-2 rounded font-semibold transition bg-blue-600 text-white hover:bg-blue-700"
+          className="flex-1 py-2 rounded font-semibold transition 
+          bg-blue-500 text-white hover:bg-blue-600
+          dark:bg-blue-800 dark:bg-text-white dark:hover:bg-blue-900
+          "
         >
           Update Event
         </button>
@@ -184,7 +196,10 @@ const EditEventForm = ({ event = {}, onChange, onSubmit, onCancel }) => {
         <button
           type="button"
           onClick={onCancel}
-          className="flex-1 bg-red-600 text-white py-2 rounded hover:bg-red-700 font-semibold transition"
+          className="flex-1 text-white py-2 font-semibold transition rounded 
+          bg-red-500 hover:bg-red-600 
+          dark:bg-red-800 dark:hover:bg-red-900
+          "
         >
           Cancel Event
         </button>
