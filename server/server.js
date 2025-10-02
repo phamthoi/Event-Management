@@ -4,25 +4,25 @@ import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
 
-// Cấu hình đọc .env từ thư mục server hiện tại
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.join(__dirname, '.env') });
 
-import authRoutes from "./routes/auth.route.js";
-import adminRoutes from "./routes/Admin/admin.route.js";
-
-import memberRoutes from "./routes/Member/member.route.js";
-
-import eventRoutes from "./routes/Admin/event.route.js";
-import notificationRoutes from "./routes/notification.route.js";
+import authRoutes from "./routes/common/auth.route.js";
+import adminRoutes from "./routes/admin/admin.route.js";
+import memberRoutes from "./routes/member/member.route.js";
+import eventRoutes from "./routes/admin/event.route.js";
+// import notificationRoutes from "./routes/notification.route.js";
+import commonProfileRoutes from "./routes/common/profile.route.js";
+import commonEventRoutes from "./routes/common/event.route.js";
 
 const app = express();
-// const PORT = process.env.PORT || 4000;
-const PORT = 4000;
+const PORT = process.env.PORT;
+
 app.set('etag', false);
 
-// Middleware cấu hình CORS - cho phép frontend từ port 3000
+
 app.use(cors({
   origin: ["http://localhost:3000"],
   // credentials: true
@@ -42,20 +42,21 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 
-// API routes
-app.use("/auth", authRoutes); // login chung
-app.use("/admin", adminRoutes); // admin route (bảo vệ bằng role ADMIN)
-app.use("/member", memberRoutes); // member route (bảo vệ bằng role MEMBER)
+
+app.use("/auth", authRoutes); 
+app.use("/admin", adminRoutes); 
+app.use("/member", memberRoutes);
+app.use("/profile", commonProfileRoutes);
+app.use("/event", commonEventRoutes);
 
 
 
 
-// Health check endpoint
 app.get("/", (req, res) => {
   res.json({ message: "Event Management API Server is running!", port: PORT });
 });
 
 app.listen(PORT, () => {
   console.log(`🚀 Backend API Server running at http://localhost:${PORT}`);
-  console.log(`📡 API endpoints available at http://localhost:${PORT}`);
+  
 });

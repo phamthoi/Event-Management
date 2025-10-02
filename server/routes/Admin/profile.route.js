@@ -1,16 +1,16 @@
-import express from 'express';
-import { authMiddleware, requireRole } from '../../middleware/auth.js';
-import * as profileController from '../../controllers/Admin/profile.controller.js';
+// import express from 'express';
+// import { authMiddleware, requireRole } from '../../middleware/auth.js';
+// import * as profileController from '../../controllers/admin/profile.controller.js';
 
-const router = express.Router();
-
-
-router.use(authMiddleware);
-router.use(requireRole('ADMIN'));
+// const router = express.Router();
 
 
-router.get('/', profileController.getProfile);
-router.put('/', profileController.updateProfile);
-router.put('/password', profileController.changePassword);
+// router.use(authMiddleware);
+// router.use(requireRole('ADMIN'));
 
-export default router;
+
+// router.get('/', profileController.getProfile);
+// router.put('/', profileController.updateProfile);
+// router.put('/password', profileController.changePassword);
+
+// export default router;

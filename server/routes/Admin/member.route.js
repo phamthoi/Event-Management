@@ -1,25 +1,30 @@
 import express from "express";
-import { authMiddleware } from "../../middleware/auth.js";
-import { MemberController } from "../../controllers/Admin/member.controller.js";
+import { authMiddleware, requireRole } from "../../middleware/auth.js";
+import { MemberController } from "../../controllers/admin/member.controller.js";
 
 const router = express.Router();
 
 
-router.get("/list", authMiddleware, MemberController.getMembersList);
+
+router.use(authMiddleware);
+router.use(requireRole('ADMIN'));
 
 
-router.get("/:id", authMiddleware, MemberController.getMemberById);
+router.get("/list", MemberController.getMembersList);
 
 
-router.post("/create", authMiddleware, MemberController.createMember);
+router.get("/:id", MemberController.getMemberById);
 
 
-router.put("/:id/lock", authMiddleware, MemberController.lockMember);
+router.post("/create", MemberController.createMember);
 
 
-router.put("/:id/unlock", authMiddleware, MemberController.unlockMember);
+router.put("/:id/lock", MemberController.lockMember);
 
 
-router.put("/:id/reset-password", authMiddleware, MemberController.resetPassword);
+router.put("/:id/unlock", MemberController.unlockMember);
+
+
+router.put("/:id/reset-password", MemberController.resetPassword);
 
 export default router;

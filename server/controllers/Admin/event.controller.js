@@ -1,4 +1,4 @@
-import { EventService } from "../../services/Admin/event.service.js";
+import { EventService } from "../../services/admin/event.service.js";
 
 export class EventController {
   static async createEvent(req, res) {

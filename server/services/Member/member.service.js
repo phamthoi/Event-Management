@@ -3,99 +3,99 @@ import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
-export const getMemberProfile = async (userId) => {
-  try {
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      select: {
-        id: true,
-        email: true,
-        fullName: true,
-        phoneNumber: true,
-        role: true,
-        avatarUrl: true,
-        organizationId: true,
-        organization: {
-          select: {
-            name: true
-          }
-        }
-      }
-    });
+// export const getMemberProfile = async (userId) => {
+//   try {
+//     const user = await prisma.user.findUnique({
+//       where: { id: userId },
+//       select: {
+//         id: true,
+//         email: true,
+//         fullName: true,
+//         phoneNumber: true,
+//         role: true,
+//         avatarUrl: true,
+//         organizationId: true,
+//         organization: {
+//           select: {
+//             name: true
+//           }
+//         }
+//       }
+//     });
     
-    if (!user) {
-      throw new Error('User not found');
-    }
+//     if (!user) {
+//       throw new Error('User not found');
+//     }
     
-    return user;
-  } catch (error) {
-    throw error;
-  }
-};
+//     return user;
+//   } catch (error) {
+//     throw error;
+//   }
+// };
 
-export const updateMemberProfile = async (userId, updateData) => {
-  try {
-    const { fullName, phoneNumber, avatarUrl } = updateData;
+// export const updateMemberProfile = async (userId, updateData) => {
+//   try {
+//     const { fullName, phoneNumber, avatarUrl } = updateData;
     
-    const updatedUser = await prisma.user.update({
-      where: { id: userId },
-      data: {
-        fullName,
-        phoneNumber,
-        ...(avatarUrl !== undefined && { avatarUrl })
-      },
-      select: {
-        id: true,
-        email: true,
-        fullName: true,
-        phoneNumber: true,
-        role: true,
-        avatarUrl: true,
-        organizationId: true,
-        organization: {
-          select: {
-            name: true
-          }
-        }
-      }
-    });
+//     const updatedUser = await prisma.user.update({
+//       where: { id: userId },
+//       data: {
+//         fullName,
+//         phoneNumber,
+//         ...(avatarUrl !== undefined && { avatarUrl })
+//       },
+//       select: {
+//         id: true,
+//         email: true,
+//         fullName: true,
+//         phoneNumber: true,
+//         role: true,
+//         avatarUrl: true,
+//         organizationId: true,
+//         organization: {
+//           select: {
+//             name: true
+//           }
+//         }
+//       }
+//     });
     
-    return updatedUser;
-  } catch (error) {
-    throw error;
-  }
-};
+//     return updatedUser;
+//   } catch (error) {
+//     throw error;
+//   }
+// };
 
-export const changeMemberPassword = async (userId, currentPassword, newPassword) => {
-  try {
-    const user = await prisma.user.findUnique({
-      where: { id: userId }
-    });
+// export const changeMemberPassword = async (userId, currentPassword, newPassword) => {
+//   try {
+//     const user = await prisma.user.findUnique({
+//       where: { id: userId }
+//     });
     
-    if (!user) {
-      throw new Error('User not found');
-    }
+//     if (!user) {
+//       throw new Error('User not found');
+//     }
     
-    const isCurrentPasswordValid = await bcrypt.compare(currentPassword, user.passwordHash);
-    if (!isCurrentPasswordValid) {
-      throw new Error('Current password is incorrect');
-    }
+//     const isCurrentPasswordValid = await bcrypt.compare(currentPassword, user.passwordHash);
+//     if (!isCurrentPasswordValid) {
+//       throw new Error('Current password is incorrect');
+//     }
     
-    const saltRounds = 10;
-    const newPasswordHash = await bcrypt.hash(newPassword, saltRounds);
+//     const saltRounds = 10;
+//     const newPasswordHash = await bcrypt.hash(newPassword, saltRounds);
     
-    await prisma.user.update({
-      where: { id: userId },
-      data: {
-        passwordHash: newPasswordHash
-      }
-    });
+//     await prisma.user.update({
+//       where: { id: userId },
+//       data: {
+//         passwordHash: newPasswordHash
+//       }
+//     });
     
-    return { message: 'Password updated successfully' };
-  } catch (error) {
-    throw error;
-  }
-};
+//     return { message: 'Password updated successfully' };
+//   } catch (error) {
+//     throw error;
+//   }
+// };
 
 export const getMembersByOrganization = async (organizationId, page = 1, limit = 10, filters = {}) => {
   try {
@@ -152,270 +152,270 @@ export const getMembersByOrganization = async (organizationId, page = 1, limit =
   }
 };
 
-export const getMemberEvents = async (userId) => {
-  try {
-    const registrations = await prisma.registration.findMany({
-      where: {
-        userId: userId,
-        status: 'REGISTERED'
-      },
-      select: {
-        id: true,
-        attendance: true,
-        createdAt: true,
-        event: {
-          select: {
-            id: true,
-            title: true,
-            description: true,
-            location: true,
-            startAt: true,
-            endAt: true,
-            registrationStartAt: true,
-            registrationEndAt: true,
-            maxAttendees: true,
-            status: true,
-            _count: {
-              select: {
-                registrations: {
-                  where: {
-                    status: 'REGISTERED'
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      orderBy: {
-        event: {
-          startAt: 'asc'
-        }
-      }
-    });
+// export const getMemberEvents = async (userId) => {
+//   try {
+//     const registrations = await prisma.registration.findMany({
+//       where: {
+//         userId: userId,
+//         status: 'REGISTERED'
+//       },
+//       select: {
+//         id: true,
+//         attendance: true,
+//         createdAt: true,
+//         event: {
+//           select: {
+//             id: true,
+//             title: true,
+//             description: true,
+//             location: true,
+//             startAt: true,
+//             endAt: true,
+//             registrationStartAt: true,
+//             registrationEndAt: true,
+//             maxAttendees: true,
+//             status: true,
+//             _count: {
+//               select: {
+//                 registrations: {
+//                   where: {
+//                     status: 'REGISTERED'
+//                   }
+//                 }
+//               }
+//             }
+//           }
+//         }
+//       },
+//       orderBy: {
+//         event: {
+//           startAt: 'asc'
+//         }
+//       }
+//     });
     
-    const result = registrations.map(reg => {
-      const registeredCount = reg.event._count.registrations;
-      const remainingSlots = reg.event.maxAttendees - registeredCount;
+//     const result = registrations.map(reg => {
+//       const registeredCount = reg.event._count.registrations;
+//       const remainingSlots = reg.event.maxAttendees - registeredCount;
       
-      const eventWithCount = {
-        ...reg.event,
-        registeredCount: registeredCount,
-        remainingSlots: remainingSlots,
-        attendance: reg.attendance,
-        registrationId: reg.id
-      };
+//       const eventWithCount = {
+//         ...reg.event,
+//         registeredCount: registeredCount,
+//         remainingSlots: remainingSlots,
+//         attendance: reg.attendance,
+//         registrationId: reg.id
+//       };
       
-      return eventWithCount;
-    });
+//       return eventWithCount;
+//     });
     
-    return result;
-  } catch (error) {
-    throw error;
-  }
-};
+//     return result;
+//   } catch (error) {
+//     throw error;
+//   }
+// };
 
-export const getUpcomingEvents = async (organizationId, userId, page = 1, limit = 10) => {
-  try {
-    const skip = (page - 1) * limit;
+// export const getUpcomingEvents = async (organizationId, userId, page = 1, limit = 10) => {
+//   try {
+//     const skip = (page - 1) * limit;
     
-    const events = await prisma.event.findMany({
-      where: {
-        organizationId: organizationId,
-        status: 'REGISTRATION',
-        NOT: {
-          registrations: {
-            some: {
-              userId: userId,
-              status: 'REGISTERED'
-            }
-          }
-        }
-      },
-      select: {
-        id: true,
-        title: true,
-        description: true,
-        location: true,
-        startAt: true,
-        endAt: true,
-        registrationStartAt: true,
-        registrationEndAt: true,
-        maxAttendees: true,
-        status: true,
-        _count: {
-          select: {
-            registrations: {
-              where: {
-                status: 'REGISTERED'
-              }
-            }
-          }
-        }
-      },
-      orderBy: {
-        startAt: 'asc'
-      },
-      skip: skip,
-      take: limit
-    });
+//     const events = await prisma.event.findMany({
+//       where: {
+//         organizationId: organizationId,
+//         status: 'REGISTRATION',
+//         NOT: {
+//           registrations: {
+//             some: {
+//               userId: userId,
+//               status: 'REGISTERED'
+//             }
+//           }
+//         }
+//       },
+//       select: {
+//         id: true,
+//         title: true,
+//         description: true,
+//         location: true,
+//         startAt: true,
+//         endAt: true,
+//         registrationStartAt: true,
+//         registrationEndAt: true,
+//         maxAttendees: true,
+//         status: true,
+//         _count: {
+//           select: {
+//             registrations: {
+//               where: {
+//                 status: 'REGISTERED'
+//               }
+//             }
+//           }
+//         }
+//       },
+//       orderBy: {
+//         startAt: 'asc'
+//       },
+//       skip: skip,
+//       take: limit
+//     });
     
-    const total = await prisma.event.count({
-      where: {
-        organizationId: organizationId,
-        status: 'REGISTRATION',
-        NOT: {
-          registrations: {
-            some: {
-              userId: userId,
-              status: 'REGISTERED'
-            }
-          }
-        }
-      }
-    });
+//     const total = await prisma.event.count({
+//       where: {
+//         organizationId: organizationId,
+//         status: 'REGISTRATION',
+//         NOT: {
+//           registrations: {
+//             some: {
+//               userId: userId,
+//               status: 'REGISTERED'
+//             }
+//           }
+//         }
+//       }
+//     });
     
-    const eventsWithRegistrationStatus = events.map(event => {
-      const registeredCount = event._count.registrations;
-      const remainingSlots = event.maxAttendees - registeredCount;
+//     const eventsWithRegistrationStatus = events.map(event => {
+//       const registeredCount = event._count.registrations;
+//       const remainingSlots = event.maxAttendees - registeredCount;
       
-      const eventWithCount = {
-        id: event.id,
-        title: event.title,
-        description: event.description,
-        location: event.location,
-        startAt: event.startAt,
-        endAt: event.endAt,
-        registrationStartAt: event.registrationStartAt,
-        registrationEndAt: event.registrationEndAt,
-        maxAttendees: event.maxAttendees,
-        status: event.status,
-        registeredCount: registeredCount,
-        remainingSlots: remainingSlots,
-        isRegistered: false
-      };
+//       const eventWithCount = {
+//         id: event.id,
+//         title: event.title,
+//         description: event.description,
+//         location: event.location,
+//         startAt: event.startAt,
+//         endAt: event.endAt,
+//         registrationStartAt: event.registrationStartAt,
+//         registrationEndAt: event.registrationEndAt,
+//         maxAttendees: event.maxAttendees,
+//         status: event.status,
+//         registeredCount: registeredCount,
+//         remainingSlots: remainingSlots,
+//         isRegistered: false
+//       };
       
-      return eventWithCount;
-    });
+//       return eventWithCount;
+//     });
     
-    return {
-      events: eventsWithRegistrationStatus,
-      total,
-      page,
-      limit,
-      totalPages: Math.ceil(total / limit)
-    };
-  } catch (error) {
-    throw error;
-  }
-};
+//     return {
+//       events: eventsWithRegistrationStatus,
+//       total,
+//       page,
+//       limit,
+//       totalPages: Math.ceil(total / limit)
+//     };
+//   } catch (error) {
+//     throw error;
+//   }
+// };
 
-export const registerForEvent = async (userId, eventId) => {
-  try {
-    const event = await prisma.event.findUnique({
-      where: { id: eventId },
-      include: {
-        _count: {
-          select: {
-            registrations: {
-              where: {
-                status: 'REGISTERED'
-              }
-            }
-          }
-        }
-      }
-    });
+// export const registerForEvent = async (userId, eventId) => {
+//   try {
+//     const event = await prisma.event.findUnique({
+//       where: { id: eventId },
+//       include: {
+//         _count: {
+//           select: {
+//             registrations: {
+//               where: {
+//                 status: 'REGISTERED'
+//               }
+//             }
+//           }
+//         }
+//       }
+//     });
     
-    if (!event) {
-      throw new Error('Event not found');
-    }
+//     if (!event) {
+//       throw new Error('Event not found');
+//     }
     
-    if (event.status !== 'REGISTRATION') {
-      throw new Error('Event registration is not open');
-    }
+//     if (event.status !== 'REGISTRATION') {
+//       throw new Error('Event registration is not open');
+//     }
     
-    if (event.maxAttendees && event._count.registrations >= event.maxAttendees) {
-      throw new Error('Event is full');
-    }
+//     if (event.maxAttendees && event._count.registrations >= event.maxAttendees) {
+//       throw new Error('Event is full');
+//     }
     
-    const existingRegistration = await prisma.registration.findUnique({
-      where: {
-        eventId_userId: {
-          eventId: eventId,
-          userId: userId
-        }
-      }
-    });
+//     const existingRegistration = await prisma.registration.findUnique({
+//       where: {
+//         eventId_userId: {
+//           eventId: eventId,
+//           userId: userId
+//         }
+//       }
+//     });
     
-    if (existingRegistration && existingRegistration.status === 'REGISTERED') {
-      throw new Error('Already registered for this event');
-    }
+//     if (existingRegistration && existingRegistration.status === 'REGISTERED') {
+//       throw new Error('Already registered for this event');
+//     }
     
-    const registration = await prisma.registration.upsert({
-      where: {
-        eventId_userId: {
-          eventId: eventId,
-          userId: userId
-        }
-      },
-      update: {
-        status: 'REGISTERED'
-      },
-      create: {
-        eventId: eventId,
-        userId: userId,
-        status: 'REGISTERED'
-      }
-    });
+//     const registration = await prisma.registration.upsert({
+//       where: {
+//         eventId_userId: {
+//           eventId: eventId,
+//           userId: userId
+//         }
+//       },
+//       update: {
+//         status: 'REGISTERED'
+//       },
+//       create: {
+//         eventId: eventId,
+//         userId: userId,
+//         status: 'REGISTERED'
+//       }
+//     });
     
-    return registration;
-  } catch (error) {
-    throw error;
-  }
-};
+//     return registration;
+//   } catch (error) {
+//     throw error;
+//   }
+// };
 
-export const cancelEventRegistration = async (userId, eventId) => {
-  try {
-    const registration = await prisma.registration.findUnique({
-      where: {
-        eventId_userId: {
-          eventId: eventId,
-          userId: userId
-        }
-      },
-      include: {
-        event: {
-          select: {
-            registrationEndAt: true,
-            status: true
-          }
-        }
-      }
-    });
+// export const cancelEventRegistration = async (userId, eventId) => {
+//   try {
+//     const registration = await prisma.registration.findUnique({
+//       where: {
+//         eventId_userId: {
+//           eventId: eventId,
+//           userId: userId
+//         }
+//       },
+//       include: {
+//         event: {
+//           select: {
+//             registrationEndAt: true,
+//             status: true
+//           }
+//         }
+//       }
+//     });
     
-    if (!registration || registration.status !== 'REGISTERED') {
-      throw new Error('Registration not found');
-    }
+//     if (!registration || registration.status !== 'REGISTERED') {
+//       throw new Error('Registration not found');
+//     }
     
-    if (registration.event.registrationEndAt && new Date() > registration.event.registrationEndAt) {
-      throw new Error('Cannot cancel registration after registration deadline');
-    }
+//     if (registration.event.registrationEndAt && new Date() > registration.event.registrationEndAt) {
+//       throw new Error('Cannot cancel registration after registration deadline');
+//     }
     
-    const updatedRegistration = await prisma.registration.update({
-      where: {
-        eventId_userId: {
-          eventId: eventId,
-          userId: userId
-        }
-      },
-      data: {
-        status: 'CANCELLED'
-      }
-    });
+//     const updatedRegistration = await prisma.registration.update({
+//       where: {
+//         eventId_userId: {
+//           eventId: eventId,
+//           userId: userId
+//         }
+//       },
+//       data: {
+//         status: 'CANCELLED'
+//       }
+//     });
     
-    return updatedRegistration;
-  } catch (error) {
-    throw error;
-  }
-};
+//     return updatedRegistration;
+//   } catch (error) {
+//     throw error;
+//   }
+// };

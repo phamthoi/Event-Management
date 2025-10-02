@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { eventService } from "../../../services/common/event/event.js";
+import { eventService } from "../../../services/common/event/eventService.js";
 import { getEventStatus } from "../../../utils/getEventStatus";
 import EventCard from "../../../components/common/eventList/EventCard";
 import { showErrorAlert } from "../../../utils/errorHandler";

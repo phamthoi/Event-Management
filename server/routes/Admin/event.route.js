@@ -1,34 +1,34 @@
 import express from "express";
-import { authMiddleware } from "../../middleware/auth.js";
-import { EventController } from "../../controllers/Admin/event.controller.js";
+import { authMiddleware, requireRole } from "../../middleware/auth.js";
+import { EventController } from "../../controllers/admin/event.controller.js";
 
 const router = express.Router();
 
-
-router.post("/create", authMiddleware, EventController.createEvent);
-
-
-router.get("/list", authMiddleware, EventController.getEventsList);
+router.use(authMiddleware);
+router.use(requireRole('ADMIN'));
 
 
-router.get("/detail/:id", authMiddleware, EventController.getEventById);
+router.post("/create", EventController.createEvent);
 
 
-router.put("/edit/:id", authMiddleware, EventController.updateEvent);
+router.get("/list", EventController.getEventsList);
 
 
-router.delete("/delete/:id", authMiddleware, EventController.deleteEvent);
+router.get("/detail/:id", EventController.getEventById);
 
 
-router.get("/ongoing", authMiddleware, EventController.getOngoingEvents);
+router.put("/edit/:id", EventController.updateEvent);
 
 
-router.get("/registrations/:id", authMiddleware, EventController.getEventRegistrations);
+router.delete("/delete/:id", EventController.deleteEvent);  
 
 
-//router.put("/attendance", authMiddleware, EventController.updateAttendance);
+router.get("/ongoing", EventController.getOngoingEvents);
 
 
-router.put("/registrations/update-status", authMiddleware, EventController.updateRegistrationStatus);
+router.get("/registrations/:id", EventController.getEventRegistrations);
+
+
+router.put("/registrations/update-status", EventController.updateRegistrationStatus);
 
 export default router;
