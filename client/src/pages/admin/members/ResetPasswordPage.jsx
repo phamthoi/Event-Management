@@ -99,16 +99,19 @@ const ResetPasswordPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-secondary-900 py-8 px-4">
+    <div className=" py-6 
+                bg-gradient-to-br from-primary-500 via-white to-accent-300 
+                dark:from-secondary-400 dark:via-secondary-600 dark:to-secondary-900 
+                flex items-center justify-center p-4 transition-all duration-300 ">
       <div className="max-w-2xl mx-auto">
-        <div className="bg-white dark:bg-secondary-800 shadow-lg rounded-xl overflow-hidden">
+        <div className="card bg-white dark:bg-secondary-800 shadow-lg rounded-xl overflow-hidden">
           <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-4">
             <h1 className="text-2xl font-bold text-white">Reset Member Password</h1>
           </div>
 
           <div className="p-6 space-y-6">
             {/* Member Info */}
-            <div className="bg-gray-50 dark:bg-secondary-900 p-4 rounded-lg space-y-4">
+            <div className="bg-gray-100 dark:bg-secondary-800 p-4 rounded-lg space-y-4">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Member Information</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <input
@@ -140,7 +143,7 @@ const ResetPasswordPage = () => {
                   placeholder="Enter new password"
                   className={`w-full px-3 py-2 rounded-md border focus:outline-none focus:ring-2 focus:ring-blue-500 transition ${
                     errors.newPassword ? "border-red-500" : "border-gray-300 dark:border-gray-700"
-                  } bg-white dark:bg-secondary-900 text-gray-800 dark:text-gray-100`}
+                  } bg-white dark:bg-secondary-800 text-gray-800 dark:text-gray-100`}
                 />
                 {errors.newPassword && <p className="mt-1 text-sm text-red-600">{errors.newPassword}</p>}
               </div>
@@ -157,7 +160,7 @@ const ResetPasswordPage = () => {
                   placeholder="Re-enter new password"
                   className={`w-full px-3 py-2 rounded-md border focus:outline-none focus:ring-2 focus:ring-blue-500 transition ${
                     errors.confirmPassword ? "border-red-500" : "border-gray-300 dark:border-gray-700"
-                  } bg-white dark:bg-secondary-900 text-gray-800 dark:text-gray-100`}
+                  } bg-white dark:bg-secondary-800 text-gray-800 dark:text-gray-100`}
                 />
                 {errors.confirmPassword && (
                   <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>

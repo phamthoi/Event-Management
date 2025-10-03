@@ -77,7 +77,7 @@ function Sidebar() {
     <div
       className={`flex flex-col h-screen transition-all duration-300 ${
         collapsed ? "w-20" : "w-72"
-      } bg-gray-100 dark:bg-secondary-800 border-r border-secondary-200 dark:border-secondary-700 shadow-large`}
+      } bg-gray-200 dark:bg-secondary-800 border-r border-secondary-200 dark:border-secondary-700 shadow-large`}
     >
       {/* Logo */}
       <div className="flex items-center justify-between p-6 border-b border-secondary-100 dark:border-secondary-700">
@@ -112,12 +112,12 @@ function Sidebar() {
               {/* Main menu item */}
               <button
                 onClick={() => toggleItem(item.name)}
-                className={`w-full flex items-center gap-3 px-4 py-3 transition-all duration-200 group ${
+                className={`w-full flex items-center gap-3 px-4 py-3 transition-all duration-200 group 
+                  focus:outline-none focus:ring-0
+                  ${
                   hasActiveChild 
-                    // ? "bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-400 border border-primary-200 dark:border-primary-700" 
-                    // : "text-secondary-600 dark:text-secondary-400 hover:text-secondary-900 dark:hover:text-secondary-100 hover:bg-secondary-50 dark:hover:bg-secondary-700"
-                    ? "bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-400" 
-                    : "text-secondary-600 dark:text-secondary-400 hover:text-secondary-900 dark:hover:text-secondary-100 hover:bg-secondary-50 dark:hover:bg-secondary-700"
+                    ? "bg-primary-50 dark:bg-primary-900/10 text-primary-700 dark:text-primary-400" 
+                    : "text-secondary-600 dark:text-secondary-400 dark:hover:text-secondary-100"
                   }`}
               >
                 <Icon className={`w-5 h-5 ${hasActiveChild ? "text-primary-600 dark:text-primary-400" : "text-secondary-400 dark:text-secondary-500 group-hover:text-secondary-600 dark:group-hover:text-secondary-300"}`} />
@@ -147,8 +147,8 @@ function Sidebar() {
                       to={link.path}
                       className={`block px-4 py-2 text-sm transition-all duration-200 ${
                         isActive(link.path)
-                          ? "bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 font-medium border-l-2 border-primary-600 dark:border-primary-400"
-                          : "text-secondary-500 dark:text-secondary-400 hover:text-secondary-700 dark:hover:text-secondary-200 hover:bg-secondary-50 dark:hover:bg-secondary-700"
+                          ? "bg-primary-50 dark:bg-primary-900/10 text-primary-700 dark:text-primary-400 font-medium border-l-2 border-primary-600 dark:border-primary-400"
+                          : "text-secondary-500 dark:text-secondary-400 hover:text-secondary-700 dark:hover:text-secondary-200"
                       }`}
                     >
                       {link.name}

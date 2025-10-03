@@ -107,10 +107,12 @@ function SidebarMember() {
               {/* Main menu item */}
               <button
                 onClick={() => toggleItem(item.name)}
-                className={`w-full flex items-center gap-3 px-4 py-3 transition-all duration-200 group ${
+                className={`w-full flex items-center gap-3 px-4 py-3 transition-all duration-200 group 
+                  focus:outline-none focus:ring-0
+                  ${
                   hasActiveChild 
-                    ? "bg-accent-50 dark:bg-primary-900/20 text-accent-700 dark:text-primary-400 border border-accent-200 dark:border-primary-700" 
-                    : "text-secondary-600 dark:text-secondary-400 hover:text-secondary-900 dark:hover:text-secondary-100 hover:bg-secondary-50 dark:hover:bg-secondary-700"
+                    ? "bg-gray-100 dark:bg-primary-900/10 text-accent-700 dark:text-primary-400" 
+                    : "text-secondary-600 dark:text-secondary-400 dark:hover:text-secondary-100 "
                 }`}
               >
                 <Icon className={`w-5 h-5 ${hasActiveChild ? "text-accent-600 dark:text-accent-400" : "text-secondary-400 dark:text-secondary-500 group-hover:text-secondary-600 dark:group-hover:text-secondary-300"}`} />
@@ -136,7 +138,7 @@ function SidebarMember() {
                       className={`block px-4 py-2 text-sm transition-all duration-200 ${
                         isActive(link.path)
                           ? "bg-accent-100 dark:bg-gray-700 text-accent-700 font-medium border-l-2 border-accent-600 dark:border-accent-400"
-                          : "text-secondary-500 hover:text-secondary-700 dark:text-secondary-200 hover:bg-secondary-50 dark:hover:bg-secondary-700"
+                          : "text-secondary-500 hover:text-secondary-700 dark:text-secondary-200"
                       }`}
                     >
                       {link.name}

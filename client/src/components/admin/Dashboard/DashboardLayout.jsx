@@ -64,7 +64,7 @@ const DashboardLayout = ({ children }) => {
     window.location.href = "/login";
   };
 
-  const isDashboardHome = location.pathname === "/admin";
+  const isDashboardHome = location.pathname === "/admin" || location.pathname ==="/admin/";
 
   // Mock stats data - replace with real API calls
   const stats = [
@@ -75,14 +75,17 @@ const DashboardLayout = ({ children }) => {
   ];
 
   return (
-    <div className="flex h-screen bg-secondary-50">
+    <div className="flex h-screen
+                  bg-gradient-to-br from-accent-100 via-yellow-200 to-gray-200
+                  dark:from-dark-gray-800 dark:via-red-800 dark:to-accent-800
+                ">
       {/* Sidebar */}
       <Sidebar />
 
       {/* Main area */}
       <div className="flex flex-col flex-1 overflow-hidden">
         {/* Header */}
-        <header className="h-16 bg-white dark:bg-secondary-800 border-b border-secondary-200 dark:border-secondary-700 flex items-center justify-between px-6 shadow-soft">
+        <header className="h-16 bg-blue-100 dark:bg-secondary-800 border-b border-secondary-200 dark:border-secondary-700 flex items-center justify-between px-6 shadow-soft">
           <div className="flex items-center gap-4">
             <h1 className="text-2xl font-display font-bold text-secondary-900 dark:text-secondary-100">
               Admin Dashboard
@@ -152,7 +155,7 @@ const DashboardLayout = ({ children }) => {
                 <DropdownMenu.Separator className="my-2 border-secondary-100 dark:border-secondary-700" />
                 <DropdownMenu.Item
                   onClick={handleLogout}
-                  className="flex items-center gap-3 px-4 py-3 hover:bg-danger-50 dark:hover:bg-danger-900/20 text-danger-600 dark:text-danger-400 transition-colors"
+                  className="flex items-center gap-3 px-4 py-3 hover:bg-secondary-50 dark:hover:bg-secondary-700 text-secondary-700 dark:text-secondary-400 transition-colors"
                 >
                   <FiLogOut className="w-4 h-4" />
                   Logout
@@ -218,7 +221,7 @@ const DashboardLayout = ({ children }) => {
         )}
 
         {/* Main content */}
-        <main className="flex-1 p-6 overflow-y-auto bg-secondary-50 dark:bg-secondary-900">
+        <main className="flex-1 p-6 overflow-y-auto bg-secondary-100 dark:bg-secondary-700">
           <div className="max-w-7xl mx-auto">
             {children}
           </div>

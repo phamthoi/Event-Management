@@ -91,7 +91,10 @@ const DashboardLayoutMember = ({ children }) => {
   ];
 
   return (
-    <div className="flex h-screen bg-secondary-50">
+    <div className="flex h-screen
+                  bg-gradient-to-br from-accent-100 via-yellow-200 to-gray-200
+                  dark:from-dark-gray-800 dark:via-red-800 dark:to-accent-800
+                ">
       <Sidebar />
 
       <div className="flex flex-col flex-1 overflow-hidden">

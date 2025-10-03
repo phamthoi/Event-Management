@@ -6,7 +6,7 @@ function MemberTable({ registrations, isOngoing, onToggle }) {
   return (
     <div className="overflow-x-auto border rounded-lg shadow-sm border-gray-200 dark:border-gray-1s00">
       <table className="w-full border-collapse text-sm">
-        <thead className="bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200 uppercase text-xs sticky top-0 z-10">
+        <thead className="bg-gray-200 dark:bg-blue-500 text-gray-700 dark:text-gray-200 uppercase text-xs sticky top-0 z-10">
           <tr>
             <th className="border px-3 py-2 dark:border-gray-700">#</th>
             <th className="border px-3 py-2 dark:border-gray-700">Name</th>
