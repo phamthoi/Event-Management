@@ -76,7 +76,11 @@ const AdminProfilePage = () => {
     );
 
   return (
-    <div className=" min-h-screen bg-gradient-to-br from-primary-500 via-white to-accent-300 dark:from-secondary-400 dark:via-secondary-600 dark:to-secondary-900 flex items-center justify-center p-4 transition-all duration-300
+    <div className=" 
+                flex items-start justify-center py-8
+                  bg-gradient-to-br from-primary-500 via-white to-accent-300 
+                  dark:from-secondary-400 dark:via-secondary-600 dark:to-secondary-900 
+                  justify-center duration-300
     ">
       <div className="w-full max-w-3xl card p-6">
         {!isEditing ? (

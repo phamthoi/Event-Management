@@ -34,7 +34,7 @@ const ProfileView = ({ profile, onEdit }) => {
       </div>
 
       {/* Card */}
-      <div className="card grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="card grid grid-cols-1 md:grid-cols-3 gap-6 px-4 py-4">
         {/* Avatar & Name */}
         <div className="flex flex-col items-center md:items-start space-y-3">
           <div

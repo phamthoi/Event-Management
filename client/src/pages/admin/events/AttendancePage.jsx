@@ -96,7 +96,10 @@ function AttendancePage() {
   }
 
   return (
-    <div className="p-6 max-w-5xl mx-auto">
+    <div className="p-6 bg-gradient-to-br from-primary-500 via-white to-accent-300 
+            dark:from-secondary-400 dark:via-secondary-600 dark:to-secondary-900 
+            items-center justify-center p-4 transition-all duration-300
+    ">
       {/* Sửa: thêm dark:text-gray-100 */}
       <h1 className="text-2xl md:text-3xl font-bold mb-6 text-gray-800 dark:text-gray-100">
         Attendance & Deposit
@@ -104,7 +107,7 @@ function AttendancePage() {
 
       {events.length === 0 ? (
         // Sửa: thêm dark:bg-gray-800 dark:text-gray-300
-        <div className="text-center text-gray-500 dark:text-gray-300 py-12 bg-white dark:bg-gray-800 shadow rounded-lg">
+        <div className="text-center text-gray-500 dark:text-gray-300 py-12 bg-white dark:bg-gray-200 shadow rounded-lg">
           No ongoing events available
         </div>
       ) : (
@@ -118,7 +121,8 @@ function AttendancePage() {
 
           {/* Member Table */}
           {/* Sửa: thêm dark:bg-gray-800 */}
-          <div className="mt-4 overflow-x-auto bg-white dark:bg-gray-800 shadow rounded-lg p-4">
+          <div className="card mt-4 overflow-x-auto bg-white dark:bg-gray-800 shadow rounded-lg p-4
+          ">
             <MemberTable
               registrations={registrations}
               isOngoing={currentEventStatus === "ONGOING"} // only enable attended if ongoing

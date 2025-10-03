@@ -58,10 +58,10 @@ const EventTable = ({ events, onDelete, page, limit }) => {
   };
 
   return (
-    <div className="overflow-x-auto border rounded-lg shadow">
+    <div className="overflow-x-auto border shadow">
       <table className="w-full border-collapse text-sm">
         {/* Header */}
-        <thead className="bg-gray-100 text-gray-700 text-xs uppercase dark:bg-secondary-900 dark:text-gray-300 sticky top-0 z-10">
+        <thead className="bg-gray-100 text-gray-700 text-xs uppercase dark:bg-secondary-700 dark:text-gray-300 sticky top-0 z-10">
           <tr>
             <th className="border px-3 py-2 text-left">#</th>
             <th className="border px-3 py-2 text-left">Name</th>

@@ -25,7 +25,7 @@ const EventFilter = ({ onFilter }) => {
 
   return (
     // 🔥 sửa card filter: thêm dark mode + border đồng bộ
-    <div className="mb-4 p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-lg max-w-6xl mx-auto">
+    <div className="card mb-4 p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-lg max-w-6xl mx-auto">
       <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2 mb-4">
         🔍 Filter Events
       </h2>
@@ -107,7 +107,12 @@ const EventFilter = ({ onFilter }) => {
         {/* 🔥 Apply: đổi bg từ blue -> secondary */}
         <button
           onClick={applyFilter}
-          className="flex items-center gap-2 px-4 py-2 bg-secondary-600 text-white font-semibold rounded-lg shadow hover:bg-secondary-500 transition-all duration-200"
+          className="
+            flex items-center gap-2 
+            bg-secondary-400 text-white 
+            dark:bg-secondary-700 
+            px-4 py-2 rounded-xl shadow hover:bg-secondary-500 
+          "
         >
           <MagnifyingGlassIcon className="w-4 h-4" />
           Apply

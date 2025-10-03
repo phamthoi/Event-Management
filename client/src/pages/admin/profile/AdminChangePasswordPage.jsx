@@ -43,7 +43,12 @@ const AdminChangePasswordPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-500 via-white to-accent-300 dark:from-secondary-400 dark:via-secondary-600 dark:to-secondary-900 flex items-center justify-center p-4 transition-all duration-300 py-12">
+    <div className="
+                flex
+                bg-gradient-to-br from-primary-500 via-white to-accent-300 
+                dark:from-secondary-400 dark:via-secondary-600 dark:to-secondary-900 
+                items-center justify-center p-6 transition-all duration-300
+    ">
       <div className="w-full max-w-md card p-8 space-y-6">
         {/* Header */}
         <div className="flex flex-col items-center">

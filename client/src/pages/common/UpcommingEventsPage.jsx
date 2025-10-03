@@ -22,7 +22,7 @@ const UpcomingEventsPage = () => {
     type: "success",
   });
 
-  const limit = 10;
+  const limit = 4;
 
   const currentUser = JSON.parse(localStorage.getItem("currentUser"));
   const currentMemberId = currentUser?.id;
@@ -119,11 +119,17 @@ const UpcomingEventsPage = () => {
   const totalPages = Math.ceil(total / limit);
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-secondary-900 p-6">
+    <div className="
+                  bg-gradient-to-br from-primary-500 via-white to-accent-300 
+                  dark:from-secondary-400 dark:via-secondary-600 dark:to-secondary-900 
+                  items-center justify-center p-6 transition-all duration-300
+              ">
       {/* Header */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
       <h1 className="text-4xl font-bold text-center mb-8 text-gray-900 dark:text-gray-100 drop-shadow-sm">
         📅 Upcoming Events
       </h1>
+      </div>
 
       {/* Event Grid */}
       {events.length === 0 ? (
@@ -131,7 +137,7 @@ const UpcomingEventsPage = () => {
           No upcoming events
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="flex flex-wrap justify-center gap-6">
           {events.map((ev) => (
             <EventCard
               key={ev.id}

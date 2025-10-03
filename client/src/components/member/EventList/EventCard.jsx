@@ -12,7 +12,7 @@ const EventCard = ({ event, registered, onToggleRegister, canCancel, pageType })
   };
 
   return (
-    <div className="bg-white dark:bg-secondary-800 rounded-2xl shadow-xl hover:shadow-2xl transition p-6 w-full sm:w-[350px] md:w-[400px] lg:w-[450px] flex flex-col justify-between relative">
+    <div className="form-card bg-white dark:bg-secondary-800 shadow-xl hover:shadow-2xl transition p-6 w-full sm:w-[350px] md:w-[400px] lg:w-[450px] flex flex-col justify-between relative">
       {/* Badge trạng thái */}
       {event.attendance && (
         <span className="absolute top-4 right-4 bg-gradient-to-r from-green-400 to-green-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow">

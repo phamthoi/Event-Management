@@ -32,9 +32,14 @@ const ChangePasswordPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-secondary-900 px-4">
+    <div className="
+                  flex
+                  bg-gradient-to-br from-primary-500 via-white to-accent-300 
+                  dark:from-secondary-400 dark:via-secondary-600 dark:to-secondary-900 
+                  items-center justify-center p-6 transition-all duration-300
+            ">
       {/* Container chính */}
-      <div className="bg-white dark:bg-secondary-800 p-8 rounded-3xl shadow-2xl w-full max-w-md space-y-6 transition-colors">
+      <div className="card p-8 rounded-3xl shadow-2xl w-full max-w-md space-y-6 transition-colors">
         {/* Header với icon */}
         <div className="flex flex-col items-center">
           <div className="w-20 h-20 bg-gradient-to-r from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white text-4xl font-bold shadow-lg">
@@ -66,7 +71,7 @@ const ChangePasswordPage = () => {
               type="password"
               value={current}
               onChange={(e) => setCurrent(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white focus:outline-none transition"
+              className="form-input w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white focus:outline-none transition"
               placeholder="Enter current password"
               required
             />
@@ -79,7 +84,7 @@ const ChangePasswordPage = () => {
               type="password"
               value={newPass}
               onChange={(e) => setNewPass(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white focus:outline-none transition"
+              className="form-input w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white focus:outline-none transition"
               placeholder="Enter new password"
               required
             />
@@ -92,7 +97,7 @@ const ChangePasswordPage = () => {
               type="password"
               value={confirm}
               onChange={(e) => setConfirm(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white focus:outline-none transition"
+              className="form-input w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white focus:outline-none transition"
               placeholder="Confirm new password"
               required
             />

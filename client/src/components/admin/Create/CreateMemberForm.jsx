@@ -60,7 +60,7 @@ const CreateMemberForm = () => {
   };
 
   return (
-    <div className="max-w-lg mx-auto p-8 bg-white dark:bg-secondary-900 rounded-3xl shadow-2xl">
+    <div className="card max-w-lg mx-auto p-8 bg-white dark:bg-secondary-900 rounded-3xl shadow-2xl">
       <h2 className="text-3xl font-extrabold text-center text-gray-800 dark:text-gray-100 mb-8">
         👤 Create New Member
       </h2>
@@ -90,7 +90,7 @@ const CreateMemberForm = () => {
               onChange={handleChange}
               required
               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-xl 
-              bg-gray-50 dark:bg-secondary-800 text-gray-800 dark:text-gray-100 
+              bg-gray-200 dark:bg-secondary-600 text-gray-800 dark:text-gray-100 
               shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
             />
           </div>

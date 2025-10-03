@@ -83,12 +83,17 @@ const MemberDetailPage = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-900 py-8">
+    <div className="
+     min-h-screen 
+      bg-gradient-to-br from-primary-500 via-white to-accent-300 
+      dark:from-secondary-400 dark:via-secondary-600 dark:to-secondary-900 
+      flex items-center justify-center p-8 transition-all duration-300 
+    ">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8 flex items-center justify-between">
           <button
             onClick={() => navigate("/admin/members/list")}
-            className="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 font-semibold"
+            className="inline-flex items-center text-blue-100 dark:text-blue-900 hover:text-blue-600 dark:hover:text-blue-200 font-semibold"
           >
             <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -98,8 +103,8 @@ const MemberDetailPage = () => {
           <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Member Details</h1>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 shadow-lg rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-700">
-          <div className="px-6 py-8 bg-gradient-to-r from-purple-50 via-pink-50 to-red-50 dark:from-gray-700 dark:via-gray-800 dark:to-gray-900 rounded-t-2xl">
+        <div className="bg dark: shadow-lg rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-700">
+          <div className="px-6 py-8 bg-gradient-to-r from-purple-200 via-pink-500 to-red-220 dark:from-secondary-700 dark:via-blue-800 dark:to-gray-900 rounded-t-2xl">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 <div className="w-16 h-16 rounded-full flex items-center justify-center text-white text-2xl font-bold bg-gradient-to-tr from-blue-500 to-indigo-600 dark:from-blue-700 dark:to-indigo-800">
@@ -118,13 +123,13 @@ const MemberDetailPage = () => {
           </div>
 
           <div className="px-6 py-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-4 bg-blue-50 dark:bg-blue-900/30 p-4 rounded-xl">
+            <div className="space-y-4 bg-blue-50 dark:bg-gray-900/100 p-4 rounded-xl">
               <p className="text-gray-900 dark:text-gray-100"><strong>ID:</strong> {member.id}</p>
               <p className="text-gray-900 dark:text-gray-100"><strong>Full Name:</strong> {member.fullName || "Not updated"}</p>
               <p className="text-gray-900 dark:text-gray-100"><strong>Email:</strong> {member.email}</p>
               <p className="text-gray-900 dark:text-gray-100"><strong>Phone:</strong> {member.phoneNumber || "Not updated"}</p>
             </div>
-            <div className="space-y-4 bg-pink-50 dark:bg-pink-900/30 p-4 rounded-xl">
+            <div className="space-y-4 bg-pink-100 dark:bg-pink-900/50 p-4 rounded-xl">
               <p className="text-gray-900 dark:text-gray-100"><strong>Role:</strong> {member.role}</p>
               <p className="text-gray-900 dark:text-gray-100"><strong>Status:</strong> {member.isActive ? "Active" : "Locked"}</p>
               <p className="text-gray-900 dark:text-gray-100"><strong>Organization ID:</strong> {member.organizationId}</p>
@@ -134,7 +139,7 @@ const MemberDetailPage = () => {
             </div>
           </div>
 
-          <div className="mt-6 px-6 py-4 bg-green-50 dark:bg-green-900/30 rounded-b-2xl grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="mt-6 px-6 py-4 bg-green-200 dark:bg-orange-900/20 rounded-b-2xl grid grid-cols-1 md:grid-cols-2 gap-4">
             <p className="text-gray-900 dark:text-gray-100"><strong>Created At:</strong> {formatDate(member.createdAt)}</p>
             <p className="text-gray-900 dark:text-gray-100"><strong>Last Updated:</strong> {formatDate(member.updatedAt)}</p>
           </div>

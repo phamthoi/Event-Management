@@ -7,7 +7,8 @@ function MemberListPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="p-6 bg-gray-50 dark:bg-secondary-900 min-h-screen">
+    <div className="p-6 bg-gray-100 dark:bg-secondary-900
+    ">
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
         {/* chỉnh text để hỗ trợ dark mode */}
@@ -21,7 +22,8 @@ function MemberListPage() {
                      bg-gradient-to-r from-blue-600 to-blue-500 
                      text-white font-semibold rounded-xl shadow 
                      hover:from-blue-700 hover:to-blue-600 
-                     transition"
+                     transition
+                     "
         >
           <PlusIcon className="w-4 h-4" />
           Create Member
@@ -30,9 +32,11 @@ function MemberListPage() {
 
       {/* Table Card */}
       <div
-        className="bg-white dark:bg-secondary-800 
-                   shadow-lg rounded-2xl p-4 overflow-x-auto
-                   border border-gray-200 dark:border-secondary-700"
+        className=" 
+                  bg-gradient-to-br from-primary-500 via-white to-accent-300 
+                  dark:from-secondary-400 dark:via-secondary-600 dark:to-secondary-900 
+                  p-6 transition-all duration-300
+                   "
       >
         <MemberTable />
       </div>

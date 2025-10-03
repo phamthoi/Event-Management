@@ -335,7 +335,7 @@ input:focus, textarea:focus, select:focus {
 }
 
 .dark .form-card {
-  background: linear-gradient(135deg, #31094b 30%, #7e0547 70%);
+  background: linear-gradient(135deg, #250b35 30%, #4d233a 70%);
   border-color: #1f5eb6;
   box-shadow: 0 2px 15px -3px rgba(0, 0, 0, 0.3), 0 10px 20px -2px rgba(0, 0, 0, 0.2);
 }

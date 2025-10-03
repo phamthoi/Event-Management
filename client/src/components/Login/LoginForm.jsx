@@ -15,7 +15,11 @@ function LoginForm({ onLogin, onForgot, error, loading }) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-500 via-white to-accent-300 dark:from-secondary-400 dark:via-secondary-600 dark:to-secondary-900 flex items-center justify-center p-4 transition-all duration-300">
+    <div className="min-h-screen 
+      bg-gradient-to-br from-primary-500 via-white to-accent-300 
+      dark:from-secondary-400 dark:via-secondary-600 dark:to-secondary-900 
+      flex items-center justify-center p-4 transition-all duration-300
+    ">
       {/* Theme Toggle */}
       <div className="absolute top-6 right-6 z-10">
         <ThemeToggle variant="simple" size="default" />
@@ -58,7 +62,7 @@ function LoginForm({ onLogin, onForgot, error, loading }) {
                   type="email"
                   id="email"
                   className="form-input"
-                  style={{ paddingLeft: '3rem' }}
+                  style={{ paddingLeft: '3rem', paddingRight: '3rem' }}
                   placeholder="Enter your email"
                   required
                   value={email}

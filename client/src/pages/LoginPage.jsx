@@ -46,51 +46,7 @@ const LoginPage = () => {
     }
   };
   
-  /*
-  // ======= Fake Login =======
-  const handleLogin = async (email, password) => {
-    setLoading(true);
-    setError("");
 
-    // Fake delay để giống call API
-    await new Promise((resolve) => setTimeout(resolve, 800));
-
-    // Fake account
-    const fakeUser = {
-      email: "member@example.com",
-      password: "123",
-      role: "MEMBER",
-    };
-    const fakeAdmin = {
-      email: "admin@example.com",
-      password: "123",
-      role: "ADMIN",
-    };
-
-    if (
-      (email === fakeUser.email && password === fakeUser.password) ||
-      (email === fakeAdmin.email && password === fakeAdmin.password)
-    ) {
-      const user = email === fakeUser.email ? fakeUser : fakeAdmin;
-
-      // Fake token + user info
-      localStorage.setItem("token", "fake-token-123");
-      localStorage.setItem("role", user.role.toLowerCase());
-      localStorage.setItem("currentUser", JSON.stringify(user));
-
-      if (user.role === "ADMIN") {
-        window.location.href = "/admin";
-      } else {
-        window.location.href = "/member";
-      }
-    } else {
-      setError("Sai email hoặc mật khẩu");
-    }
-
-    setLoading(false);
-  };
-  // ======= End Fake Login =======
-*/
   const handleForgot = () => {
     setError("");
     setShowForgot(true);

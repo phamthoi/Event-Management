@@ -51,14 +51,17 @@ function ViewMemberList() {
   return (
     <div className="space-y-6">
       {/* Filters */}
-      <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-4 flex flex-wrap gap-4">
+      <div className="form-card bg-white dark:bg-gray-800 shadow rounded-lg p-4 flex flex-wrap gap-4">
         <input
           type="text"
           placeholder="Email"
           value={tempFilters.email}
           onChange={(e) => setTempFilters({ ...tempFilters, email: e.target.value })}
           onKeyPress={(e) => e.key === "Enter" && handleFilter()}
-          className="flex-1 min-w-[200px] border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+          className="flex-1 min-w-[200px] border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 
+              focus:outline-none focus:ring-2 focus:ring-blue-500
+              bg-gray-200 
+              dark:bg-gray-500 dark:text-white"
         />
         <input
           type="text"
@@ -66,7 +69,10 @@ function ViewMemberList() {
           value={tempFilters.fullName}
           onChange={(e) => setTempFilters({ ...tempFilters, fullName: e.target.value })}
           onKeyPress={(e) => e.key === "Enter" && handleFilter()}
-          className="flex-1 min-w-[200px] border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+          className="flex-1 min-w-[200px] border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 
+              focus:outline-none focus:ring-2 focus:ring-blue-500 
+              bg-gray-200
+              dark:bg-gray-500 dark:text-white"
         />
         <div className="flex gap-2">
           <button
@@ -90,7 +96,7 @@ function ViewMemberList() {
           <div className="p-6 text-center text-gray-500 dark:text-gray-300">Loading...</div>
         ) : (
           <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-            <thead className="bg-gray-50 dark:bg-gray-700">
+            <thead className="bg-gray-200 dark:bg-gray-600">
               <tr>
                 <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">#</th>
                 <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Email</th>
@@ -98,7 +104,9 @@ function ViewMemberList() {
                 <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-200">Phone</th>
               </tr>
             </thead>
-            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+            <tbody className="
+                            bg-gray-100 dark:bg-gray-700 divide-y divide-gray-100 dark:divide-gray-900
+                            ">
               {members.length === 0 ? (
                 <tr>
                   <td colSpan={4} className="text-center py-6 text-gray-500 dark:text-gray-300">No members found</td>
@@ -121,25 +129,27 @@ function ViewMemberList() {
       </div>
 
       {/* Pagination */}
-      <div className="flex justify-between items-center">
-        <button
-          disabled={page === 1}
-          onClick={() => setPage(page - 1)}
-          className="flex items-center gap-1 px-4 py-2 rounded-lg bg-gradient-to-r from-gray-300 to-gray-400 dark:from-gray-700 dark:to-gray-600 hover:opacity-90 disabled:opacity-50 transition"
-        >
-          ◀ Previous
-        </button>
-        <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
-          Page {page} of {totalPages || 1}
-        </span>
-        <button
-          disabled={page >= totalPages}
-          onClick={() => setPage(page + 1)}
-          className="flex items-center gap-1 px-4 py-2 rounded-lg bg-gradient-to-r from-gray-300 to-gray-400 dark:from-gray-700 dark:to-gray-600 hover:opacity-90 disabled:opacity-50 transition"
-        >
-          Next ▶
-        </button>
-      </div>
+      {/* <div className="fixed bottom-0 left-0 w-full bg-white dark:bg-gray-900 shadow-md p-4"> */}
+        <div className="flex justify-between items-center">
+          <button
+            disabled={page === 1}
+            onClick={() => setPage(page - 1)}
+            className="flex items-center gap-1 px-4 py-2 rounded-lg bg-gradient-to-r from-gray-300 to-gray-400 dark:from-gray-700 dark:to-gray-600 hover:opacity-90 disabled:opacity-50 transition"
+          >
+            ◀ Previous
+          </button>
+          <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
+            Page {page} of {totalPages || 1}
+          </span>
+          <button
+            disabled={page >= totalPages}
+            onClick={() => setPage(page + 1)}
+            className="flex items-center gap-1 px-4 py-2 rounded-lg bg-gradient-to-r from-gray-300 to-gray-400 dark:from-gray-700 dark:to-gray-600 hover:opacity-90 disabled:opacity-50 transition"
+          >
+            Next ▶
+          </button>
+        </div>
+      {/* </div> */}
 
       {msg && <div className="text-red-600 dark:text-red-400">{msg}</div>}
     </div>

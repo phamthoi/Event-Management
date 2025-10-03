@@ -110,16 +110,17 @@ function MemberTable({ role = "admin" }) {
     );
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {/* Bộ lọc */}
-      <div className="p-5 bg-white dark:bg-gray-800 shadow-md rounded-2xl flex flex-wrap gap-3 items-center">
+      <div className="form-card p-5 bg-white dark:bg-gray-800 shadow-md rounded-2xl flex flex-wrap gap-3 items-center">
         <input
           type="text"
           placeholder="Email"
           value={tempFilters.email}
           onChange={(e) => setTempFilters({ ...tempFilters, email: e.target.value })}
           onKeyPress={(e) => e.key === "Enter" && handleFilter()}
-          className="border px-3 py-2 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-200"
+          className="border px-3 py-2 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200"
+          
         />
         <input
           type="text"
@@ -127,13 +128,13 @@ function MemberTable({ role = "admin" }) {
           value={tempFilters.fullName}
           onChange={(e) => setTempFilters({ ...tempFilters, fullName: e.target.value })}
           onKeyPress={(e) => e.key === "Enter" && handleFilter()}
-          className="border px-3 py-2 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-200"
+          className="border px-3 py-2 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200"
         />
         {role === "admin" && (
           <select
             value={tempFilters.isActive}
             onChange={(e) => setTempFilters({ ...tempFilters, isActive: e.target.value })}
-            className="border px-3 py-2 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-200"
+            className="border px-3 py-2 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200"
           >
             <option value="">Status</option>
             <option value="true">Active</option>

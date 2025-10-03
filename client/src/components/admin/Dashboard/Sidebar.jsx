@@ -77,18 +77,18 @@ function Sidebar() {
     <div
       className={`flex flex-col h-screen transition-all duration-300 ${
         collapsed ? "w-20" : "w-72"
-      } bg-white dark:bg-secondary-800 border-r border-secondary-200 dark:border-secondary-700 shadow-large`}
+      } bg-gray-100 dark:bg-secondary-800 border-r border-secondary-200 dark:border-secondary-700 shadow-large`}
     >
       {/* Logo */}
       <div className="flex items-center justify-between p-6 border-b border-secondary-100 dark:border-secondary-700">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-gradient-primary rounded-xl flex items-center justify-center shadow-glow">
-            <FiCalendar className="w-6 h-6 text-white" />
+            <FiCalendar className="w-6 h-6 text-black dark:text-white " />
           </div>
           {!collapsed && (
             <div>
               <h1 className="text-xl font-display font-bold text-secondary-900 dark:text-secondary-100">NEXPANDO</h1>
-              <p className="text-xs text-secondary-500 dark:text-secondary-400">Event Management</p>
+              <p className="text-xs text-secondary-7600 dark:text-secondary-200">Event Management</p>
             </div>
           )}
         </div>
@@ -101,7 +101,7 @@ function Sidebar() {
       </div>
 
       {/* Menu */}
-      <div className="flex-1 overflow-auto p-4 space-y-2">
+      <div className="flex-1 overflow-auto p-4 space-y-4">
         {menuItems.map((item) => {
           const Icon = item.icon;
           const isOpen = openItems.includes(item.name);
@@ -112,11 +112,13 @@ function Sidebar() {
               {/* Main menu item */}
               <button
                 onClick={() => toggleItem(item.name)}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group ${
+                className={`w-full flex items-center gap-3 px-4 py-3 transition-all duration-200 group ${
                   hasActiveChild 
-                    ? "bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-400 border border-primary-200 dark:border-primary-700" 
+                    // ? "bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-400 border border-primary-200 dark:border-primary-700" 
+                    // : "text-secondary-600 dark:text-secondary-400 hover:text-secondary-900 dark:hover:text-secondary-100 hover:bg-secondary-50 dark:hover:bg-secondary-700"
+                    ? "bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-400" 
                     : "text-secondary-600 dark:text-secondary-400 hover:text-secondary-900 dark:hover:text-secondary-100 hover:bg-secondary-50 dark:hover:bg-secondary-700"
-                }`}
+                  }`}
               >
                 <Icon className={`w-5 h-5 ${hasActiveChild ? "text-primary-600 dark:text-primary-400" : "text-secondary-400 dark:text-secondary-500 group-hover:text-secondary-600 dark:group-hover:text-secondary-300"}`} />
                 {!collapsed && (
@@ -143,7 +145,7 @@ function Sidebar() {
                     <Link
                       key={link.name}
                       to={link.path}
-                      className={`block px-4 py-2 text-sm rounded-lg transition-all duration-200 ${
+                      className={`block px-4 py-2 text-sm transition-all duration-200 ${
                         isActive(link.path)
                           ? "bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 font-medium border-l-2 border-primary-600 dark:border-primary-400"
                           : "text-secondary-500 dark:text-secondary-400 hover:text-secondary-700 dark:hover:text-secondary-200 hover:bg-secondary-50 dark:hover:bg-secondary-700"
