@@ -1,9 +1,9 @@
 // client/src/App.jsx
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import LoginPage from "./pages/LoginPage.jsx";
+import LoginPage from "./pages/common/login/LoginPage.jsx";
 
 // Admin
-import AdminDashboardPage from "./pages/admin/AdminDashboardPage.jsx";
+import AdminDashboardPage from "./pages/admin/dashboardPage/AdminDashboardPage.jsx";
 import AdminProfilePage from "./pages/admin/profile/AdminProfilePage.jsx";
 import AdminChangePasswordPage from "./pages/admin/profile/AdminChangePasswordPage.jsx";
 import CreateEventPage from "./pages/admin/events/CreateEventPage.jsx";
@@ -12,19 +12,19 @@ import EditEventPage from "./pages/admin/events/EditEventPage.jsx";
 import AttendancePage from "./pages/admin/events/AttendancePage.jsx";
 import CreateMemberPage from "./pages/admin/members/CreateMemberPage.jsx";
 import MemberListPage from "./pages/admin/members/MemberListPage.jsx";
-import MemberDetailPage from "./components/admin/MemberList/MemberDetailPage.jsx";
+import MemberDetailPage from "./components/admin/memberList/MemberDetailPage.jsx";
 import ResetPasswordPage from "./pages/admin/members/ResetPasswordPage.jsx";
 
 
 // Member
-import MemberDashboardPage from "./pages/member/MemberDashBoardPage.jsx";  
+import MemberDashboardPage from "./pages/member/dashboardPage/MemberDashBoardPage.jsx";  
 import MemberProfilePage from "./pages/member/profileMember/MemberProfilePage.jsx";
 import ChangePasswordPage from "./pages/member/profileMember/ChangePasswordPage.jsx";
 import ViewMemberListPage from "./pages/member/memberList/ViewMemberListPage.jsx";
 //import UpcomingEventsPage from "./pages/member/event/UpcomingEventPage.jsx";
 //import MyEventsPage from "./pages/member/event/MyEventsPage.jsx";
-import UpcomingEventsPage from "./pages/common/UpcommingEventsPage.jsx";
-import MyEventsPage from "./pages/common/MyEventsPage.jsx";
+import UpcomingEventsPage from "./pages/common/event/UpcommingEventsPage.jsx";
+import MyEventsPage from "./pages/common/event/MyEventsPage.jsx";
 
 function App() {
   // 🔹 Gộp ProtectedRoute ngay trong App

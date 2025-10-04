@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import EventCard from "../../../components/common/eventList/EventCard";
 import { eventService } from "../../../services/common/event/eventService.js";
 import { showErrorAlert } from "../../../utils/errorHandler";
+import { getEventStatus } from "../../../utils/getEventStatus";
 import * as Toast from "@radix-ui/react-toast";
 
 const UpcomingEventsPage = () => {

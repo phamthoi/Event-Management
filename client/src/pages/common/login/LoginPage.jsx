@@ -8,7 +8,7 @@ import {
   resetPassword, 
   handleLoginSuccess, 
   handleApiError 
-} from "../../../services/common/login/login";
+} from "../../../services/common/login/loginService";
 
 const LoginPage = () => {
   const [showForgot, setShowForgot] = useState(false);
