@@ -2,6 +2,8 @@ import express from "express";
 import { authMiddleware, requireRole } from "../../middleware/auth.js";
 import { EventController } from "../../controllers/admin/event.controller.js";
 
+
+
 const router = express.Router();
 
 router.use(authMiddleware);

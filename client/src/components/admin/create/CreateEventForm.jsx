@@ -1,9 +1,9 @@
 // src/components/admin/events/CreateEventForm.jsx
 import React, { useState } from "react";
 import * as Toast from "@radix-ui/react-toast";
-import { createEvent } from "../../../services/admin/event/eventService.js";
+import { createEvent } from "../../../services/admin/event/eventService";
 import { validateEventForm } from "../../../utils/validation";
-import { showErrorAlert } from "../../../utils/errorHandler.js";
+import { showErrorAlert } from "../../../utils/errorHandler";
 
 const CreateEventForm = () => {
   const [form, setForm] = useState({

@@ -1,5 +1,6 @@
 import { MemberService } from '../../services/admin/member.service.js';
 
+
 export class MemberController {
   static async getProfileMember(req, res) {
     try {

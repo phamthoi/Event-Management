@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import EventSelect from "../../../components/admin/attendance/EventSelect";
 import MemberTable from "../../../components/admin/attendance/MemberTable";
-import { getOngoingEvents, getRegistrations, updateRegistrationStatus } from "../../../services/admin/event/attendanceService.js";
-import { showErrorAlert } from "../../../utils/errorHandler.js";
+import { getOngoingEvents, getRegistrations, updateRegistrationStatus } from "../../../services/admin/event/attendanceService";
+import { showErrorAlert } from "../../../utils/errorHandler";
 
 function AttendancePage() {
   const [events, setEvents] = useState([]);

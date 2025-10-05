@@ -1,4 +1,3 @@
-// client/src/components/member/Dashboard/SidebarMember.jsx
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
 import {

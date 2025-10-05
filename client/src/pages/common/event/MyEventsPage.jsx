@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { getMemberRegistrations, cancelRegistration } from "../../../services/common/event/eventService.js";
-import { showErrorAlert } from "../../../utils/errorHandler.js";
+import { getMemberRegistrations, cancelRegistration } from "../../../services/common/event/eventService";
+import { showErrorAlert } from "../../../utils/errorHandler";
 
 const MyEventsPage = () => {
   const [events, setEvents] = useState([]);

@@ -1,9 +1,9 @@
 // src/pages/admin/events/EditEventPage.jsx
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getEventById, updateEvent } from "../../../services/admin/event/eventService.js";
+import { getEventById, updateEvent } from "../../../services/admin/event/eventService";
 import EditEventForm from "../../../components/admin/eventlist/EditEventForm";
-import { showErrorAlert } from "../../../utils/errorHandler.js";
+import { showErrorAlert } from "../../../utils/errorHandler";
 
 import * as Toast from "@radix-ui/react-toast";
 import * as Dialog from "@radix-ui/react-dialog";

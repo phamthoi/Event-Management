@@ -1,4 +1,3 @@
-// client/src/components/member/Dashboard/DashboardLayoutMember.jsx
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import Sidebar from "./sidebar";

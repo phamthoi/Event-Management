@@ -7,7 +7,7 @@ import {
   getMemberRegistrations,
 } from "../../../services/common/event/eventService.js";
 import { getEventStatus } from "../../../utils/getEventStatus";
-import { showErrorAlert } from "../../../utils/errorHandler.js";
+import { showErrorAlert } from "../../../utils/errorHandler";
 import * as Toast from "@radix-ui/react-toast";
 
 const UpcomingEventsPage = () => {

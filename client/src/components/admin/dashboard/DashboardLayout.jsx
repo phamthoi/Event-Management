@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Sidebar from "./Sidebar";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { Link, useLocation } from "react-router-dom";
-import { profileService } from "../../../services/common/profile/profileService.js";
+import { profileService } from "../../../services/common/profile/profileService";
 import ThemeToggle from "../../common/ThemeToggle";
 import { 
   FiBell, 

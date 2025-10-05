@@ -1,5 +1,7 @@
 import * as EventService from "../../services/common/event/event.service.js";
 
+
+
 export const getMyEvents = async (req, res) => {
   try {
     const userId = req.user.id;
