@@ -164,7 +164,6 @@ export class MemberService {
   }
 
   static async unlockMember(memberId) {
-    // Kiểm tra role của member trước khi unlock
     const targetMember = await prisma.user.findUnique({
       where: { id: memberId },
       select: { role: true, fullName: true }
@@ -187,7 +186,6 @@ export class MemberService {
   }
 
   static async resetPassword(memberId) {
-    // Kiểm tra role của member trước khi reset password
     const targetMember = await prisma.user.findUnique({
       where: { id: memberId },
       select: { role: true, fullName: true }
