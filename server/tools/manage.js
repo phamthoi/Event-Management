@@ -1,30 +1,23 @@
-// tools/manage.js
-import inquirer from "inquirer";   // CLI tool để hỏi đáp
-import slugify from "slugify";     // Tạo slug từ tên tổ chức
-import bcrypt from "bcryptjs";     // Hash password trước khi lưu
+import inquirer from "inquirer";
+import slugify from "slugify";
+import bcrypt from "bcryptjs";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-// ---------------- ORGANIZATION ----------------
-
-// Hàm tạo tổ chức mới
 async function createOrganization() {
   const { name } = await inquirer.prompt([
     { type: "input", name: "name", message: "Tên tổ chức:" }
   ]);
 
-  // Tạo slug từ name
   const slug = slugify(name, { lower: true, strict: true });
 
-  // Check duplicate slug
   const existing = await prisma.organization.findUnique({ where: { slug } });
   if (existing) {
     console.log(`❌ Slug '${slug}' đã tồn tại, vui lòng chọn tên khác.`);
     return;
   }
 
-  // Lưu vào DB
   const org = await prisma.organization.create({
     data: { name, slug }
   });
@@ -32,14 +25,12 @@ async function createOrganization() {
   console.log("✅ Đã tạo tổ chức:", org);
 }
 
-// Liệt kê tất cả tổ chức
 async function listOrganizations() {
   const orgs = await prisma.organization.findMany();
   console.log("📋 Danh sách tổ chức:");
   orgs.forEach(o => console.log(`- ${o.id} | ${o.name} | ${o.slug}`));
 }
 
-// Xóa tổ chức
 async function deleteOrganization() {
   const orgs = await prisma.organization.findMany();
   if (orgs.length === 0) {
@@ -60,9 +51,6 @@ async function deleteOrganization() {
   console.log("🗑️ Đã xóa tổ chức thành công.");
 }
 
-// ---------------- ADMIN ----------------
-
-// Hàm tạo Admin mới
 async function createAdmin() {
   const orgs = await prisma.organization.findMany();
   if (orgs.length === 0) {
@@ -82,10 +70,8 @@ async function createAdmin() {
     { type: "input", name: "fullName", message: "Tên đầy đủ:" }
   ]);
 
-  // Hash password
   const passwordHash = await bcrypt.hash(password, 10);
 
-  // Tạo user role ADMIN
   const admin = await prisma.user.create({
     data: {
       email,
@@ -99,7 +85,6 @@ async function createAdmin() {
   console.log("✅ Đã tạo admin:", admin);
 }
 
-// Liệt kê Admins
 async function listAdmins() {
   const admins = await prisma.user.findMany({
     where: { role: "ADMIN" },
@@ -117,7 +102,6 @@ async function listAdmins() {
   );
 }
 
-// Xóa admin
 async function deleteAdmin() {
   const admins = await prisma.user.findMany({
     where: { role: "ADMIN" },
@@ -129,7 +113,6 @@ async function deleteAdmin() {
     return;
   }
 
-  // Hiển thị danh sách admin để chọn
   const { adminId } = await inquirer.prompt([
     {
       type: "list",
@@ -142,12 +125,9 @@ async function deleteAdmin() {
     }
   ]);
 
-  // Xóa admin
   await prisma.user.delete({ where: { id: adminId } });
   console.log("🗑️ Đã xóa admin thành công.");
 }
-
-// ---------------- MAIN MENU ----------------
 
 async function main() {
   const { action } = await inquirer.prompt([
@@ -175,10 +155,9 @@ async function main() {
   else if (action === "deleteAdmin") await deleteAdmin();
   else if (action === "exit") process.exit(0);
 
-  await main(); // Quay lại menu
+  await main();
 }
 
-// Chạy tool
 main().catch(e => {
   console.error(e);
   process.exit(1);

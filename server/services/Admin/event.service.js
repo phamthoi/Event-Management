@@ -24,17 +24,17 @@ export class EventService {
     const eventStart = startAt ? new Date(startAt) : null;
     const eventEnd = endAt ? new Date(endAt) : null;
 
-    // Trạng thái trước khi bắt đầu đăng ký
+  
     if (registrationStart && now < registrationStart) {
       return "DRAFT";
     }
 
-    // Trạng thái đang trong thời gian đăng ký
+   
     if (registrationStart && registrationEnd && now >= registrationStart && now <= registrationEnd) {
       return "REGISTRATION";
     }
 
-    // Trạng thái sau khi kết thúc đăng ký nhưng chưa diễn ra sự kiện
+  
     if (registrationEnd && now > registrationEnd && eventStart && now < eventStart) {
       if (minAttendees > 0 && registeredCount < minAttendees) {
         return "CANCELLED";
@@ -42,17 +42,17 @@ export class EventService {
       return "READY";
     }
 
-    // Trạng thái sự kiện đang diễn ra
+   
     if (eventStart && eventEnd && now >= eventStart && now <= eventEnd) {
       return "ONGOING";
     }
 
-    // Trạng thái sau khi sự kiện kết thúc
+
     if (eventEnd && now > eventEnd) {
       return "COMPLETED";
     }
 
-    // Trả về trạng thái mặc định
+  
     return initialStatus || "DRAFT";
   }
 
@@ -332,7 +332,7 @@ export class EventService {
   }
 
   static async deleteEvent(eventId) {
-    //lấy event kèm số đăng ký
+   
     const event = await prisma.event.findUnique({
       where: {id: eventId},
       include: { registrtions: true},
@@ -374,19 +374,6 @@ export class EventService {
   }
 
 
-  // static async updateAttendance(updates) {
-  //   await Promise.all(
-  //     updates.map((u) =>
-  //       prisma.registration.update({
-  //         where: { id: parseInt(u.registrationId) },
-  //         data: { 
-  //           attendance: u.attended
-  //         },
-  //       })
-
-  //     )
-  //   );
-  // }
 
   static async updateRegistrationStatus(updates) {
     await Promise.all(
@@ -409,7 +396,7 @@ export class EventService {
     const events = await prisma.event.findMany({
       where: {
         organizationId: organizationId,
-        status: { in: ['ONGOING', 'READY'] } // thêm ready để điểm danh ai đã nộp tiền. 
+        status: { in: ['ONGOING', 'READY'] }
       },
       orderBy: { createdAt: "desc" },
       select: {

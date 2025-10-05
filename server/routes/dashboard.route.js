@@ -4,7 +4,7 @@ import { DashboardController } from "../controllers/common/dashboard.controller.
 
 const router = express.Router();
 
-// GET /dashboard - Lấy thông tin dashboard
+
 router.get("/", authMiddleware, DashboardController.getDashboard);
 
 export default router;
