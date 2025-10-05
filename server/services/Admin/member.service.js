@@ -56,14 +56,14 @@ export class MemberService {
   static async getMembersList(filters) {
     const { email, fullName, isActive, page = 1, limit = 10, organizationId } = filters;
     const where = { organizationId};
-
+  
     if (email) where.email = { contains: email, mode: "insensitive" };
     if (fullName) where.fullName = { contains: fullName, mode: "insensitive" };
     if (isActive !== undefined) where.isActive = isActive === "true";
-
+  
     const members = await prisma.user.findMany({
       where,
-      orderBy: { createdAt: "desc" },
+      orderBy: { id: "asc" },
       skip: (parseInt(page) - 1) * parseInt(limit),
       take: parseInt(limit),
       select: {
@@ -72,12 +72,13 @@ export class MemberService {
         email: true,
         phoneNumber: true,
         isActive: true,
+        role: true,
         createdAt: true
       }
     });
-
+  
     const total = await prisma.user.count({ where });
-
+  
     return {
       members,
       total,
@@ -91,7 +92,7 @@ export class MemberService {
       where: {
         id: memberId,
         organizationId: organizationId,
-        role: "MEMBER"
+        
       },
       select: {
         id: true,
@@ -140,6 +141,20 @@ export class MemberService {
   }
 
   static async lockMember(memberId) {
+
+    const targetMember = await prisma.user.findUnique({
+      where: { id: memberId },
+      select: { role: true, fullName: true }
+    });
+
+    if (!targetMember) {
+      throw new Error("Member not found");
+    }
+
+    if (targetMember.role === "ADMIN") {
+      throw new Error("Cannot lock admin users");
+    }
+
     const member = await prisma.user.update({
       where: { id: memberId },
       data: { isActive: false },
@@ -149,6 +164,20 @@ export class MemberService {
   }
 
   static async unlockMember(memberId) {
+    // Kiểm tra role của member trước khi unlock
+    const targetMember = await prisma.user.findUnique({
+      where: { id: memberId },
+      select: { role: true, fullName: true }
+    });
+
+    if (!targetMember) {
+      throw new Error("Member not found");
+    }
+
+    if (targetMember.role === "ADMIN") {
+      throw new Error("Cannot unlock admin users");
+    }
+
     const member = await prisma.user.update({
       where: { id: memberId },
       data: { isActive: true },
@@ -158,6 +187,20 @@ export class MemberService {
   }
 
   static async resetPassword(memberId) {
+    // Kiểm tra role của member trước khi reset password
+    const targetMember = await prisma.user.findUnique({
+      where: { id: memberId },
+      select: { role: true, fullName: true }
+    });
+
+    if (!targetMember) {
+      throw new Error("Member not found");
+    }
+
+    if (targetMember.role === "ADMIN") {
+      throw new Error("Cannot reset password for admin users");
+    }
+
     const newPassword = "Member@123";
     const passwordHash = await bcrypt.hash(newPassword, 10);
 

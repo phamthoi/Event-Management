@@ -12,6 +12,7 @@ import AttendancePage from "./pages/admin/events/AttendancePage.jsx";
 import CreateMemberPage from "./pages/admin/members/CreateMemberPage.jsx";
 import MemberListPage from "./pages/admin/members/MemberListPage.jsx";
 import MemberDetailPage from "./components/admin/memberlist/MemberDetailPage.jsx";
+import ResetPasswordPage from "./pages/admin/members/ResetPasswordPage.jsx";
 
 import MemberDashboardPage from "./pages/member/dashboardPage/MemberDashBoardPage.jsx";  
 import MemberProfilePage from "./pages/member/profile/MemberProfilePage.jsx";
@@ -66,6 +67,7 @@ function App() {
           <Route path="members/create" element={<CreateMemberPage />} />
           <Route path="members/list" element={<MemberListPage />} />
           <Route path="members/:id" element={<MemberDetailPage />} />
+          <Route path="members/:id/reset-password" element={<ResetPasswordPage />} />
           
           <Route path="upcoming-event" element={<UpcomingEventsPage />} />
           <Route path="my-event" element={<MyEventsPage />} />

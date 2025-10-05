@@ -68,8 +68,17 @@ function MemberTable({ role = "admin" }) {
     navigate(`/admin/members/${id}`);
   };
 
-  const handleToggleLock = async (id, isActive) => {
+  const handleToggleLock = async (id, isActive, memberRole) => {
     if (role !== "admin") return;
+    
+    
+    
+    if (memberRole === "ADMIN") {
+    
+      showErrorAlert("Cannot lock/unlock admin users");
+      return;
+    }
+    
     try {
       setLoading(true);
       if (isActive) await MemberLock(id);
@@ -83,8 +92,17 @@ function MemberTable({ role = "admin" }) {
     }
   };
 
-  const handleResetPassword = (id) => {
+  const handleResetPassword = (id, memberRole) => {
     if (role !== "admin") return;
+    
+    
+    
+    if (memberRole === "ADMIN") {
+     
+      showErrorAlert("Cannot reset password for admin users");
+      return;
+    }
+    
     navigate(`/admin/members/${id}/reset-password`);
   };
 
@@ -98,6 +116,20 @@ function MemberTable({ role = "admin" }) {
         }`}
       >
         {isActive ? "Active" : "Locked"}
+      </span>
+    );
+  };
+
+  const renderRoleBadge = (memberRole) => {
+    return (
+      <span
+        className={`px-2 py-1 text-xs font-semibold rounded-full shadow-sm ${
+          memberRole === "ADMIN"
+            ? "bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300"
+            : "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300"
+        }`}
+      >
+        {memberRole === "ADMIN" ? "Admin" : "Member"}
       </span>
     );
   };
@@ -164,6 +196,7 @@ function MemberTable({ role = "admin" }) {
               <th className="border px-3 py-2 text-left">Email</th>
               <th className="border px-3 py-2 text-left">Full Name</th>
               <th className="border px-3 py-2 text-left">Phone</th>
+              <th className="border px-3 py-2 text-center">Role</th>
               <th className="border px-3 py-2 text-center">Status</th>
               {role === "admin" && <th className="border px-3 py-2 text-center">Actions</th>}
             </tr>
@@ -172,60 +205,100 @@ function MemberTable({ role = "admin" }) {
             {members.length === 0 ? (
               <tr>
                 <td
-                  colSpan={role === "admin" ? 6 : 5}
+                  colSpan={role === "admin" ? 7 : 6}
                   className="text-center p-4 text-gray-500 dark:text-gray-400"
                 >
                   No members found
                 </td>
               </tr>
             ) : (
-              members.map((m, idx) => (
-                <tr
-                  key={m.id}
-                  className="hover:bg-gray-50 dark:hover:bg-gray-700 transition"
-                >
-                  <td className="border px-3 py-2">
-                    {(page - 1) * limit + idx + 1}
-                  </td>
-                  <td className="border px-3 py-2">{m.email}</td>
-                  <td className="border px-3 py-2">{m.fullName || "-"}</td>
-                  <td className="border px-3 py-2">{m.phoneNumber || "-"}</td>
-                  <td className="border px-3 py-2 text-center">
-                    {renderStatusBadge(m.isActive)}
-                  </td>
-                  {role === "admin" && (
-                    <td className="border px-3 py-2 flex justify-center items-center gap-2">
-                      <button
-                        onClick={() => handleView(m.id)}
-                        className="p-2 rounded-full bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 transition"
-                        title="View Member"
-                      >
-                        <EyeOpenIcon />
-                      </button>
-                      <button
-                        onClick={() => handleToggleLock(m.id, m.isActive)}
-                        className={`p-2 rounded-full transition ${
-                          m.isActive
-                            ? "bg-red-500 text-white hover:bg-red-600"
-                            : "bg-green-500 text-white hover:bg-green-600"
-                        }`}
-                        title={m.isActive ? "Lock Member" : "Unlock Member"}
-                        disabled={loading}
-                      >
-                        {m.isActive ? <LockClosedIcon /> : <LockOpen1Icon />}
-                      </button>
-                      <button
-                        onClick={() => handleResetPassword(m.id)}
-                        className="p-2 rounded-full bg-yellow-400 hover:bg-yellow-500 transition"
-                        title="Reset Password"
-                        disabled={loading}
-                      >
-                        <ReloadIcon />
-                      </button>
+              members.map((m, idx) => {
+                const isAdminUser = m.role === "ADMIN";
+                
+                
+                return (
+                  <tr
+                    key={m.id}
+                    className="hover:bg-gray-50 dark:hover:bg-gray-700 transition"
+                  >
+                    <td className="border px-3 py-2">
+                      {(page - 1) * limit + idx + 1}
                     </td>
-                  )}
-                </tr>
-              ))
+                    <td className="border px-3 py-2">{m.email}</td>
+                    <td className="border px-3 py-2">{m.fullName || "-"}</td>
+                    <td className="border px-3 py-2">{m.phoneNumber || "-"}</td>
+                    <td className="border px-3 py-2 text-center">
+                      {renderRoleBadge(m.role)}
+                    </td>
+                    <td className="border px-3 py-2 text-center">
+                      {renderStatusBadge(m.isActive)}
+                    </td>
+                    {role === "admin" && (
+                      <td className="border px-3 py-2 flex justify-center items-center gap-2">
+                        <button
+                          onClick={() => handleView(m.id)}
+                          className="p-2 rounded-full bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 transition"
+                          title="View Member"
+                        >
+                          <EyeOpenIcon />
+                        </button>
+                        
+                        <button
+                          onClick={() => {
+                            if (!isAdminUser) {
+                              handleToggleLock(m.id, m.isActive, m.role);
+                            } else {
+                              
+                              showErrorAlert("Cannot lock/unlock admin users");
+                            }
+                          }}
+                          className={`p-2 rounded-full transition ${
+                            isAdminUser
+                              ? "bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed opacity-50"
+                              : m.isActive
+                              ? "bg-red-500 text-white hover:bg-red-600"
+                              : "bg-green-500 text-white hover:bg-green-600"
+                          }`}
+                          title={
+                            isAdminUser
+                              ? "Cannot lock/unlock admin user"
+                              : m.isActive
+                              ? "Lock Member"
+                              : "Unlock Member"
+                          }
+                          disabled={loading || isAdminUser}
+                        >
+                          {m.isActive ? <LockClosedIcon /> : <LockOpen1Icon />}
+                        </button>
+                        
+                        <button
+                          onClick={() => {
+                            if (!isAdminUser) {
+                              handleResetPassword(m.id, m.role);
+                            } else {
+                              
+                              showErrorAlert("Cannot reset password for admin users");
+                            }
+                          }}
+                          className={`p-2 rounded-full transition ${
+                            isAdminUser
+                              ? "bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed opacity-50"
+                              : "bg-yellow-400 text-gray-800 hover:bg-yellow-500"
+                          }`}
+                          title={
+                            isAdminUser
+                              ? "Cannot reset admin password"
+                              : "Reset Password"
+                          }
+                          disabled={loading || isAdminUser}
+                        >
+                          <ReloadIcon />
+                        </button>
+                      </td>
+                    )}
+                  </tr>
+                );
+              })
             )}
           </tbody>
         </table>

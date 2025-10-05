@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getMemberById } from "../../../services/admin/member/memberService";
-import { showErrorAlert } from "../../../utils/admin/errorHandler";
+import { showErrorAlert } from "../../../utils/errorHandler";
 import * as Toast from "@radix-ui/react-toast";
 
 const ResetPasswordPage = () => {

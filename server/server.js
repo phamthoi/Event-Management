@@ -12,8 +12,6 @@ dotenv.config({ path: path.join(__dirname, '.env') });
 import authRoutes from "./routes/common/auth.route.js";
 import adminRoutes from "./routes/admin/admin.route.js";
 import memberRoutes from "./routes/member/member.route.js";
-import eventRoutes from "./routes/admin/event.route.js";
-// import notificationRoutes from "./routes/notification.route.js";
 import commonProfileRoutes from "./routes/common/profile.route.js";
 import commonEventRoutes from "./routes/common/event.route.js";
 
