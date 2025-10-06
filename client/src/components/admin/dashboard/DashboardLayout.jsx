@@ -67,10 +67,8 @@ const DashboardLayout = ({ children }) => {
   const isDashboardHome = location.pathname === "/admin" || location.pathname ==="/admin/";
 
   const stats = [
-    { label: "Total Events", value: "24", icon: FiCalendar, change: "+12%", color: "primary" },
-    { label: "Active Members", value: "1,234", icon: FiUsers, change: "+8%", color: "accent" },
-    { label: "This Month", value: "156", icon: FiActivity, change: "+23%", color: "warning" },
-    { label: "Growth Rate", value: "18.2%", icon: FiTrendingUp, change: "+5%", color: "success" },
+    { label: "Total Events", value: "24", icon: FiCalendar, color: "primary" },
+    { label: "Active Members", value: "4", icon: FiUsers, color: "accent" },
   ];
 
   return (
@@ -126,7 +124,7 @@ const DashboardLayout = ({ children }) => {
                 <FiChevronDown className="w-4 h-4 text-secondary-400 dark:text-secondary-500 group-hover:text-secondary-600 dark:group-hover:text-secondary-300" />
               </DropdownMenu.Trigger>
 
-              <DropdownMenu.Content className="bg-white dark:bg-secondary-800 rounded-2xl shadow-large border border-secondary-200 dark:border-secondary-700 py-2 w-56 animate-fade-in">
+              <DropdownMenu.Content className="bg-white dark:bg-secondary-800 rounded-2xl shadow-large border border-secondary-200 dark:border-secondary-700 py-2 w-56 animate-fade-in z-50">
                 <DropdownMenu.Item asChild>
                   <Link 
                     to="/admin/profile" 
@@ -160,7 +158,7 @@ const DashboardLayout = ({ children }) => {
 
         {isDashboardHome && (
           <section className="p-6 animate-fade-in">
-            <div className="card p-8 mb-8 bg-gradient-to-r from-primary-600 to-primary-700 text-white">
+            <div className="card relative z-0 p-8 mb-8 bg-gradient-to-r from-primary-600 to-primary-700 text-white">
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-3xl font-display font-bold mb-2">
@@ -195,9 +193,6 @@ const DashboardLayout = ({ children }) => {
                       <div style={{ padding: '0.75rem', borderRadius: '0.75rem', backgroundColor: colors.bg, transition: 'background-color 0.3s ease' }}>
                         <Icon style={{ width: '1.5rem', height: '1.5rem', color: colors.text }} />
                       </div>
-                      <span style={{ fontSize: '0.875rem', fontWeight: '500', color: colors.text, backgroundColor: colors.badge, padding: '0.25rem 0.5rem', borderRadius: '0.5rem' }}>
-                        {stat.change}
-                      </span>
                     </div>
                     <div>
                       <p style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#0f172a', marginBottom: '0.25rem' }}>{stat.value}</p>

@@ -1,5 +1,5 @@
 import { Navigate, Outlet } from "react-router-dom";
-import DashboardLayoutMember from "../../../components/member/dashboard/DashboardLayoutMember"; 
+import DashboardLayout from "../../../components/member/dashboard/DashboardLayout"; 
 
 function MemberDashboardPage(){
   const token = localStorage.getItem("token");
@@ -9,9 +9,9 @@ function MemberDashboardPage(){
   }
 
   return (
-    <DashboardLayoutMember>
+    <DashboardLayout>
       <Outlet />
-    </DashboardLayoutMember>
+    </DashboardLayout>
   );
 }
 
