@@ -16,14 +16,14 @@ import {
 } from "react-icons/fi";
 
 const menuItems = [
-  {
-    name: "Profile",
-    icon: FiUser,
-    links: [
-      { name: "View & Update", path: "/admin/profile" },
-      { name: "Change Password", path: "/admin/profile/change-password" },
-    ],
-  },
+  // {
+  //   name: "Profile",
+  //   icon: FiUser,
+  //   links: [
+  //     { name: "View & Update", path: "/admin/profile" },
+  //     { name: "Change Password", path: "/admin/profile/change-password" },
+  //   ],
+  // },
   {
     name: "Events Management",
     icon: FiCalendar,

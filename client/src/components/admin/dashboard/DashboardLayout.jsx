@@ -126,7 +126,7 @@ const DashboardLayout = ({ children }) => {
                 <FiChevronDown className="w-4 h-4 text-secondary-400 dark:text-secondary-500 group-hover:text-secondary-600 dark:group-hover:text-secondary-300" />
               </DropdownMenu.Trigger>
 
-              <DropdownMenu.Content className="bg-white dark:bg-secondary-800 rounded-2xl shadow-large border border-secondary-200 dark:border-secondary-700 py-2 w-56 animate-fade-in">
+              <DropdownMenu.Content className="bg-white dark:bg-secondary-800 rounded-2xl shadow-large border border-secondary-200 dark:border-secondary-700 py-2 w-56 animate-fade-in z-50">
                 <DropdownMenu.Item asChild>
                   <Link 
                     to="/admin/profile" 
@@ -160,7 +160,7 @@ const DashboardLayout = ({ children }) => {
 
         {isDashboardHome && (
           <section className="p-6 animate-fade-in">
-            <div className="card p-8 mb-8 bg-gradient-to-r from-primary-600 to-primary-700 text-white">
+            <div className="card relative z-0 p-8 mb-8 bg-gradient-to-r from-primary-600 to-primary-700 text-white">
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-3xl font-display font-bold mb-2">
