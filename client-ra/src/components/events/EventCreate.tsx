@@ -1,7 +1,7 @@
-// src/components/events/EventEdit.tsx
+// src/components/events/EventCreate.tsx
 import * as React from "react";
 import {
-  Edit,
+  Create,
   SimpleForm,
   TextInput,
   NumberInput,
@@ -9,24 +9,23 @@ import {
   required,
 } from "react-admin";
 
-const EventEdit = () => {
+const EventCreate = () => {
   return (
-    <Edit resource="events" mutationMode="pessimistic">
+    <Create resource="events" mutationMode="pessimistic">
       <SimpleForm>
         <TextInput source="title" label="Event Name" validate={required()} />
         <TextInput source="location" label="Location" />
-        <DateTimeInput source="startAt" label="Event Start" />
-        <DateTimeInput source="endAt" label="Event End" />
+        <DateTimeInput source="startAt" label="Event Start" validate={required()} />
+        <DateTimeInput source="endAt" label="Event End" validate={required()} />
         <DateTimeInput source="registrationStartAt" label="Registration Start" />
         <DateTimeInput source="registrationEndAt" label="Registration End" />
         <NumberInput source="minAttendees" label="Min Attendees" />
         <NumberInput source="maxAttendees" label="Max Attendees" />
         <NumberInput source="deposit" label="Deposit (VND)" />
-        <NumberInput source="registeredCount" label="Registered Users" disabled />
-        <TextInput source="description" label="Description" />
+        <TextInput source="description" label="Description" multiline />
       </SimpleForm>
-    </Edit>
+    </Create>
   );
 };
 
-export default EventEdit;
+export default EventCreate;

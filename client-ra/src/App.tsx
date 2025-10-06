@@ -4,12 +4,11 @@ import { Route } from "react-router-dom";
 
 import authProvider from "./providers/authProvider";
 import dataProvider from "./providers/dataProvider";
-import eventDataProvider from "./providers/eventDataProvider";
 import Dashboard from "./pages/Dashboard";
 import CustomLayout from "./components/CustomLayout/CustomLayout";
 
 import { ProfileView, ProfileEdit } from "./components/Profile"; 
-import { EventFilter, EventList } from "./components/events";
+import { EventList, EventEdit, EventCreate } from "./components/events";
 
 const App = () => (
   <Admin
@@ -25,7 +24,13 @@ const App = () => (
     </CustomRoutes>
 
     {/* Nếu sau này có entity chuẩn CRUD thì mới khai báo Resource */}
-    <Resource name="events" list={EventList}/>
+    <Resource 
+      name="events" 
+      list={EventList}
+      edit={EventEdit}
+      create={EventCreate}
+    />
+
   </Admin>
 );
 

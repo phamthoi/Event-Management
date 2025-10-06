@@ -42,7 +42,21 @@ const authProvider = {
       : Promise.reject();
   },
 
-  getPermissions: () => Promise.resolve(),
+  getPermissions: () => {
+    // có thể trả về role ở đây nếu cần
+    const role = localStorage.getItem("role");
+    return Promise.resolve(role);
+  },
+  getIdentity: async () => {
+    // trả về thông tin user đầy đủ cho useGetIdentity
+    const user = JSON.parse(localStorage.getItem("currentUser") || "{}");
+    return Promise.resolve({
+      id: user.id,
+      fullName: user.fullName,
+      role: user.role,   // **quan trọng**
+      avatar: user.avatarUrl,
+    });
+  },
 };
 
 export default authProvider;
