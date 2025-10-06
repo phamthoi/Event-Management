@@ -16,14 +16,6 @@ import {
 } from "react-icons/fi";
 
 const menuItems = [
-  // {
-  //   name: "Profile",
-  //   icon: FiUser,
-  //   links: [
-  //     { name: "View & Update", path: "/admin/profile" },
-  //     { name: "Change Password", path: "/admin/profile/change-password" },
-  //   ],
-  // },
   {
     name: "Events Management",
     icon: FiCalendar,
@@ -69,6 +61,20 @@ function Sidebar() {
     window.location.href = "/login";
   };
 
+  const handleLogoClick = (e) => {
+    e.preventDefault();
+    
+  
+    if (location.pathname === "/admin" || location.pathname === "/admin/") {
+      if (window.refreshAdminDashboard) {
+        window.refreshAdminDashboard();
+      }
+    } else {
+     
+      window.location.href = "/admin";
+    }
+  };
+
   const isActive = (path) => location.pathname === path;
 
   const toggleItem = (itemName) => {
@@ -88,6 +94,7 @@ function Sidebar() {
       <div className="flex items-center justify-between p-6 border-b border-secondary-100 dark:border-secondary-700">
         <Link
           to="/admin"
+          onClick={handleLogoClick}
           className="flex items-center gap-3 hover:opacity-80 transition-opacity"
         >
           <div className="w-10 h-10 bg-gradient-primary rounded-xl flex items-center justify-center shadow-glow">
@@ -116,7 +123,7 @@ function Sidebar() {
         </button>
       </div>
 
-      <div className="flex-1 overflow-auto p-4 space-y-4">
+      <div className="flex-1 overflow-auto p-4 space-y-2">
         {menuItems.map((item) => {
           const Icon = item.icon;
           const isOpen = openItems.includes(item.name);
@@ -126,53 +133,52 @@ function Sidebar() {
             <div key={item.name} className="space-y-1">
               <button
                 onClick={() => toggleItem(item.name)}
-                className={`w-full flex items-center gap-3 px-4 py-3 transition-all duration-200 group 
-                  focus:outline-none focus:ring-0
-                  ${
-                    hasActiveChild
-                      ? "bg-primary-50 dark:bg-primary-900/10 text-primary-700 dark:text-primary-400"
-                      : "text-secondary-600 dark:text-secondary-400 dark:hover:text-secondary-100"
-                  }`}
+                className={`w-full flex items-center justify-between p-3 rounded-xl transition-all duration-200 group ${
+                  hasActiveChild
+                    ? "bg-primary-100 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300"
+                    : "text-secondary-600 dark:text-secondary-400 hover:bg-secondary-100 dark:hover:bg-secondary-700 hover:text-secondary-900 dark:hover:text-secondary-200"
+                }`}
               >
-                <Icon
-                  className={`w-5 h-5 ${
-                    hasActiveChild
-                      ? "text-primary-600 dark:text-primary-400"
-                      : "text-secondary-400 dark:text-secondary-500 group-hover:text-secondary-600 dark:group-hover:text-secondary-300"
-                  }`}
-                />
+                <div className="flex items-center gap-3">
+                  <Icon
+                    className={`w-5 h-5 transition-colors ${
+                      hasActiveChild
+                        ? "text-primary-600 dark:text-primary-400"
+                        : "text-secondary-500 dark:text-secondary-400 group-hover:text-secondary-700 dark:group-hover:text-secondary-300"
+                    }`}
+                  />
+                  {!collapsed && (
+                    <span className="font-medium text-sm">{item.name}</span>
+                  )}
+                </div>
                 {!collapsed && (
-                  <>
-                    <span className="flex-1 text-left font-medium">
-                      {item.name}
-                    </span>
-                    {item.links[0].badge && (
-                      <span className="bg-danger-500 text-white text-xs font-semibold px-2 py-1 rounded-full">
-                        {item.links[0].badge}
-                      </span>
-                    )}
-                    {isOpen ? (
-                      <FiChevronDown className="w-4 h-4 text-secondary-400 dark:text-secondary-500" />
-                    ) : (
-                      <FiChevronRight className="w-4 h-4 text-secondary-400 dark:text-secondary-500" />
-                    )}
-                  </>
+                  <FiChevronDown
+                    className={`w-4 h-4 transition-transform duration-200 ${
+                      isOpen ? "rotate-180" : ""
+                    }`}
+                  />
                 )}
               </button>
 
-              {!collapsed && isOpen && (
+              {isOpen && !collapsed && (
                 <div className="ml-8 space-y-1 animate-fade-in">
                   {item.links.map((link) => (
                     <Link
-                      key={link.name}
+                      key={link.path}
                       to={link.path}
-                      className={`block px-4 py-2 text-sm transition-all duration-200 ${
+                      className={`flex items-center gap-3 p-2 rounded-lg text-sm transition-all duration-200 ${
                         isActive(link.path)
-                          ? "bg-primary-50 dark:bg-primary-900/10 text-primary-700 dark:text-primary-400 font-medium border-l-2 border-primary-600 dark:border-primary-400"
-                          : "text-secondary-500 dark:text-secondary-400 hover:text-secondary-700 dark:hover:text-secondary-200"
+                          ? "bg-primary-50 dark:bg-primary-900/10 text-primary-700 dark:text-primary-300 font-medium"
+                          : "text-secondary-600 dark:text-secondary-400 hover:bg-secondary-50 dark:hover:bg-secondary-700/50 hover:text-secondary-900 dark:hover:text-secondary-200"
                       }`}
                     >
+                      <FiChevronRight className="w-3 h-3" />
                       {link.name}
+                      {link.badge && (
+                        <span className="ml-auto bg-danger-500 text-white text-xs px-2 py-1 rounded-full">
+                          {link.badge}
+                        </span>
+                      )}
                     </Link>
                   ))}
                 </div>
@@ -182,13 +188,13 @@ function Sidebar() {
         })}
       </div>
 
-      <div className="p-4 border-t border-secondary-100">
+      <div className="p-4 border-t border-secondary-100 dark:border-secondary-700">
         <button
           onClick={handleLogout}
-          className="w-full flex items-center gap-3 px-4 py-3 text-danger-600 hover:text-danger-700 hover:bg-danger-50 rounded-xl transition-all duration-200 group"
+          className="w-full flex items-center gap-3 p-3 text-danger-600 dark:text-danger-400 hover:bg-danger-50 dark:hover:bg-danger-900/20 rounded-xl transition-all duration-200 group"
         >
           <FiLogOut className="w-5 h-5" />
-          {!collapsed && <span className="font-medium">Logout</span>}
+          {!collapsed && <span className="font-medium text-sm">Logout</span>}
         </button>
       </div>
     </div>

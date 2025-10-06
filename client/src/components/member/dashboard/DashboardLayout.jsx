@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { profileService } from "../../../services/common/profile/profileService";
+import { getMemberStats } from "../../../services/member/stats/statsService";
 import ThemeToggle from "../../common/ThemeToggle";
 import { 
   FiBell, 
@@ -15,18 +16,22 @@ import {
   FiTrendingUp,
   FiActivity,
   FiClock,
-  FiCheckCircle
+  FiCheckCircle,
+  FiPlay
 } from "react-icons/fi";
 
-const DashboardLayoutMember = ({ children }) => {
+const DashboardLayout = ({ children }) => {
   const location = useLocation();
   const [user, setUser] = useState({ fullName: "", avatarUrl: "" });
   const [notifications, setNotifications] = useState(2);
   const [stats, setStats] = useState({
-    events: 0,
-    registrations: 0,
-    upcoming: 0,
+    totalRegistrations: 0,
+    ready: 0,
+    ongoing: 0,
+    completed: 0,
   });
+  const [loading, setLoading] = useState(true);
+  
 
   useEffect(() => {
     const loadUserProfile = async () => {
@@ -50,6 +55,7 @@ const DashboardLayoutMember = ({ children }) => {
             localStorage.setItem("currentUser", JSON.stringify(updatedUser));
           }
         }
+        
       } catch (err) {
         console.error("Error loading user profile:", err);
         setUser({
@@ -59,17 +65,19 @@ const DashboardLayoutMember = ({ children }) => {
       }
     };
 
-    loadUserProfile();
+    const loadMemberStats = async () => {
+      try {
+        const memberStats = await getMemberStats();
+        setStats(memberStats);
+      } catch (err) {
+        console.error("Error loading member stats:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    fetch("/api/member/stats")
-      .then(res => res.json())
-      .then(data => {
-        setStats({
-          registrations: data.myRegistrations || 0,
-          upcoming: data.upcoming || 0,
-        });
-      })
-      .catch(err => console.log(err));
+    loadUserProfile();
+    loadMemberStats();
   }, []);
 
   const handleLogout = () => {
@@ -81,10 +89,30 @@ const DashboardLayoutMember = ({ children }) => {
   const isMemberHome = location.pathname === "/member" || location.pathname === "/member/";
 
   const memberStats = [
-    { label: "My Events", value: "8", icon: FiCalendar, change: "+2", color: "primary" },
-    { label: "Registrations", value: "12", icon: FiCheckCircle, change: "+3", color: "accent" },
-    { label: "Upcoming", value: "4", icon: FiClock, change: "+1", color: "warning" },
-    { label: "Completed", value: "6", icon: FiActivity, change: "+2", color: "success" },
+    { 
+      label: "Registrations", 
+      value: loading ? "..." : stats.totalRegistrations.toString(), 
+      icon: FiCheckCircle, 
+      color: "accent" 
+    },
+    { 
+      label: "Ready", 
+      value: loading ? "..." : stats.ready.toString(), 
+      icon: FiClock, 
+      color: "warning" 
+    },
+    { 
+      label: "Ongoing", 
+      value: loading ? "..." : stats.ongoing.toString(), 
+      icon: FiPlay, 
+      color: "primary" 
+    },
+    { 
+      label: "Completed", 
+      value: loading ? "..." : stats.completed.toString(), 
+      icon: FiActivity, 
+      color: "success" 
+    },
   ];
 
   return (
@@ -209,9 +237,7 @@ const DashboardLayoutMember = ({ children }) => {
                       <div style={{ padding: '0.75rem', borderRadius: '0.75rem', backgroundColor: colors.bg, transition: 'background-color 0.3s ease' }}>
                         <Icon style={{ width: '1.5rem', height: '1.5rem', color: colors.text }} />
                       </div>
-                      <span style={{ fontSize: '0.875rem', fontWeight: '500', color: colors.text, backgroundColor: colors.badge, padding: '0.25rem 0.5rem', borderRadius: '0.5rem' }}>
-                        {stat.change}
-                      </span>
+                  
                     </div>
                     <div>
                       <p style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#0f172a', marginBottom: '0.25rem' }}>{stat.value}</p>
@@ -234,4 +260,4 @@ const DashboardLayoutMember = ({ children }) => {
   );
 };
 
-export default DashboardLayoutMember;
+export default DashboardLayout;
