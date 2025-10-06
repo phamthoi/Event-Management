@@ -166,9 +166,15 @@ export class MemberController {
       }
 
       const memberId = parseInt(req.params.id);
-      await MemberService.resetPassword(memberId);
+      const { newPassword } = req.body;
+
+      if (!newPassword) {
+        return res.status(400).json({ message: "New password is required" });
+      }
+
+      await MemberService.resetPassword(memberId, newPassword);
       
-      res.json({ message: "Password has been reset to 'Member@123'" });
+      res.json({ message: "Password has been reset successfully" });
     } catch (error) {
       res.status(500).json({ message: error.message });
     }

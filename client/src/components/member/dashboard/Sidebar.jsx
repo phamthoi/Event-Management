@@ -14,35 +14,24 @@ import {
 } from "react-icons/fi";
 
 const menuItems = [
-  {
-    name: "Profile",
-    icon: FiUser,
-    links: [
-      { name: "Update Information", path: "/member/profile/update" },
-      { name: "Change Password", path: "/member/profile/change-password" }
-    ],
-  },
+ 
   {
     name: "Members List",
     icon: FiUsers,
-    links: [
-      { name: "View Members", path: "/member/list-member" }
-    ],
+    links: [{ name: "View Members", path: "/member/list-member" }],
   },
   {
     name: "Events Registration",
     icon: FiCalendar,
     links: [
       { name: "Upcoming Events", path: "/member/upcoming-event" },
-      { name: "My Events", path: "/member/my-event" }
+      { name: "My Events", path: "/member/my-event" },
     ],
   },
   {
     name: "Notifications",
     icon: FiBell,
-    links: [
-      { name: "Get Notifications", path: "/member/notifications" }
-    ],
+    links: [{ name: "Get Notifications", path: "/member/notifications" }],
   },
 ];
 
@@ -57,12 +46,26 @@ function SidebarMember() {
     window.location.href = "/login";
   };
 
+  const handleLogoClick = (e) => {
+    e.preventDefault();
+    
+    // Nếu đang ở trang dashboard, refresh data
+    if (location.pathname === "/member" || location.pathname === "/member/") {
+      if (window.refreshMemberDashboard) {
+        window.refreshMemberDashboard();
+      }
+    } else {
+      // Nếu không ở trang dashboard, navigate về dashboard
+      window.location.href = "/member";
+    }
+  };
+
   const isActive = (path) => location.pathname === path;
 
   const toggleItem = (itemName) => {
-    setOpenItems(prev => 
-      prev.includes(itemName) 
-        ? prev.filter(name => name !== itemName)
+    setOpenItems((prev) =>
+      prev.includes(itemName)
+        ? prev.filter((name) => name !== itemName)
         : [...prev, itemName]
     );
   };
@@ -74,22 +77,32 @@ function SidebarMember() {
       } bg-gray-200 dark:bg-secondary-800 border-r border-secondary-200 dark:border-secondary-700 shadow-large`}
     >
       <div className="flex items-center justify-between p-6 border-b border-secondary-100 dark:border-secondary-700">
-        <div className="flex items-center gap-3">
+        <Link
+          to="/member"
+          onClick={handleLogoClick}
+          className="flex items-center gap-3 hover:opacity-80 transition-opacity"
+        >
           <div className="w-10 h-10 bg-gradient-accent rounded-xl flex items-center justify-center shadow-glow">
             <FiUsers className="w-6 h-6 text-black dark:text-white" />
           </div>
           {!collapsed && (
             <div>
-              <h1 className="text-xl font-display font-bold text-secondary-900">NEXPANDO</h1>
+              <h1 className="text-xl font-display font-bold text-secondary-900">
+                NEXPANDO
+              </h1>
               <p className="text-xs text-secondary-500">Member Portal</p>
             </div>
           )}
-        </div>
+        </Link>
         <button
           className="p-2 text-secondary-400 dark:text-secondary-500 hover:text-secondary-600 dark:hover:text-secondary-300 hover:bg-secondary-100 dark:hover:bg-secondary-700 rounded-lg transition-all duration-200"
           onClick={() => setCollapsed(!collapsed)}
         >
-          {collapsed ? <FiMenu className="w-5 h-5" /> : <FiX className="w-5 h-5" />}
+          {collapsed ? (
+            <FiMenu className="w-5 h-5" />
+          ) : (
+            <FiX className="w-5 h-5" />
+          )}
         </button>
       </div>
 
@@ -97,45 +110,52 @@ function SidebarMember() {
         {menuItems.map((item) => {
           const Icon = item.icon;
           const isOpen = openItems.includes(item.name);
-          const hasActiveChild = item.links.some(link => isActive(link.path));
-          
+          const hasActiveChild = item.links.some((link) => isActive(link.path));
+
           return (
             <div key={item.name} className="space-y-1">
               <button
                 onClick={() => toggleItem(item.name)}
-                className={`w-full flex items-center gap-3 px-4 py-3 transition-all duration-200 group 
-                  focus:outline-none focus:ring-0
-                  ${
-                  hasActiveChild 
-                    ? "bg-gray-100 dark:bg-primary-900/10 text-accent-700 dark:text-primary-400" 
-                    : "text-secondary-600 dark:text-secondary-400 dark:hover:text-secondary-100 "
+                className={`w-full flex items-center justify-between p-3 rounded-xl transition-all duration-200 group ${
+                  hasActiveChild
+                    ? "bg-accent-100 dark:bg-accent-900/20 text-accent-700 dark:text-accent-300"
+                    : "text-secondary-600 dark:text-secondary-400 hover:bg-secondary-100 dark:hover:bg-secondary-700 hover:text-secondary-900 dark:hover:text-secondary-200"
                 }`}
               >
-                <Icon className={`w-5 h-5 ${hasActiveChild ? "text-accent-600 dark:text-accent-400" : "text-secondary-400 dark:text-secondary-500 group-hover:text-secondary-600 dark:group-hover:text-secondary-300"}`} />
+                <div className="flex items-center gap-3">
+                  <Icon
+                    className={`w-5 h-5 transition-colors ${
+                      hasActiveChild
+                        ? "text-accent-600 dark:text-accent-400"
+                        : "text-secondary-500 dark:text-secondary-400 group-hover:text-secondary-700 dark:group-hover:text-secondary-300"
+                    }`}
+                  />
+                  {!collapsed && (
+                    <span className="font-medium text-sm">{item.name}</span>
+                  )}
+                </div>
                 {!collapsed && (
-                  <>
-                    <span className="flex-1 text-left font-medium">{item.name}</span>
-                    {isOpen ? (
-                      <FiChevronDown className="w-4 h-4 text-secondary-400" />
-                    ) : (
-                      <FiChevronRight className="w-4 h-4 text-secondary-400" />
-                    )}
-                  </>
+                  <FiChevronDown
+                    className={`w-4 h-4 transition-transform duration-200 ${
+                      isOpen ? "rotate-180" : ""
+                    }`}
+                  />
                 )}
               </button>
 
-              {!collapsed && isOpen && (
+              {isOpen && !collapsed && (
                 <div className="ml-8 space-y-1 animate-fade-in">
                   {item.links.map((link) => (
                     <Link
-                      key={link.name}
+                      key={link.path}
                       to={link.path}
-                      className={`block px-4 py-2 text-sm transition-all duration-200 ${
+                      className={`flex items-center gap-3 p-2 rounded-lg text-sm transition-all duration-200 ${
                         isActive(link.path)
-                          ? "bg-accent-100 dark:bg-gray-700 text-accent-700 font-medium border-l-2 border-accent-600 dark:border-accent-400"
-                          : "text-secondary-500 hover:text-secondary-700 dark:text-secondary-200"
+                          ? "bg-accent-50 dark:bg-accent-900/10 text-accent-700 dark:text-accent-300 font-medium"
+                          : "text-secondary-600 dark:text-secondary-400 hover:bg-secondary-50 dark:hover:bg-secondary-700/50 hover:text-secondary-900 dark:hover:text-secondary-200"
                       }`}
                     >
+                      <FiChevronRight className="w-3 h-3" />
                       {link.name}
                     </Link>
                   ))}
@@ -146,13 +166,13 @@ function SidebarMember() {
         })}
       </div>
 
-      <div className="p-4 border-t border-secondary-200 dark:border-secondary-700 ">
+      <div className="p-4 border-t border-secondary-100 dark:border-secondary-700">
         <button
           onClick={handleLogout}
-          className="w-full flex items-center gap-3 px-4 py-3 text-danger-600 hover:text-danger-700 hover:bg-danger-50 rounded-xl transition-all duration-200 group"
+          className="w-full flex items-center gap-3 p-3 text-danger-600 dark:text-danger-400 hover:bg-danger-50 dark:hover:bg-danger-900/20 rounded-xl transition-all duration-200 group"
         >
           <FiLogOut className="w-5 h-5" />
-          {!collapsed && <span className="font-medium">Logout</span>}
+          {!collapsed && <span className="font-medium text-sm">Logout</span>}
         </button>
       </div>
     </div>

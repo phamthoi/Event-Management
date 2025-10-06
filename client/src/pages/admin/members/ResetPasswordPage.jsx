@@ -60,7 +60,7 @@ const ResetPasswordPage = () => {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: localStorage.getItem("token"),
         },
         body: JSON.stringify({ newPassword: formData.newPassword }),
       });

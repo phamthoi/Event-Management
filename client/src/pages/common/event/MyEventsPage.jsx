@@ -92,10 +92,20 @@ const MyEventsPage = () => {
                     className={`absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-bold ${
                       ev.status === "CANCELLED"
                         ? "bg-red-500 dark:bg-red-600 text-white"
+                        : ev.status === "COMPLETED"
+                        ? "bg-blue-500 dark:bg-blue-600 text-white"
+                        : ev.status === "ONGOING"
+                        ? "bg-orange-500 dark:bg-orange-600 text-white"
                         : "bg-green-500 dark:bg-green-600 text-white"
                     }`}
                   >
-                    {ev.status === "CANCELLED" ? "Cancelled" : "Registered"}
+                    {ev.status === "CANCELLED" 
+                      ? "Cancelled" 
+                      : ev.status === "COMPLETED"
+                      ? "Completed"
+                      : ev.status === "ONGOING"
+                      ? "Ongoing"
+                      : "Registered"}
                   </span>
 
                   <div>

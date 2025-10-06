@@ -185,7 +185,7 @@ export class MemberService {
     return member;
   }
 
-  static async resetPassword(memberId) {
+  static async resetPassword(memberId, newPassword) {
     const targetMember = await prisma.user.findUnique({
       where: { id: memberId },
       select: { role: true, fullName: true }
@@ -199,7 +199,6 @@ export class MemberService {
       throw new Error("Cannot reset password for admin users");
     }
 
-    const newPassword = "Member@123";
     const passwordHash = await bcrypt.hash(newPassword, 10);
 
     await prisma.user.update({
