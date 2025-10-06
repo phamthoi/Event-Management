@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { NotificationService } from "../common/notification/notification.service.js";
 
 const prisma = new PrismaClient();
 
@@ -112,6 +113,15 @@ export class EventService {
         }
       }
     });
+
+    // Tự động tạo notification cho tất cả members trong organization
+    try {
+      await NotificationService.createEventNotification(event);
+  
+    } catch (notificationError) {
+      console.error("❌ Failed to create notifications for event:", notificationError);
+      // Không throw error để không ảnh hưởng đến việc tạo event
+    }
   
     return event;
   }
@@ -241,15 +251,17 @@ export class EventService {
   }
 
   static async getEventById(eventId) {
-    const rawEvent = await prisma.$queryRaw`
-      SELECT id, "startAt", "endAt" 
-      FROM "Event" 
-      WHERE id = ${eventId}
-    `;
-    
     const event = await prisma.event.findUnique({
       where: { id: eventId },
       include: {
+        organization: true,
+        createdBy: {
+          select: {
+            id: true,
+            fullName: true,
+            email: true,
+          },
+        },
         _count: {
           select: {
             registrations: {
@@ -261,14 +273,11 @@ export class EventService {
             }
           }
         }
-      }
+      },
     });
 
     if (event) {
-      return {
-        ...event,
-        registeredCount: event._count.registrations
-      };
+      event.registeredCount = event._count.registrations;
     }
 
     return event;
@@ -332,24 +341,9 @@ export class EventService {
   }
 
   static async deleteEvent(eventId) {
-   
-    const event = await prisma.event.findUnique({
-      where: {id: eventId},
-      include: { registrations: true},
+    await prisma.event.delete({
+      where: { id: eventId },
     });
-
-    if(!event){
-      throw new Error("Event not found");
-    }
-
-    if (event.registrations.length > 0){
-      throw new Error(
-        `Cannot delete event. ${event.registrations.length} member(s) already registered.`
-      );
-    }
-    await prisma.event.delete({ where: { id: eventId } });
-
-    return { success: true, message: "Event deleted successfully"};
   }
 
   static async getEventRegistrations(eventId) {
@@ -373,8 +367,6 @@ export class EventService {
     }
   }
 
-
-
   static async updateRegistrationStatus(updates) {
     await Promise.all(
       updates.map((u) =>
@@ -390,26 +382,33 @@ export class EventService {
     );
   }
 
-
-
   static async getOngoingEventsByOrganization(organizationId) {
     const events = await prisma.event.findMany({
       where: {
-        organizationId: organizationId,
-        status: { in: ['ONGOING', 'READY'] }
+        organizationId,
+        status: "ONGOING",
       },
-      orderBy: { createdAt: "desc" },
-      select: {
-        id: true,
-        title: true,
-        location: true,
-        startAt: true,
-        endAt: true,
-        status: true,
-        deposit: true,
+      include: {
+        _count: {
+          select: {
+            registrations: {
+              where: {
+                status: {
+                  in: ['REGISTERED', 'ATTENDED']
+                }
+              }
+            }
+          }
+        }
+      },
+      orderBy: {
+        startAt: "asc",
       },
     });
 
-    return events;
+    return events.map(event => ({
+      ...event,
+      registeredCount: event._count.registrations
+    }));
   }
 }

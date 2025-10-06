@@ -12,9 +12,9 @@ import {
   FiMenu,
   FiX,
 } from "react-icons/fi";
+import NotificationBadge from "../../common/notifications/NotificationBadge.jsx";
 
 const menuItems = [
- 
   {
     name: "Members List",
     icon: FiUsers,
@@ -32,6 +32,7 @@ const menuItems = [
     name: "Notifications",
     icon: FiBell,
     links: [{ name: "Get Notifications", path: "/member/notifications" }],
+    showBadge: true,
   },
 ];
 
@@ -43,6 +44,7 @@ function SidebarMember() {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("currentUser");
+    localStorage.removeItem("role");
     window.location.href = "/login";
   };
 
@@ -123,13 +125,18 @@ function SidebarMember() {
                 }`}
               >
                 <div className="flex items-center gap-3">
-                  <Icon
-                    className={`w-5 h-5 transition-colors ${
-                      hasActiveChild
-                        ? "text-accent-600 dark:text-accent-400"
-                        : "text-secondary-500 dark:text-secondary-400 group-hover:text-secondary-700 dark:group-hover:text-secondary-300"
-                    }`}
-                  />
+                  <div className="relative">
+                    <Icon
+                      className={`w-5 h-5 transition-colors ${
+                        hasActiveChild
+                          ? "text-accent-600 dark:text-accent-400"
+                          : "text-secondary-500 dark:text-secondary-400 group-hover:text-secondary-700 dark:group-hover:text-secondary-300"
+                      }`}
+                    />
+                    {item.showBadge && (
+                      <NotificationBadge className="absolute -top-2 -right-2" />
+                    )}
+                  </div>
                   {!collapsed && (
                     <span className="font-medium text-sm">{item.name}</span>
                   )}
@@ -149,14 +156,18 @@ function SidebarMember() {
                     <Link
                       key={link.path}
                       to={link.path}
-                      className={`flex items-center gap-3 p-2 rounded-lg text-sm transition-all duration-200 ${
+                      className={`flex items-center justify-between p-2 rounded-lg text-sm transition-all duration-200 ${
                         isActive(link.path)
                           ? "bg-accent-50 dark:bg-accent-900/10 text-accent-700 dark:text-accent-300 font-medium"
                           : "text-secondary-600 dark:text-secondary-400 hover:bg-secondary-50 dark:hover:bg-secondary-700/50 hover:text-secondary-900 dark:hover:text-secondary-200"
                       }`}
                     >
-                      <FiChevronRight className="w-3 h-3" />
-                      {link.name}
+                      <span>{link.name}</span>
+                      {link.badge && (
+                        <span className="bg-accent-500 text-white text-xs px-2 py-1 rounded-full">
+                          {link.badge}
+                        </span>
+                      )}
                     </Link>
                   ))}
                 </div>
@@ -169,7 +180,7 @@ function SidebarMember() {
       <div className="p-4 border-t border-secondary-100 dark:border-secondary-700">
         <button
           onClick={handleLogout}
-          className="w-full flex items-center gap-3 p-3 text-danger-600 dark:text-danger-400 hover:bg-danger-50 dark:hover:bg-danger-900/20 rounded-xl transition-all duration-200 group"
+          className="w-full flex items-center gap-3 p-3 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-all duration-200 group"
         >
           <FiLogOut className="w-5 h-5" />
           {!collapsed && <span className="font-medium text-sm">Logout</span>}
