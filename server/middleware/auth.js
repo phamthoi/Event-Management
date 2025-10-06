@@ -10,7 +10,7 @@ export function authMiddleware(req, res, next) {
  
   const token = authHeader; 
  
-  //if (!token) return res.sendStatus(401).json({ message: "Invalid token format"});
+  // if (!token) return res.sendStatus(401).json({ message: "Invalid token format"});
 
   
  
@@ -26,13 +26,7 @@ export function authMiddleware(req, res, next) {
 
 
 export function requireRole(roles) {
-  // return (req, res, next) => {
-  //   if(!req.user) return res.status(401).json({ message: "Unauthorized" });
-  //   if (req.user.role !== role) {
-  //     return res.status(403).json({ message: `Access denied: ${role} only` });
-  //   }
-  //   next();
-  // };
+  
   return (req, res, next) => {
     if (!req.user) {
       return res.status(401).json({ message: "Unauthorized" });

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import Sidebar from "./sidebar";
+import Sidebar from "./Sidebar";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { profileService } from "../../../services/common/profile/profileService";
 import ThemeToggle from "../../common/ThemeToggle";

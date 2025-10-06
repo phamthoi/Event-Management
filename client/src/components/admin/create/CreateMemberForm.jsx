@@ -59,6 +59,16 @@ const CreateMemberForm = () => {
     }
   };
 
+  const getInputType = (field) => {
+    if (field === "password" || field === "confirmPassword") {
+      return "password";
+    }
+    if (field === "email") {
+      return "email";
+    }
+    return "text";
+  };
+
   return (
     <div className="card max-w-lg mx-auto p-8 bg-white dark:bg-secondary-900 rounded-3xl shadow-2xl">
       <h2 className="text-3xl font-extrabold text-center text-gray-800 dark:text-gray-100 mb-8">
@@ -77,13 +87,7 @@ const CreateMemberForm = () => {
               *
             </label>
             <input
-              type={
-                field.includes("password")
-                  ? "password"
-                  : field === "email"
-                  ? "email"
-                  : "text"
-              }
+              type={getInputType(field)}
               id={field}
               placeholder={`Enter ${field === "confirmPassword" ? "password again" : field}`}
               value={form[field]}
