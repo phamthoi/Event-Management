@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { SocketService } from "../socket/socket.service.js";
 
 const prisma = new PrismaClient();
 
@@ -16,6 +17,13 @@ export class NotificationService {
           recipientId,
         },
       });
+
+      // Emit real-time notification to user
+      SocketService.emitToUser(recipientId, 'new-notification', {
+        notification,
+        unreadCount: await this.getUnreadCount(recipientId)
+      });
+
       return notification;
     } catch (error) {
       console.error("Error creating notification:", error);
@@ -54,6 +62,27 @@ export class NotificationService {
           })
         )
       );
+
+      // Emit real-time notifications to all members
+    //   for (const member of members) {
+    //     // Log each member ID
+    //     console.log(`🧯 Sending notification to user ${member.id}`);
+
+    //     const unreadCount = await this.getUnreadCount(member.id);
+    //     SocketService.emitToUser(member.id, 'new-notification', {
+    //       notification: notifications.find(n => n.recipientId === member.id),
+    //       unreadCount
+    //     });
+    //   }
+
+      // Also emit to organization room
+      SocketService.emitToOrganization(organizationId, 'organization-notification', {
+        title,
+        message,
+        type,
+        memberCount: members.length
+      });
+      
 
       return notifications;
     } catch (error) {
@@ -113,7 +142,7 @@ export class NotificationService {
         organizationId,
       });
 
-     
+      console.log(`✅ Created ${notifications.length} notifications for new event: ${title}`);
       return notifications;
     } catch (error) {
       console.error("Error creating event notifications:", error);
@@ -173,6 +202,13 @@ export class NotificationService {
         },
       });
 
+      // Emit updated unread count
+      const unreadCount = await this.getUnreadCount(userId);
+      SocketService.emitToUser(userId, 'notification-read', {
+        notificationId,
+        unreadCount
+      });
+
       return notification;
     } catch (error) {
       console.error("Error marking notification as read:", error);
@@ -193,6 +229,11 @@ export class NotificationService {
         data: {
           isRead: true,
         },
+      });
+
+      // Emit updated unread count (should be 0)
+      SocketService.emitToUser(userId, 'all-notifications-read', {
+        unreadCount: 0
       });
 
       return result;
