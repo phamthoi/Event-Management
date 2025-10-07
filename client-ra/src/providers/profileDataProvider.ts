@@ -1,61 +1,51 @@
 // client/src/providers/profileDataProvider.ts
 import api from "../services/axios";
-import { DataProvider } from "react-admin";
+import { DataProvider, GetOneParams, UpdateParams, CreateParams, DeleteParams, RaRecord } from "react-admin";
 
 /**
- * DataProvider riêng cho Profile (current user).
+ * DataProvider riêng cho Profile (current user)
  * Backend: /common/profile, /common/profile/password
+ * Lưu ý: Chỉ có 1 profile hiện tại, không dùng getList
  */
 const profileDataProvider: DataProvider = {
-  // Không dùng getList cho profile (chỉ có 1 user hiện tại)
+  // Không dùng getList cho profile
   getList: async () => {
     throw new Error("getList not implemented in profileDataProvider");
   },
 
-  // GET /common/profile
-  getOne: async (resource, params) => {
+  // Lấy profile hiện tại
+  getOne: async (resource, params: GetOneParams) => {
     if (resource === "admin" && params.id === "profile") {
-      const { data } = await api.get(`/profile`);
+      const { data } = await api.get("/profile");
       return {
-        data: {
-          ...data,
-          id: "profile", // ép id thành "profile" để match với params.id
-        },
+        data: { ...data, id: "profile" }, // Ép id thành "profile"
       };
     }
     throw new Error(`getOne not implemented for resource ${resource}`);
   },
 
-  // UPDATE /common/profile
-  update: async (resource, params) => {
+  // Cập nhật profile hiện tại
+  update: async (resource, params: UpdateParams) => {
     if (resource === "admin" && params.id === "profile") {
-      const { data } = await api.put(`/profile`, params.data);
+      const { data } = await api.put("/profile", params.data);
       return {
-        data: {
-          ...data,
-          id: "profile",
-        },
+        data: { ...data, id: "profile" },
       };
     }
     throw new Error(`update not implemented for resource ${resource}`);
   },
 
-  // Đổi mật khẩu /common/profile/password
-  changePassword: async (currentPassword: string, newPassword: string) => {
-    const { data } = await api.put(`/profile/password`, {
-      currentPassword,
-      newPassword,
-    });
-    return data;
-  },
-
-  // Các method còn lại (không dùng cho profile)
+  // Tạo profile (không sử dụng)
   create: async () => {
     throw new Error("create not implemented in profileDataProvider");
   },
-  delete: async () => {
+
+  // Xóa profile (không sử dụng)
+  delete: async <RecordType extends RaRecord = any>() => {
     throw new Error("delete not implemented in profileDataProvider");
   },
+
+  // Không dùng các phương thức nhiều bản ghi
   getMany: async () => {
     throw new Error("getMany not implemented in profileDataProvider");
   },
@@ -67,6 +57,13 @@ const profileDataProvider: DataProvider = {
   },
   deleteMany: async () => {
     throw new Error("deleteMany not implemented in profileDataProvider");
+  },
+
+  // Phương thức đặc biệt: đổi mật khẩu
+  // Không phải chuẩn react-admin, dùng trực tiếp từ service
+  changePassword: async (currentPassword: string, newPassword: string) => {
+    const { data } = await api.put("/profile/password", { currentPassword, newPassword });
+    return data;
   },
 };
 

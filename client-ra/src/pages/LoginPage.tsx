@@ -1,6 +1,15 @@
+// src/pages/LoginPage.tsx
 import * as React from "react";
 import { useLogin, Notification } from "react-admin";
-import { TextField, Button, Card, CardContent, Typography, Box, CircularProgress } from "@mui/material";
+import {
+  TextField,
+  Button,
+  Card,
+  CardContent,
+  Typography,
+  Box,
+  CircularProgress,
+} from "@mui/material";
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = React.useState("");
@@ -15,8 +24,8 @@ const LoginPage: React.FC = () => {
     setLoading(true);
     setError("");
     try {
-      await login({ email, password });
-      // React-Admin tự redirect
+      // Chú ý: useLogin mặc định truyền username, password
+      await login({ username: email, password });
     } catch (err: any) {
       setError(err?.message || "Login failed");
     } finally {

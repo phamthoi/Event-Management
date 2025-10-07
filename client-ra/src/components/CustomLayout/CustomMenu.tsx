@@ -1,42 +1,98 @@
+// src/components/CustomMenu.tsx
 import * as React from "react";
+import { useTheme } from "@mui/material/styles";
 import { MenuItemLink, DashboardMenuItem } from "react-admin";
-import { Box } from "@mui/material";
+import { List, ListSubheader, Divider } from "@mui/material";
 import EventIcon from "@mui/icons-material/Event";
 import PeopleIcon from "@mui/icons-material/People";
+import BarChartIcon from "@mui/icons-material/BarChart";
 import AssignmentIcon from "@mui/icons-material/Assignment";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
-const CustomMenu = (props: any) => (
-  <Box sx={{ width: 240 }}>
-    <DashboardMenuItem {...props} />
-    
-    <MenuItemLink
-      to="/events"
-      primaryText="Events"
-      leftIcon={<EventIcon />}
-      {...props}
-    />
-    <MenuItemLink
-      to="/members"
-      primaryText="Members"
-      leftIcon={<PeopleIcon />}
-      {...props}
-    />
-    <MenuItemLink
-      to="/registrations"
-      primaryText="Registrations"
-      leftIcon={<AssignmentIcon />}
-      {...props}
-    />
+interface CustomMenuProps {
+  role: string;
+}
 
-    {/* My Profile link */}
-    {/* <MenuItemLink
-      to="/admin/profile/show"
-      primaryText="My Profile"
-      leftIcon={<AccountCircleIcon />}
+const CustomMenu: React.FC<CustomMenuProps> = ({ role, ...props }) => {
+  const theme = useTheme();
+
+  const renderMenuItem = (
+    to: string,
+    primaryText: string,
+    icon?: React.ReactElement
+  ) => (
+    <MenuItemLink
+      to={to}
+      primaryText={primaryText}
+      leftIcon={icon}
       {...props}
-    /> */}
-  </Box>
-);
+      sx={{
+        "&.RaMenuItemLink-root": {
+          borderRadius: 1,
+          mb: 0.5,
+          "&.active": {
+            backgroundColor: theme.palette.action.selected,
+            fontWeight: "bold",
+            color: theme.palette.primary.main,
+          },
+          "&:hover": {
+            backgroundColor: theme.palette.action.hover,
+          },
+        },
+      }}
+    />
+  );
+
+  return (
+    <List sx={{ width: 240, paddingTop: 0 }} component="nav">
+      <DashboardMenuItem {...props} />
+
+      {role === "admin" && (
+        <>
+          <Divider sx={{ my: 1 }} />
+          <ListSubheader
+            sx={{ fontWeight: "bold", color: theme.palette.text.primary }}
+          >
+            Management
+          </ListSubheader>
+          {renderMenuItem("/events", "Events", <EventIcon />)}
+          {renderMenuItem("/members", "Members", <PeopleIcon />)}
+
+          <Divider sx={{ my: 1 }} />
+          <ListSubheader
+            sx={{ fontWeight: "bold", color: theme.palette.text.primary }}
+          >
+            Registrations
+          </ListSubheader>
+          {renderMenuItem("/upcoming-events", "Upcoming Events", <AssignmentIcon />)}
+          {renderMenuItem("/member-events", "My Events", <EventIcon />)}
+          
+          {/* ✅ Thêm menu Attendance cho admin */}
+          {renderMenuItem("/registrations", "Attendance", <BarChartIcon />)}
+        </>
+      )}
+
+      {role === "member" && (
+        <>
+          <Divider sx={{ my: 1 }} />
+          <ListSubheader
+            sx={{ fontWeight: "bold", color: theme.palette.text.primary }}
+          >
+            Registrations
+          </ListSubheader>
+          {renderMenuItem("/upcoming-events", "Upcoming Events", <AssignmentIcon />)}
+          {renderMenuItem("/member-events", "My Events", <EventIcon />)}
+
+          <Divider sx={{ my: 1 }} />
+          <ListSubheader
+            sx={{ fontWeight: "bold", color: theme.palette.text.primary }}
+          >
+            Members
+          </ListSubheader>
+          {renderMenuItem("/membersPublic", "Members", <PeopleIcon />)}
+        </>
+      )}
+    </List>
+  );
+};
 
 export default CustomMenu;

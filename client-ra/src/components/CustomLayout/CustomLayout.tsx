@@ -1,10 +1,16 @@
+// src/components/CustomLayout.tsx
 import * as React from "react";
-import { Layout } from "react-admin";
-import CustomAppBar from "./CustomAppBar";
+import { Layout, usePermissions } from "react-admin";
 import CustomMenu from "./CustomMenu";
+import CustomAppBar from "./CustomAppBar";
 
-const CustomLayout = (props: any) => (
-  <Layout {...props} appBar={CustomAppBar} menu={CustomMenu} />
-);
+const CustomLayout: React.FC<any> = (props) => {
+  const { permissions } = usePermissions();
+  if (!permissions) return null;
+
+  const MenuWithRole = (menuProps: any) => <CustomMenu {...menuProps} role={permissions} />;
+
+  return <Layout {...props} menu={MenuWithRole} appBar={CustomAppBar} />;
+};
 
 export default CustomLayout;

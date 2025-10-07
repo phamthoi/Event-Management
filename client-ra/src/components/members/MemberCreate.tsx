@@ -6,7 +6,6 @@ const MemberCreate = () => (
     <SimpleForm>
       <TextInput source="email" label="Email" />
       <TextInput source="fullName" label="Full Name" />
-      <TextInput source="phoneNumber" label="Phone" />
       <TextInput source="password" label="Password" type="password" />
     </SimpleForm>
   </Create>

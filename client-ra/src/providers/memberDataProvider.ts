@@ -10,10 +10,8 @@ import {
 } from "react-admin";
 
 const memberDataProvider: DataProvider = {
-  // Lấy danh sách
-  getList: async (resource, params: GetListParams) => {
-    //const { page, perPage } = params.pagination;
-    //const { field, order } = params.sort;
+  // Get list cho các resource khác nhau
+  getList: async (resource: string, params: GetListParams) => {
     const page = params.pagination?.page || 1;
     const perPage = params.pagination?.perPage || 10;
 
@@ -22,39 +20,79 @@ const memberDataProvider: DataProvider = {
       limit: perPage,
       ...params.filter,
     };
-    
+
     const queryString = new URLSearchParams(query as any).toString();
-    const res = await api.get(`/admin/members/list?${queryString}`);
-    const data = res.data.members.map((m: any) => ({ ...m, id: m.id.toString() }));
+
+    let res;
+
+    if (resource === "members") {
+      // Admin members
+      res = await api.get(`/admin/members/list?${queryString}`);
+    } else if (resource === "membersPublic") {
+      // Public members service
+      const { email = "", fullName = "" } = params.filter || {};
+      const serviceQuery = new URLSearchParams({
+        page: page.toString(),
+        limit: perPage.toString(),
+        ...(email && { email }),
+        ...(fullName && { fullName }),
+      }).toString();
+      res = await api.get(`/member/members?${serviceQuery}`);
+    } else {
+      return { data: [], total: 0 };
+    }
+
+    const data = (res.data.members || []).map((m: any) => ({ ...m, id: String(m.id) }));
     const total = res.data.total || data.length;
+
     return { data, total };
   },
 
-  // Lấy 1 member
-  getOne: async (resource, params: GetOneParams) => {
-    const res = await api.get(`/admin/members/${params.id}`);
-    return { data: { id: res.data.id, ...res.data } };
+  // Get 1 member
+  getOne: async (resource: string, params: GetOneParams) => {
+    if (resource === "members") {
+      const res = await api.get(`/admin/members/${params.id}`);
+      const member = res.data.member || res.data;
+      return { data: { id: String(member.id), ...member } };
+    }
+
+    if (resource === "membersPublic") {
+      const res = await api.get(`/member/members/${params.id}`);
+      const member = res.data.member || res.data;
+      return { data: { id: String(member.id), ...member } };
+    }
+
+    return { data: {} };
   },
 
-  // Tạo member
-  create: async (resource, params: CreateParams) => {
-    const res = await api.post(`/admin/members/create`, params.data);
-    return { data: { id: res.data.id, ...res.data } };
+  // Create member
+  create: async (resource: string, params: CreateParams) => {
+    if (resource === "members") {
+      const res = await api.post(`/admin/members/create`, params.data);
+      return { data: { id: String(res.data.id), ...res.data } };
+    }
+    return { data: {} };
   },
 
   // Update member
-  update: async (resource, params: UpdateParams) => {
-    const res = await api.put(`/admin/members/${params.id}`, params.data);
-    return { data: { id: res.data.id, ...res.data } };
+  update: async (resource: string, params: UpdateParams) => {
+    if (resource === "members") {
+      const res = await api.put(`/admin/members/${params.id}`, params.data);
+      return { data: { id: String(res.data.id), ...res.data } };
+    }
+    return { data: {} };
   },
 
   // Delete member
-  delete: async (resource, params: DeleteParams) => {
-    const res = await api.delete(`/admin/members/${params.id}`);
-    return { data: { id: res.data.id, ...res.data } };
+  delete: async (resource: string, params: DeleteParams) => {
+    if (resource === "members") {
+      const res = await api.delete(`/admin/members/${params.id}`);
+      return { data: { id: String(res.data.id), ...res.data } };
+    }
+    return { data: {} };
   },
 
-  // Optional
+  // Optional methods
   getMany: async () => ({ data: [] }),
   getManyReference: async () => ({ data: [], total: 0 }),
   updateMany: async () => ({ data: [] }),
