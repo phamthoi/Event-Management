@@ -3,80 +3,69 @@ import { Link } from 'react-router-dom';
 import { FiBell } from 'react-icons/fi';
 import { notificationService } from '../../../services/common/notification/notificationService.js';
 import { useTheme } from '../../../contexts/ThemeContext.jsx';
+import { useSocket } from '../../../contexts/SocketContext.jsx';
 
 const NotificationDropdown = () => {
   const { isDarkMode } = useTheme();
+  const { unreadCount, notificationTrigger } = useSocket();
   const [isOpen, setIsOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
-  const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(false);
   const dropdownRef = useRef(null);
 
-  // Fetch recent notifications
+  
   const fetchRecentNotifications = async () => {
     try {
       setLoading(true);
-      const response = await notificationService.getNotifications(1, 5);
+      const response = await notificationService.getNotifications(1, 10);
       if (response.success) {
         setNotifications(response.notifications);
       }
     } catch (err) {
-      console.error('Error fetching notifications:', err);
+      console.error('Error fetching recent notifications:', err);
     } finally {
       setLoading(false);
     }
   };
 
-  // Fetch unread count
-  const fetchUnreadCount = async () => {
-    try {
-      const response = await notificationService.getUnreadCount();
-      if (response.success) {
-        setUnreadCount(response.unreadCount);
-      }
-    } catch (err) {
-      console.error('Error fetching unread count:', err);
-    }
-  };
-
-  // Mark notification as read
+  
   const handleMarkAsRead = async (notificationId) => {
     try {
       await notificationService.markAsRead(notificationId);
-      
-      // Update local state
-      setNotifications(prev => 
-        prev.map(notif => 
-          notif.id === notificationId 
-            ? { ...notif, isRead: true }
-            : notif
-        )
-      );
-      
-      // Update unread count
-      fetchUnreadCount();
+      fetchRecentNotifications();
     } catch (err) {
       console.error('Error marking notification as read:', err);
     }
   };
 
-  // Format date
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffInHours = (now - date) / (1000 * 60 * 60);
-    
-    if (diffInHours < 1) {
-      const diffInMinutes = Math.floor((now - date) / (1000 * 60));
-      return `${diffInMinutes}p`;
-    } else if (diffInHours < 24) {
-      return `${Math.floor(diffInHours)}h`;
-    } else {
-      return `${Math.floor(diffInHours / 24)}d`;
+  
+  const handleMarkAllAsRead = async () => {
+    try {
+      await notificationService.markAllAsRead();
+      fetchRecentNotifications();
+    } catch (err) {
+      console.error('Error marking all notifications as read:', err);
     }
   };
 
-  // Get notification icon
+  
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInHours = Math.floor((now - date) / (1000 * 60 * 60));
+
+    if (diffInHours < 1) {
+      const diffInMinutes = Math.floor((now - date) / (1000 * 60));
+      return diffInMinutes <= 1 ? 'Just now' : `${diffInMinutes} minutes ago`;
+    } else if (diffInHours < 24) {
+      return `${diffInHours} hours ago`;
+    } else {
+      const diffInDays = Math.floor(diffInHours / 24);
+      return `${diffInDays} days ago`;
+    }
+  };
+
+  
   const getNotificationIcon = (type) => {
     switch (type) {
       case 'EVENT':
@@ -88,7 +77,7 @@ const NotificationDropdown = () => {
     }
   };
 
-  // Handle click outside
+  
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -109,22 +98,20 @@ const NotificationDropdown = () => {
     }
   }, [isOpen]);
 
-  // Initial fetch
+  
   useEffect(() => {
-    fetchUnreadCount();
-    
-    // Refresh every 30 seconds
-    const interval = setInterval(fetchUnreadCount, 30000);
-    
-    return () => clearInterval(interval);
-  }, []);
+    if (notificationTrigger > 0 && isOpen) {
+      console.log('🔔 NotificationDropdown: Refreshing due to notification trigger');
+      fetchRecentNotifications();
+    }
+  }, [notificationTrigger, isOpen]);
 
   const role = localStorage.getItem('role');
   const notificationsPath = role === 'admin' ? '/admin/notifications' : '/member/notifications';
 
   return (
     <div className="relative" ref={dropdownRef}>
-      {/* Bell Icon Button */}
+      
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={`relative p-2 rounded-lg transition-colors ${
@@ -141,46 +128,45 @@ const NotificationDropdown = () => {
         )}
       </button>
 
-      {/* Dropdown */}
+     
       {isOpen && (
         <div className={`absolute right-0 mt-2 w-80 ${
           isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
         } border rounded-lg shadow-lg z-50`}>
-          {/* Header */}
+          
           <div className={`px-4 py-3 border-b ${
-            isDarkMode ? 'border-gray-700' : 'border-gray-200'
+            isDarkMode ? 'border-gray-700' : 'border-gray-100'
           }`}>
             <div className="flex items-center justify-between">
-              <h3 className={`font-medium ${
+              <h3 className={`font-semibold ${
                 isDarkMode ? 'text-white' : 'text-gray-900'
               }`}>
-                Thông báo
+                Notifications
               </h3>
-              <Link
-                to={notificationsPath}
-                onClick={() => setIsOpen(false)}
-                className={`text-sm ${
-                  isDarkMode ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-700'
-                }`}
-              >
-                Xem tất cả
-              </Link>
+              {unreadCount > 0 && (
+                <button
+                  onClick={handleMarkAllAsRead}
+                  className="text-xs text-blue-600 hover:text-blue-700"
+                >
+                  Mark all as read
+                </button>
+              )}
             </div>
           </div>
 
-          {/* Notifications List */}
+         
           <div className="max-h-96 overflow-y-auto">
             {loading ? (
-              <div className="flex justify-center items-center py-8">
-                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+              <div className="px-4 py-8 text-center">
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto"></div>
               </div>
             ) : notifications.length === 0 ? (
-              <div className="text-center py-8">
+              <div className="px-4 py-8 text-center">
                 <div className="text-4xl mb-2">📭</div>
                 <p className={`text-sm ${
                   isDarkMode ? 'text-gray-400' : 'text-gray-600'
                 }`}>
-                  Không có thông báo
+                  No notifications available
                 </p>
               </div>
             ) : (
@@ -228,19 +214,17 @@ const NotificationDropdown = () => {
             )}
           </div>
 
-          {/* Footer */}
+          
           {notifications.length > 0 && (
             <div className={`px-4 py-3 border-t ${
-              isDarkMode ? 'border-gray-700' : 'border-gray-200'
+              isDarkMode ? 'border-gray-700' : 'border-gray-100'
             }`}>
               <Link
                 to={notificationsPath}
+                className="block text-center text-sm text-blue-600 hover:text-blue-700"
                 onClick={() => setIsOpen(false)}
-                className={`block text-center text-sm ${
-                  isDarkMode ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-700'
-                } transition-colors`}
               >
-                Xem tất cả thông báo
+                View all notifications
               </Link>
             </div>
           )}

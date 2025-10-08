@@ -114,13 +114,12 @@ export class EventService {
       }
     });
 
-    // Tự động tạo notification cho tất cả members trong organization
+  
     try {
       await NotificationService.createEventNotification(event);
   
     } catch (notificationError) {
       console.error("❌ Failed to create notifications for event:", notificationError);
-      // Không throw error để không ảnh hưởng đến việc tạo event
     }
   
     return event;

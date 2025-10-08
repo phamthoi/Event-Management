@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { SocketProvider } from "./contexts/SocketContext";
+import ToastNotification from "./components/common/notifications/ToastNotification.jsx";
 import LoginPage from "./pages/common/login/LoginPage.jsx";
 
 import AdminDashboardPage from "./pages/admin/dashboardPage/AdminDashboardPage.jsx";
@@ -14,7 +16,7 @@ import MemberListPage from "./pages/admin/members/MemberListPage.jsx";
 import MemberDetailPage from "./components/admin/memberlist/MemberDetailPage.jsx";
 import ResetPasswordPage from "./pages/admin/members/ResetPasswordPage.jsx";
 
-import MemberDashboardPage from "./pages/member/dashboardPage/MemberDashBoardPage.jsx";  
+import MemberDashboardPage from "./pages/member/dashboardPage/MemberDashBoardPage.jsx";
 import MemberProfilePage from "./pages/member/profile/MemberProfilePage.jsx";
 import ChangePasswordPage from "./pages/member/profile/ChangePasswordPage.jsx";
 import ViewMemberListPage from "./pages/member/memberList/ViewMemberListPage.jsx";
@@ -42,65 +44,76 @@ function App() {
 
   return (
     <ThemeProvider>
-      <BrowserRouter>
-        <Routes>
-        <Route path="/login" element={<LoginPage />} />
-        
-        <Route path="/design-system" element={<DesignSystemPage />} />
+      <SocketProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/login" element={<LoginPage />} />
 
-        <Route
-          path="/admin/*"
-          element={
-             <ProtectedRoute
-              element={<AdminDashboardPage />}
-              allowedRoles={["admin"]}
-            />
-          }
-        >
-          <Route path="profile" element={<AdminProfilePage/>}/>
-          <Route path="profile/change-password" element={<AdminChangePasswordPage/>}/>
+            <Route path="/design-system" element={<DesignSystemPage />} />
 
-          <Route path="events/create" element={<CreateEventPage />} />
-          <Route path="events/list" element={<EventListPage />} />
-          <Route path="events/attendance" element={<AttendancePage />} />
-          <Route path="events/edit/:id" element = {<EditEventPage/>} />
-          
-          <Route path="members/create" element={<CreateMemberPage />} />
-          <Route path="members/list" element={<MemberListPage />} />
-          <Route path="members/:id" element={<MemberDetailPage />} />
-          <Route path="members/:id/reset-password" element={<ResetPasswordPage />} />
-          
-          <Route path="upcoming-event" element={<UpcomingEventsPage />} />
-          <Route path="my-event" element={<MyEventsPage />} />
-          <Route path="notifications" element={<NotificationsPage />} />
+            <Route
+              path="/admin/*"
+              element={
+                <ProtectedRoute
+                  element={<AdminDashboardPage />}
+                  allowedRoles={["admin"]}
+                />
+              }
+            >
+              <Route path="profile/update" element={<AdminProfilePage />} />
+              <Route
+                path="profile/change-password"
+                element={<AdminChangePasswordPage />}
+              />
 
-          <Route
-            path="notifications/send"
-            element={<p>Send Notification Page (Coming Soon)</p>}
-          />
-        </Route>
+              <Route path="events/create" element={<CreateEventPage />} />
+              <Route path="events/list" element={<EventListPage />} />
+              <Route path="events/attendance" element={<AttendancePage />} />
+              <Route path="events/edit/:id" element={<EditEventPage />} />
 
-        <Route
-          path="/member/*"
-          element={
-            <ProtectedRoute
-              element={<MemberDashboardPage />}
-              allowedRoles={["member"]}
-            />
-          }  
-        >
-          <Route path="profile/update" element={<MemberProfilePage />} />
-          <Route path="list-member" element={<ViewMemberListPage/>}/>
-          <Route path="upcoming-event" element={<UpcomingEventsPage/>}/>
-          <Route path="my-event" element={<MyEventsPage/>}/>
-          <Route path="profile/change-password" element={<ChangePasswordPage/>}/>
-          <Route path="notifications" element={<NotificationsPage />} />
-          
-        </Route>
+              <Route path="members/create" element={<CreateMemberPage />} />
+              <Route path="members/list" element={<MemberListPage />} />
+              <Route path="members/:id" element={<MemberDetailPage />} />
+              <Route
+                path="members/:id/reset-password"
+                element={<ResetPasswordPage />}
+              />
 
-        <Route path="*" element={<Navigate to="/login" />} />
-        </Routes>
-      </BrowserRouter>
+              <Route path="upcoming-event" element={<UpcomingEventsPage />} />
+              <Route path="my-event" element={<MyEventsPage />} />
+              <Route path="notifications" element={<NotificationsPage />} />
+
+              <Route
+                path="notifications/send"
+                element={<p>Send Notification Page (Coming Soon)</p>}
+              />
+            </Route>
+
+            <Route
+              path="/member/*"
+              element={
+                <ProtectedRoute
+                  element={<MemberDashboardPage />}
+                  allowedRoles={["member"]}
+                />
+              }
+            >
+              <Route path="profile/update" element={<MemberProfilePage />} />
+              <Route path="list-member" element={<ViewMemberListPage />} />
+              <Route path="upcoming-event" element={<UpcomingEventsPage />} />
+              <Route path="my-event" element={<MyEventsPage />} />
+              <Route
+                path="profile/change-password"
+                element={<ChangePasswordPage />}
+              />
+              <Route path="notifications" element={<NotificationsPage />} />
+            </Route>
+
+            <Route path="*" element={<Navigate to="/login" />} />
+          </Routes>
+          <ToastNotification />
+        </BrowserRouter>
+      </SocketProvider>
     </ThemeProvider>
   );
 }

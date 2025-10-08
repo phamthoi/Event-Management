@@ -1,40 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { notificationService } from '../../../services/common/notification/notificationService.js';
+import { useSocket } from '../../../contexts/SocketContext.jsx';
 import { useTheme } from '../../../contexts/ThemeContext.jsx';
 
 const NotificationBadge = ({ className = "" }) => {
   const { isDarkMode } = useTheme();
-  const [unreadCount, setUnreadCount] = useState(0);
+  const { unreadCount, notificationTrigger } = useSocket();
 
-  const fetchUnreadCount = async () => {
-    try {
-      const response = await notificationService.getUnreadCount();
-      if (response.success) {
-        setUnreadCount(response.unreadCount);
-      }
-    } catch (err) {
-      console.error('Error fetching unread count:', err);
-    }
-  };
-
-  useEffect(() => {
-    fetchUnreadCount();
-    
-    // Refresh unread count every 30 seconds
-    const interval = setInterval(fetchUnreadCount, 30000);
-    
-    return () => clearInterval(interval);
-  }, []);
-
-  // Expose refresh function globally for other components to use
-  useEffect(() => {
-    window.refreshNotificationBadge = fetchUnreadCount;
-    
-    return () => {
-      delete window.refreshNotificationBadge;
-    };
-  }, []);
-
+ 
   if (unreadCount === 0) {
     return null;
   }

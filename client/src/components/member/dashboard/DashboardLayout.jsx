@@ -19,6 +19,7 @@ import {
   FiCheckCircle,
   FiPlay
 } from "react-icons/fi";
+import NotificationDropdown from "../../common/notifications/NotificationDropdown";
 
 const DashboardLayout = ({ children }) => {
   const location = useLocation();
@@ -137,14 +138,9 @@ const DashboardLayout = ({ children }) => {
           <div className="flex items-center gap-4">
             <ThemeToggle variant="simple" size="default" />
             
-            <button className="relative p-3 text-secondary-600 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-xl transition-all duration-200 group">
-              <FiBell className="w-5 h-5" />
-              {notifications > 0 && (
-                <span className="absolute -top-1 -right-1 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-danger-500 rounded-full min-w-[20px] h-5">
-                  {notifications}
-                </span>
-              )}
-            </button>
+            <NotificationDropdown />
+          
+
 
             <DropdownMenu.Root>
               <DropdownMenu.Trigger className="flex items-center gap-3 cursor-pointer p-2 hover:bg-secondary-50 rounded-xl transition-all duration-200 group">
