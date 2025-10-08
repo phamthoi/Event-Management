@@ -1,232 +1,333 @@
 // src/providers/dataProvider.ts
-import profileDataProvider from "./profileDataProvider";
-import eventDataProvider from "./eventDataProvider";
-import memberDataProvider from "./memberDataProvider";
-import statsDataProvider from "./statsDataProvider";
-import attendanceDataProvider from "./attendanceDataProvider";
-
+import api from "../services/axios";
 import {
   DataProvider,
   GetListParams,
   GetOneParams,
   UpdateParams,
+  UpdateManyParams,
   CreateParams,
   DeleteParams,
   DeleteResult,
   RaRecord,
+  UpdateResult,
+  GetManyReferenceParams,
 } from "react-admin";
 
-const dataProvider: DataProvider = {
-  // 🟢 GET LIST
-  getList: async (resource, params: GetListParams) => {
+// Lấy user hiện tại từ localStorage
+const getUser = () => {
+  const user = localStorage.getItem("user");
+  return user ? JSON.parse(user) : null;
+};
+
+const dataProvider: DataProvider & { changePassword?: Function } = {
+  // ===== GET LIST =====
+  getList: async (resource: string, params: GetListParams) => {
+    const page = params.pagination?.page || 1;
+    const perPage = params.pagination?.perPage || 10;
+    const query: Record<string, any> = { page, limit: perPage, ...params.filter };
+    const queryString = new URLSearchParams(query as any).toString();
+
+    // ---- Event ----
     if (
       resource === "events" ||
       resource === "upcoming-events" ||
       resource === "member-events"
     ) {
-      return eventDataProvider.getList(resource, params);
+      let res;
+      if (resource === "upcoming-events") {
+        res = await api.get(`/event/upcoming?page=${page}&limit=${perPage}`);
+      } else if (resource === "member-events") {
+        res = await api.get(`/event`);
+      } else {
+        res = await api.get(`/admin/events/list?${queryString}`);
+      }
+      const data = res.data.events
+        ? res.data.events.map((ev: any) => ({ ...ev, id: ev.id.toString() }))
+        : res.data.map((ev: any) => ({ ...ev, id: ev.id.toString() }));
+      const total = res.data.total || data.length;
+      return { data, total };
     }
 
-    // Dữ liệu liên quan điểm danh / đăng ký
-    if (resource === "registrations" || resource === "attendance-events") {
-      return attendanceDataProvider.getList(resource, params);
-    }
-
+    // ---- Member ----
     if (resource === "members" || resource === "membersPublic") {
-      return memberDataProvider.getList(resource, params);
+      let res;
+      if (resource === "members") res = await api.get(`/admin/members/list?${queryString}`);
+      else {
+        const { email = "", fullName = "" } = params.filter || {};
+        const serviceQuery = new URLSearchParams({
+          page: page.toString(),
+          limit: perPage.toString(),
+          ...(email && { email }),
+          ...(fullName && { fullName }),
+        }).toString();
+        res = await api.get(`/member/members?${serviceQuery}`);
+      }
+      const data = (res.data.members || []).map((m: any) => ({ ...m, id: String(m.id) }));
+      const total = res.data.total || data.length;
+      return { data, total };
     }
 
-    if (resource === "dashboardStats" || resource === "memberStats") {
-      return statsDataProvider.getList(resource);
+    // ---- Attendance ----
+    if (resource === "attendance-events") {
+      const res = await api.get("/admin/events/ongoing");
+      const events = res.data?.events || res.data || [];
+      return { data: events.map((e: any) => ({ id: e.id, ...e })), total: events.length };
     }
 
-    return profileDataProvider.getList(resource, params);
+    if (resource === "registrations") {
+      const eventId = params.filter?.eventId;
+      if (!eventId) return { data: [], total: 0 };
+      const res = await api.get(`/admin/events/registrations/${eventId}`);
+      const registrations = (res.data?.registrations || res.data || []).map((reg: any) => ({
+        id: reg.id,
+        user: reg.user,
+        depositPaid: reg.depositPaid ?? false,
+        attended: reg.attended ?? false,
+      }));
+      return { data: registrations, total: registrations.length };
+    }
+
+    // ---- Stats ----
+    if (resource === "dashboardStats") {
+      const response = await api.get("/admin/stats/dashboard");
+      return { data: [{ id: 1, ...response.data }], total: 1 };
+    }
+    if (resource === "memberStats") {
+      const response = await api.get("/member/stats/dashboard");
+      return { data: [{ id: 1, ...response.data.data }], total: 1 };
+    }
+
+    // ---- Profile ----
+    if (resource === "admin") throw new Error("getList not implemented for profile");
+
+    throw new Error(`getList not implemented for resource: ${resource}`);
   },
 
-  // 🟢 GET ONE
-  getOne: async (resource, params: GetOneParams) => {
+  // ===== GET ONE =====
+  getOne: async (resource: string, params: GetOneParams) => {
+    // ---- Profile ----
+    if (resource === "admin" && params.id === "profile") {
+      const { data } = await api.get("/profile");
+      return { data: { ...data, id: "profile" } };
+    }
+
+    // ---- Event ----
     if (
       resource === "events" ||
       resource === "upcoming-events" ||
       resource === "member-events"
     ) {
-      return eventDataProvider.getOne(resource, params);
+      let res;
+      if (resource === "upcoming-events" || resource === "member-events") {
+        res = await api.get(`/event/${params.id}`);
+        return { data: { ...res.data, id: params.id } };
+      } else {
+        res = await api.get(`/admin/events/detail/${params.id}`);
+        return { data: { ...res.data.event, id: params.id } };
+      }
     }
 
-    if (resource === "registrations" || resource === "attendance-events") {
-      // hiện tại attendanceDataProvider chưa có getOne nên reject
-      return attendanceDataProvider.getOne(resource, params);
-    }
-
+    // ---- Member ----
     if (resource === "members" || resource === "membersPublic") {
-      return memberDataProvider.getOne(resource, params);
+      const res =
+        resource === "members"
+          ? await api.get(`/admin/members/${params.id}`)
+          : await api.get(`/member/members/${params.id}`);
+      const member = res.data.member || res.data;
+      return { data: { id: String(member.id), ...member } };
     }
 
-    if (resource === "dashboardStats" || resource === "memberStats") {
-      return statsDataProvider.getOne(resource, params);
+    // ---- Attendance ----
+    if (resource === "attendance-events") {
+      const res = await api.get(`/admin/events/ongoing`);
+      const event = res.data.events?.find((e: any) => e.id === params.id) || null;
+      return { data: { ...event, id: params.id } };
+    }
+    if (resource === "registrations") throw new Error("getOne not implemented for registrations");
+
+    // ---- Stats ----
+    if (resource === "dashboardStats") {
+      const response = await api.get("/admin/stats/dashboard");
+      return { data: { id: params.id, ...response.data } };
+    }
+    if (resource === "memberStats") {
+      const response = await api.get("/member/stats/dashboard");
+      return { data: { id: params.id, ...response.data.data } };
     }
 
-    return profileDataProvider.getOne(resource, params);
+    throw new Error(`getOne not implemented for resource: ${resource}`);
   },
 
-  // 🟢 CREATE
-  create: async (resource, params: CreateParams) => {
-    if (
-      resource === "events" ||
-      resource === "upcoming-events" ||
-      resource === "event-register" ||
-      resource === "member-events"
-    ) {
-      return eventDataProvider.create(resource, params);
+  // ===== CREATE =====
+  create: async (resource: string, params: CreateParams) => {
+    // ---- Event ----
+    if (resource === "event-register") {
+      const { eventId } = params.data;
+      const res = await api.post(`/event/${eventId}/register`);
+      return { data: { id: eventId, ...res.data } };
     }
-
-    if (resource === "registrations" || resource === "attendance-events") {
-      return attendanceDataProvider.create(resource, params);
-    }
-
-    if (resource === "members") {
-      return memberDataProvider.create(resource, params);
-    }
-
-    return profileDataProvider.create(resource, params);
-  },
-
-  // 🟢 UPDATE
-  update: async (resource, params: UpdateParams) => {
     if (resource === "events") {
-      return eventDataProvider.update(resource, params);
+      const res = await api.post("/admin/events/create", params.data);
+      const eventData = res.data.event;
+      return { data: { ...eventData, id: eventData.id.toString() } };
     }
 
-    if (resource === "registrations" || resource === "attendance-events") {
-      return attendanceDataProvider.update(resource, params);
-    }
-
+    // ---- Member ----
     if (resource === "members") {
-      return memberDataProvider.update(resource, params);
+      const res = await api.post(`/admin/members/create`, params.data);
+      return { data: { id: String(res.data.id), ...res.data } };
     }
 
-    return profileDataProvider.update(resource, params);
+    // ---- Attendance ----
+    if (resource === "registrations") {
+      const { memberId, eventId } = params.data;
+      const res = await api.post(`/admin/member/registrations/${memberId}/${eventId}`);
+      return { data: { id: res.data.id, ...res.data } };
+    }
+
+    throw new Error(`create not implemented for resource: ${resource}`);
   },
 
-  // 🟢 DELETE
+  // ===== UPDATE =====
+  update: async <RecordType extends RaRecord = any>(
+    resource: string,
+    params: UpdateParams<RecordType>
+  ): Promise<UpdateResult<RecordType>> => {
+    // Profile
+    if (resource === "admin" && params.id === "profile") {
+      const { data } = await api.put("/profile", params.data);
+      return { data: { ...data, id: "profile" } as RecordType };
+    }
+
+    // Event
+    if (resource === "events") {
+      const res = await api.put(`/admin/events/edit/${params.id}`, params.data);
+      return { data: { ...res.data.event, id: params.id.toString() } as RecordType };
+    }
+
+    // Member
+    if (resource === "members") {
+      const res = await api.put(`/admin/members/${params.id}`, params.data);
+      return { data: { id: String(res.data.id), ...res.data } as RecordType };
+    }
+
+    // Attendance - cập nhật 1 registration
+    if (resource === "registrations") {
+      const { id, data } = params;
+      const updates = [{ registrationId: id, ...data }];
+      await api.put("/admin/events/registrations/update-status", { updates });
+      const updatedRecord = { ...params.previousData, ...data, id } as RecordType;
+      return { data: updatedRecord };
+    }
+
+    throw new Error(`update not implemented for resource: ${resource}`);
+  },
+
+  // ===== DELETE =====
   delete: async <RecordType extends RaRecord = any>(
     resource: string,
     params: DeleteParams<RecordType>
   ): Promise<DeleteResult<RecordType>> => {
+    const user = getUser();
+
+    // Event / cancel registration
     if (
       resource === "events" ||
       resource === "upcoming-events" ||
       resource === "member-events" ||
       resource === "event-register"
     ) {
-      return (await eventDataProvider.delete(
-        resource,
-        params
-      )) as DeleteResult<RecordType>;
+      if (resource === "events") {
+        if (!user || user.role !== "ADMIN") throw new Error("Only admin can delete events");
+        await api.delete(`/admin/events/delete/${params.id}`);
+        return { data: params.previousData as RecordType };
+      }
+      await api.delete(`/event/${params.id}/register`);
+      return { data: { id: params.id } as unknown as RecordType };
     }
 
-    if (resource === "registrations" || resource === "attendance-events") {
-      return (await attendanceDataProvider.delete(
-        resource,
-        params
-      )) as DeleteResult<RecordType>;
-    }
-
+    // Member
     if (resource === "members") {
-      return (await memberDataProvider.delete(
-        resource,
-        params
-      )) as DeleteResult<RecordType>;
+      const res = await api.delete(`/admin/members/${params.id}`);
+      return { data: { id: String(res.data.id), ...res.data } };
     }
 
-    return (await profileDataProvider.delete(
-      resource,
-      params
-    )) as DeleteResult<RecordType>;
+    // Attendance - hủy đăng ký
+    if (resource === "registrations") {
+      //const { memberId, eventId } = params.previousData;
+      const memberId = params.previousData?.memberId;
+      const eventId = params.previousData?.eventId;
+      if (!memberId || !eventId) throw new Error("Missing memberId or eventId in previousData");
+      const res = await api.delete(`/admin/member/registrations/${memberId}/${eventId}`);
+      return { data: { id: eventId, ...res.data } as unknown as RecordType };
+    }
+
+    throw new Error(`delete not implemented for resource: ${resource}`);
   },
 
-  // 🟢 DELETE MANY
-  deleteMany: async <RecordType extends RaRecord = any>(
-    resource: string,
-    params: any
-  ): Promise<{ data: any[] }> => {
+  // ===== UPDATE MANY =====
+  updateMany: async (resource: string, params: UpdateManyParams) => {
+    if (resource === "registrations") {
+      const updates = params.ids.map((id) => ({ registrationId: id, ...params.data }));
+      await api.put("/admin/events/registrations/update-status", { updates });
+      return { data: params.ids };
+    }
+    throw new Error(`updateMany not implemented for resource: ${resource}`);
+  },
+
+  // ===== DELETE MANY =====
+  deleteMany: async (resource: string, params: any) => {
+    const user = getUser();
     if (resource === "events" || resource === "upcoming-events") {
-      await eventDataProvider.deleteMany(resource, params);
+      if (!user || user.role !== "ADMIN") throw new Error("Only admin can delete events");
+      await Promise.all(
+        params.ids.map((id: string) =>
+          api.delete(`/admin/events/delete/${id}`, {
+            headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+          })
+        )
+      );
       return { data: params.ids };
     }
 
-    if (resource === "registrations" || resource === "attendance-events") {
-      await attendanceDataProvider.deleteMany(resource, params);
+    if (resource === "registrations") {
+      await Promise.all(
+        params.ids.map((id: string) =>
+          api.put("/admin/events/registrations/update-status", {
+            updates: [{ registrationId: id, ...params.data }],
+          })
+        )
+      );
       return { data: params.ids };
     }
 
     if (resource === "members") {
-      await memberDataProvider.deleteMany(resource, params);
+      await Promise.all(params.ids.map((id: string) => api.delete(`/admin/members/${id}`)));
       return { data: params.ids };
     }
 
-    await profileDataProvider.deleteMany(resource, params);
-    return { data: params.ids };
+    throw new Error(`deleteMany not implemented for resource: ${resource}`);
   },
 
-  // 🟢 GET MANY
-  getMany: async (resource, params) => {
-    if (
-      (resource === "events" || resource === "member-events") &&
-      eventDataProvider.getMany
-    )
-      return eventDataProvider.getMany(resource, params);
-
-    if (
-      (resource === "registrations" || resource === "attendance-events") &&
-      attendanceDataProvider.getMany
-    )
-      return attendanceDataProvider.getMany(resource, params);
-
-    if (resource === "members" && memberDataProvider.getMany)
-      return memberDataProvider.getMany(resource, params);
-
-    return profileDataProvider.getMany(resource, params);
+  // ===== GET MANY REFERENCE =====
+  getManyReference: async (resource: string, params: GetManyReferenceParams) => {
+    if (resource === "registrations" && params.target === "memberId") {
+      const memberId = params.id;
+      const res = await api.get(`/admin/member/registrations/${memberId}`);
+      const registrations = res.data?.registrations || res.data || [];
+      return { data: registrations.map((r: any) => ({ id: r.id, ...r })), total: registrations.length };
+    }
+    throw new Error(`getManyReference not implemented for resource: ${resource}`);
   },
 
-  // 🟢 GET MANY REFERENCE
-  getManyReference: async (resource, params) => {
-    if (
-      (resource === "events" || resource === "member-events") &&
-      eventDataProvider.getManyReference
-    )
-      return eventDataProvider.getManyReference(resource, params);
+  // ===== GET MANY =====
+  getMany: async () => ({ data: [] }),
 
-    if (
-      (resource === "registrations" || resource === "attendance-events") &&
-      attendanceDataProvider.getManyReference
-    )
-      return attendanceDataProvider.getManyReference(resource, params);
-
-    if (resource === "members" && memberDataProvider.getManyReference)
-      return memberDataProvider.getManyReference(resource, params);
-
-    return profileDataProvider.getManyReference(resource, params);
-  },
-
-  // 🟢 UPDATE MANY
-  updateMany: async (resource, params) => {
-    if (
-      (resource === "events" || resource === "member-events") &&
-      eventDataProvider.updateMany
-    )
-      return eventDataProvider.updateMany(resource, params);
-
-    if (
-      (resource === "registrations" || resource === "attendance-events") &&
-      attendanceDataProvider.updateMany
-    )
-      return attendanceDataProvider.updateMany(resource, params);
-
-    if (resource === "members" && memberDataProvider.updateMany)
-      return memberDataProvider.updateMany(resource, params);
-
-    return profileDataProvider.updateMany(resource, params);
+  // ===== SPECIAL METHOD: CHANGE PASSWORD =====
+  changePassword: async (currentPassword: string, newPassword: string) => {
+    const { data } = await api.put("/profile/password", { currentPassword, newPassword });
+    return data;
   },
 };
 
