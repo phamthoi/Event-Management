@@ -1,20 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { notificationService } from "../../../services/common/notification/notificationService.js";
 import { useSocket } from "../../../contexts/SocketContext.jsx";
 import { useTheme } from "../../../contexts/ThemeContext.jsx";
 
 const NotificationList = () => {
   const { isDarkMode } = useTheme();
-  const { socket } = useSocket();
+  const { socket, isConnected, unreadCount, notificationTrigger } = useSocket();
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [unreadCount, setUnreadCount] = useState(0);
 
-  // Fetch notifications
-  const fetchNotifications = async (pageNum = 1) => {
+  const fetchNotifications = useCallback(async (pageNum = 1) => {
     try {
       setLoading(true);
       const response = await notificationService.getNotifications(pageNum, 10);
@@ -30,131 +28,50 @@ const NotificationList = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  // Fetch unread count
-  const fetchUnreadCount = async () => {
-    try {
-      const response = await notificationService.getUnreadCount();
-      if (response.success) {
-        setUnreadCount(response.unreadCount);
-      }
-    } catch (err) {
-      console.error("Error fetching unread count:", err);
-    }
-  };
-
-  // Mark notification as read
   const handleMarkAsRead = async (notificationId) => {
     try {
       await notificationService.markAsRead(notificationId);
 
-      // Update local state
       setNotifications((prev) =>
         prev.map((notif) =>
           notif.id === notificationId ? { ...notif, isRead: true } : notif
         )
       );
-
-      // Update unread count
-      fetchUnreadCount();
     } catch (err) {
       console.error("Error marking notification as read:", err);
     }
   };
 
-  // Mark all as read
   const handleMarkAllAsRead = async () => {
     try {
       await notificationService.markAllAsRead();
 
-      // Update local state
       setNotifications((prev) =>
         prev.map((notif) => ({ ...notif, isRead: true }))
       );
-
-      setUnreadCount(0);
     } catch (err) {
       console.error("Error marking all notifications as read:", err);
     }
   };
 
-  // Listen for real-time socket events
-  useEffect(() => {
-    if (socket) {
-      // Listen for new notifications (commented out for emitToUser)
-      // socket.on('new-notification', (data) => {
-      //   console.log('📢 New notification received in list:', data);
-      
-      //   // Add new notification to the top of the list
-      //   setNotifications(prev => [data.notification, ...prev]);
-      //   setUnreadCount(data.unreadCount);
-      
-      //   // Show toast notification
-      //   if (window.showToast) {
-      //     window.showToast('success', 'Thông báo mới', data.notification.title);
-      //   }
-      // });
-  
-      // Listen for organization-wide notifications
-      socket.on('organization-notification', (data) => {
-        console.log('🏢 Organization notification received in list:', data);
-        
-        // Show toast notification
-        if (window.showToast) {
-          window.showToast('info', 'Thông báo tổ chức', data.title);
-        }
-        
-        // Refresh the notification list to get updated data
-        fetchNotifications();
-        fetchUnreadCount();
-      });
-  
-      // Listen for notification read events
-      socket.on('notification-read', (data) => {
-        setUnreadCount(data.unreadCount);
-      });
-  
-      // Listen for all notifications read
-      socket.on('all-notifications-read', (data) => {
-        setNotifications(prev => 
-          prev.map(notif => ({ ...notif, isRead: true }))
-        );
-        setUnreadCount(data.unreadCount);
-      });
-  
-      return () => {
-        // socket.off('new-notification');
-        socket.off('organization-notification');
-        socket.off('notification-read');
-        socket.off('all-notifications-read');
-      };
-    }
-  }, [socket]);
-
-  // Format date
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const now = new Date();
-    const diffInHours = (now - date) / (1000 * 60 * 60);
+    const diffInHours = Math.floor((now - date) / (1000 * 60 * 60));
 
     if (diffInHours < 1) {
       const diffInMinutes = Math.floor((now - date) / (1000 * 60));
-      return `${diffInMinutes} phút trước`;
+      return diffInMinutes <= 1 ? "Just now" : `${diffInMinutes} minutes ago`;
     } else if (diffInHours < 24) {
-      return `${Math.floor(diffInHours)} giờ trước`;
+      return `${diffInHours} hours ago`;
     } else {
-      return date.toLocaleDateString("vi-VN", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-      });
+      const diffInDays = Math.floor(diffInHours / 24);
+      return `${diffInDays} days ago`;
     }
   };
 
-  // Get notification icon based on type
   const getNotificationIcon = (type) => {
     switch (type) {
       case "EVENT":
@@ -168,8 +85,14 @@ const NotificationList = () => {
 
   useEffect(() => {
     fetchNotifications();
-    fetchUnreadCount();
-  }, []);
+  }, [fetchNotifications]);
+
+  useEffect(() => {
+    if (notificationTrigger > 0) {
+      
+      fetchNotifications(page);
+    }
+  }, [notificationTrigger, fetchNotifications, page]);
 
   if (loading && notifications.length === 0) {
     return (
@@ -218,7 +141,7 @@ const NotificationList = () => {
       }`}
     >
       <div className="max-w-4xl mx-auto">
-        {/* Header */}
+      
         <div className="mb-6">
           <div className="flex justify-between items-center mb-4">
             <div>
@@ -227,8 +150,8 @@ const NotificationList = () => {
                   isDarkMode ? "text-white" : "text-gray-900"
                 }`}
               >
-                Thông báo
-                {socket && (
+                Notification List
+                {isConnected && (
                   <span
                     className={`ml-2 text-sm ${
                       isDarkMode ? "text-green-400" : "text-green-600"
@@ -244,7 +167,7 @@ const NotificationList = () => {
                     isDarkMode ? "text-gray-400" : "text-gray-600"
                   } mt-1`}
                 >
-                  Bạn có {unreadCount} thông báo chưa đọc
+                  You have {unreadCount} unread notifications
                 </p>
               )}
             </div>
@@ -259,13 +182,13 @@ const NotificationList = () => {
                       : "bg-blue-600 hover:bg-blue-700 text-white"
                   }`}
               >
-                Đánh dấu tất cả đã đọc
+                Mark all as read
               </button>
             )}
           </div>
         </div>
 
-        {/* Notifications List */}
+
         <div className="space-y-4">
           {notifications.length === 0 ? (
             <div
@@ -282,12 +205,12 @@ const NotificationList = () => {
                   isDarkMode ? "text-white" : "text-gray-900"
                 } mb-2`}
               >
-                Không có thông báo
+                No notifications yet
               </h3>
               <p
                 className={`${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
               >
-                Bạn chưa có thông báo nào. Các thông báo mới sẽ xuất hiện ở đây.
+                You haven't received any notifications yet. New notifications will appear here.
               </p>
             </div>
           ) : (
@@ -310,7 +233,7 @@ const NotificationList = () => {
                 `}
               >
                 <div className="flex items-start space-x-4">
-                  {/* Icon */}
+                  
                   <div className="flex-shrink-0">
                     <div
                       className={`w-10 h-10 rounded-full flex items-center justify-center text-lg
@@ -332,7 +255,7 @@ const NotificationList = () => {
                     </div>
                   </div>
 
-                  {/* Content */}
+                  
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
@@ -352,7 +275,7 @@ const NotificationList = () => {
                         </div>
                       </div>
 
-                      {/* Unread indicator */}
+                      
                       {!notification.isRead && (
                         <div className="flex-shrink-0 ml-2">
                           <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
@@ -360,7 +283,7 @@ const NotificationList = () => {
                       )}
                     </div>
 
-                    {/* Footer */}
+                    
                     <div className="flex items-center justify-between mt-3">
                       <span
                         className={`text-xs ${
@@ -377,10 +300,10 @@ const NotificationList = () => {
                             ${
                               isDarkMode
                                 ? "text-blue-400 hover:bg-blue-900/30"
-                                : "text-blue-600 hover:bg-blue-50"
+                                : "text-blue-600 hover:bg-blue-100"
                             }`}
                         >
-                          Đánh dấu đã đọc
+                          Mark as read
                         </button>
                       )}
                     </div>
@@ -391,7 +314,7 @@ const NotificationList = () => {
           )}
         </div>
 
-        {/* Pagination */}
+        
         {totalPages > 1 && (
           <div className="flex justify-center mt-8">
             <div className="flex space-x-2">
@@ -402,19 +325,18 @@ const NotificationList = () => {
                   ${
                     page === 1
                       ? isDarkMode
-                        ? "bg-gray-800 text-gray-600 cursor-not-allowed"
-                        : "bg-gray-100 text-gray-400 cursor-not-allowed"
+                        ? "bg-gray-700 text-gray-500 cursor-not-allowed"
+                        : "bg-gray-200 text-gray-400 cursor-not-allowed"
                       : isDarkMode
                       ? "bg-gray-700 text-white hover:bg-gray-600"
                       : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-300"
                   }`}
               >
-                Trước
+                Previous
               </button>
 
-              {[...Array(totalPages)].map((_, index) => {
-                const pageNum = index + 1;
-                return (
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                (pageNum) => (
                   <button
                     key={pageNum}
                     onClick={() => fetchNotifications(pageNum)}
@@ -429,8 +351,8 @@ const NotificationList = () => {
                   >
                     {pageNum}
                   </button>
-                );
-              })}
+                )
+              )}
 
               <button
                 onClick={() => fetchNotifications(page + 1)}
@@ -439,14 +361,14 @@ const NotificationList = () => {
                   ${
                     page === totalPages
                       ? isDarkMode
-                        ? "bg-gray-800 text-gray-600 cursor-not-allowed"
-                        : "bg-gray-100 text-gray-400 cursor-not-allowed"
+                        ? "bg-gray-700 text-gray-500 cursor-not-allowed"
+                        : "bg-gray-200 text-gray-400 cursor-not-allowed"
                       : isDarkMode
                       ? "bg-gray-700 text-white hover:bg-gray-600"
                       : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-300"
                   }`}
               >
-                Sau
+                Next
               </button>
             </div>
           </div>

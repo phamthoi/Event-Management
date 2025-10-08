@@ -7,40 +7,41 @@ export class NotificationService {
   /**
    * Tạo notification cho một user cụ thể
    */
-  static async createNotification({ title, message, type = "GENERAL", recipientId }) {
-    try {
-      const notification = await prisma.notification.create({
-        data: {
-          title,
-          message,
-          type,
-          recipientId,
-        },
-      });
+  // static async createNotification({ title, message, type = "GENERAL", recipientId }) {
+  //   try {
+  //     const notification = await prisma.notification.create({
+  //       data: {
+  //         title,
+  //         message,
+  //         type,
+  //         recipientId,
+  //       },
+  //     });
 
-      // Emit real-time notification to user
-      SocketService.emitToUser(recipientId, 'new-notification', {
-        notification,
-        unreadCount: await this.getUnreadCount(recipientId)
-      });
+  //     // Emit real-time notification to user
+  //     SocketService.emitToUser(recipientId, 'new-notification', {
+  //       notification,
+  //       unreadCount: await this.getUnreadCount(recipientId)
+  //     });
 
-      return notification;
-    } catch (error) {
-      console.error("Error creating notification:", error);
-      throw error;
-    }
-  }
+  //     return notification;
+  //   } catch (error) {
+  //     console.error("Error creating notification:", error);
+  //     throw error;
+  //   }
+  // }
 
   /**
-   * Tạo notification cho tất cả members trong organization
+   * Tạo notification cho tất cả user trong organization
    */
   static async createNotificationForOrganization({ title, message, type = "GENERAL", organizationId, excludeUserId = null }) {
     try {
-      // Lấy tất cả members trong organization (trừ user được exclude)
       const members = await prisma.user.findMany({
         where: {
           organizationId,
-          role: "MEMBER",
+          role: {
+            in: ["MEMBER", "ADMIN"]
+          },
           isActive: true,
           ...(excludeUserId && { id: { not: excludeUserId } }),
         },
@@ -49,7 +50,8 @@ export class NotificationService {
         },
       });
 
-      // Tạo notifications cho tất cả members
+ 
+
       const notifications = await Promise.all(
         members.map((member) =>
           prisma.notification.create({
@@ -63,11 +65,8 @@ export class NotificationService {
         )
       );
 
-      // Emit real-time notifications to all members
+      
     //   for (const member of members) {
-    //     // Log each member ID
-    //     console.log(`🧯 Sending notification to user ${member.id}`);
-
     //     const unreadCount = await this.getUnreadCount(member.id);
     //     SocketService.emitToUser(member.id, 'new-notification', {
     //       notification: notifications.find(n => n.recipientId === member.id),
@@ -75,7 +74,7 @@ export class NotificationService {
     //     });
     //   }
 
-      // Also emit to organization room
+      
       SocketService.emitToOrganization(organizationId, 'organization-notification', {
         title,
         message,
@@ -92,13 +91,13 @@ export class NotificationService {
   }
 
   /**
-   * Tạo notification về event mới cho tất cả members trong organization
+   * Tạo notification về event mới cho tất cả user trong organization (func đầu tiên dc gọi trong file này)
    */
   static async createEventNotification(event) {
     try {
       const { title, description, location, startAt, endAt, registrationStartAt, registrationEndAt, organizationId } = event;
 
-      // Format dates
+  
       const formatDate = (date) => {
         if (!date) return "Chưa xác định";
         return new Date(date).toLocaleString("vi-VN", {
@@ -110,8 +109,8 @@ export class NotificationService {
         });
       };
 
-      // Tạo nội dung notification
-      const notificationTitle = `🎉 Sự kiện mới: ${title}`;
+    
+      const notificationTitle = `🌈 Sự kiện mới: ${title}`;
       
       let notificationMessage = `Có sự kiện mới được tạo!\n\n`;
       notificationMessage += `📅 Sự kiện: ${title}\n`;
@@ -132,9 +131,9 @@ export class NotificationService {
       notificationMessage += `• Mở đăng ký: ${formatDate(registrationStartAt)}\n`;
       notificationMessage += `• Đóng đăng ký: ${formatDate(registrationEndAt)}\n`;
       
-      notificationMessage += `\n🚀 Hãy đăng ký ngay để không bỏ lỡ cơ hội tham gia!`;
+      notificationMessage += `\n🚀 Hãy đăng ký ngay để không bỏ lỡ cơ hội tham gia cùng các Nexer nhé!`;
 
-      // Tạo notifications cho tất cả members trong organization
+      
       const notifications = await this.createNotificationForOrganization({
         title: notificationTitle,
         message: notificationMessage,
@@ -142,13 +141,17 @@ export class NotificationService {
         organizationId,
       });
 
-      console.log(`✅ Created ${notifications.length} notifications for new event: ${title}`);
+      
       return notifications;
     } catch (error) {
       console.error("Error creating event notifications:", error);
       throw error;
     }
   }
+
+
+
+
 
   /**
    * Lấy notifications của user
@@ -187,22 +190,29 @@ export class NotificationService {
     }
   }
 
+
+
+
+
+
+
+
   /**
-   * Đánh dấu notification đã đọc
+   * Đánh dấu notification đã đọc 1 thông báo cụ thể
    */
   static async markAsRead(notificationId, userId) {
     try {
       const notification = await prisma.notification.update({
         where: {
           id: notificationId,
-          recipientId: userId, // Đảm bảo user chỉ có thể mark read notification của mình
+          recipientId: userId, 
         },
         data: {
           isRead: true,
         },
       });
 
-      // Emit updated unread count
+    
       const unreadCount = await this.getUnreadCount(userId);
       SocketService.emitToUser(userId, 'notification-read', {
         notificationId,
@@ -215,6 +225,10 @@ export class NotificationService {
       throw error;
     }
   }
+
+
+
+
 
   /**
    * Đánh dấu tất cả notifications của user đã đọc
@@ -231,7 +245,7 @@ export class NotificationService {
         },
       });
 
-      // Emit updated unread count (should be 0)
+   
       SocketService.emitToUser(userId, 'all-notifications-read', {
         unreadCount: 0
       });
@@ -242,6 +256,11 @@ export class NotificationService {
       throw error;
     }
   }
+
+
+
+
+
 
   /**
    * Lấy số lượng notifications chưa đọc

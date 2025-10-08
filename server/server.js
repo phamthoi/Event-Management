@@ -8,7 +8,7 @@ import { Server } from "socket.io";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-dotenv.config({ path: path.join(__dirname, '.env') });
+dotenv.config({ path: path.join(__dirname, ".env") });
 
 import authRoutes from "./routes/common/auth.route.js";
 import adminRoutes from "./routes/admin/admin.route.js";
@@ -21,19 +21,22 @@ const app = express();
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:3000"],
-    methods: ["GET", "POST"]
-  }
+    origin: [process.env.CLIENT_URL],
+    methods: ["GET", "POST"],
+    // credentials: true,
+  },
 });
 
 const PORT = process.env.PORT;
 
-app.set('etag', false);
+app.set("etag", false);
 
-app.use(cors({
-  origin: ["http://localhost:3000"],
-  // credentials: true
-}));
+app.use(
+  cors({
+    origin: [process.env.CLIENT_URL],
+    // credentials: true,
+  })
+);
 
 app.use((req, res, next) => {
   res.set({
@@ -41,7 +44,7 @@ app.use((req, res, next) => {
     // 'Pragma': 'no-cache',
     // 'Expires': '0',
     // 'Surrogate-Control': 'no-store'
-    'Content-Type': 'application/json'
+    "Content-Type": "application/json",
   });
   next();
 });
@@ -54,35 +57,66 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use("/auth", authRoutes); 
-app.use("/admin", adminRoutes); 
+app.use("/auth", authRoutes);
+app.use("/admin", adminRoutes);
 app.use("/member", memberRoutes);
 app.use("/profile", commonProfileRoutes);
 app.use("/event", commonEventRoutes);
 app.use("/notifications", notificationRoutes);
 
+
+
+
+
 app.get("/", (req, res) => {
   res.json({ message: "Event Management API is running!" });
 });
 
-// Socket.IO connection handling
-io.on('connection', (socket) => {
-  console.log('User connected:', socket.id);
 
-  // Join user to their organization room
-  socket.on('join-organization', (organizationId) => {
-    socket.join(`org-${organizationId}`);
-    console.log(`🚐 User ${socket.id} joined organization ${organizationId}`);
-  });
 
-  // Join user to their personal room
-  socket.on('join-user', (userId) => {
+
+
+
+io.on("connection", (socket) => {
+  console.log("💖 User connected:", socket.id);
+
+
+
+  socket.on("join-user", (userId) => {
     socket.join(`user-${userId}`);
+
+
     console.log(`🚖 User ${socket.id} joined personal room ${userId}`);
+    console.log("🏠 ALL ROOMS (after user):");
+    io.sockets.adapter.rooms.forEach((sockets, roomName) => {
+      console.log(
+        `  +   Room "${roomName}": ${sockets.size} users - [${Array.from(
+          sockets
+        ).join(", ")}]`
+      );
+    });
   });
 
-  socket.on('disconnect', () => {
-    console.log('User disconnected:', socket.id);
+
+  socket.on("join-organization", (organizationId) => {
+    socket.join(`org-${organizationId}`);
+
+
+    console.log(`🚐 User ${socket.id} joined organization ${organizationId}`);
+    console.log("🏠 ALL ROOMS (after org):");
+    io.sockets.adapter.rooms.forEach((sockets, roomName) => {
+      console.log(
+        `  +   Room "${roomName}": ${sockets.size} users - [${Array.from(
+          sockets
+        ).join(", ")}]`
+      );
+    });
+  });
+
+
+
+  socket.on("disconnect", () => {
+    console.log("❌ User disconnected:", socket.id);
   });
 });
 
