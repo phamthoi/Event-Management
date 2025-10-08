@@ -4,6 +4,7 @@ import { FiBell } from 'react-icons/fi';
 import { notificationService } from '../../../services/common/notification/notificationService.js';
 import { useTheme } from '../../../contexts/ThemeContext.jsx';
 import { useSocket } from '../../../contexts/SocketContext.jsx';
+import NotificationDetailModal from './NotificationDetailModal.jsx';
 
 const NotificationDropdown = () => {
   const { isDarkMode } = useTheme();
@@ -11,6 +12,8 @@ const NotificationDropdown = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [selectedNotification, setSelectedNotification] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const dropdownRef = useRef(null);
 
   
@@ -29,15 +32,6 @@ const NotificationDropdown = () => {
   };
 
   
-  const handleMarkAsRead = async (notificationId) => {
-    try {
-      await notificationService.markAsRead(notificationId);
-      fetchRecentNotifications();
-    } catch (err) {
-      console.error('Error marking notification as read:', err);
-    }
-  };
-
   
   const handleMarkAllAsRead = async () => {
     try {
@@ -91,7 +85,7 @@ const NotificationDropdown = () => {
     };
   }, []);
 
-  // Fetch data when dropdown opens
+  
   useEffect(() => {
     if (isOpen) {
       fetchRecentNotifications();
@@ -108,6 +102,38 @@ const NotificationDropdown = () => {
 
   const role = localStorage.getItem('role');
   const notificationsPath = role === 'admin' ? '/admin/notifications' : '/member/notifications';
+
+  const handleNotificationClick = async (notification) => {
+    try {
+
+      if (!notification.isRead) {
+        await notificationService.markAsRead(notification.id);
+        fetchRecentNotifications();
+      }
+      
+  
+      setSelectedNotification(notification);
+      setIsModalOpen(true);
+      setIsOpen(false); 
+    } catch (err) {
+      console.error('Error handling notification click:', err);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedNotification(null);
+  };
+
+  
+  useEffect(() => {
+    if (notificationTrigger > 0 && isOpen) {
+      console.log('🔔 NotificationDropdown: Refreshing due to notification trigger');
+      fetchRecentNotifications();
+    }
+  }, [notificationTrigger, isOpen]);
+
+
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -130,9 +156,11 @@ const NotificationDropdown = () => {
 
      
       {isOpen && (
-        <div className={`absolute right-0 mt-2 w-80 ${
-          isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
-        } border rounded-lg shadow-lg z-50`}>
+        <div className={`absolute right-0 mt-2 w-80 rounded-lg shadow-lg border z-50 ${
+          isDarkMode 
+            ? 'bg-gray-800 border-gray-700' 
+            : 'bg-white border-gray-200'
+        }`}>
           
           <div className={`px-4 py-3 border-b ${
             isDarkMode ? 'border-gray-700' : 'border-gray-100'
@@ -180,7 +208,7 @@ const NotificationDropdown = () => {
                       ? (isDarkMode ? 'bg-blue-900/20' : 'bg-blue-50') 
                       : ''
                   } hover:${isDarkMode ? 'bg-gray-700' : 'bg-gray-50'} transition-colors cursor-pointer`}
-                  onClick={() => handleMarkAsRead(notification.id)}
+                  onClick={() => handleNotificationClick(notification)}
                 >
                   <div className="flex items-start space-x-3">
                     <div className="flex-shrink-0 text-lg">
@@ -230,6 +258,13 @@ const NotificationDropdown = () => {
           )}
         </div>
       )}
+
+      
+      <NotificationDetailModal
+        notification={selectedNotification}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+      />
     </div>
   );
 };
