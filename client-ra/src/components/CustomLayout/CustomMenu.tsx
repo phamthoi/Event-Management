@@ -116,9 +116,6 @@ const CustomMenu: React.FC<CustomMenuProps> = ({ role, ...props }) => {
              <Divider sx={{ my: 1 }} />
              {renderMenuItem("/membersPublic", "Members Directory", <PeopleIcon />)}
 
-             {/* 4. Nhóm Cá nhân (Profile) */}
-             <Divider sx={{ my: 1 }} />
-             {renderMenuItem("/account", "My Profile", <ProfileIcon />)}
           </>
         )}
      </List>

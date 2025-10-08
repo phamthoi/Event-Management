@@ -29,6 +29,7 @@ import {
 // Registrations / Attendance
 import { UpcomingEventList, MyEventsList } from "./components/registration";
 import AttendancePage from "./components/attendance/AttendancePage";
+import ChangePasswordPage from "./pages/ChangePasswordPage";
 
 const App = () => (
   <Admin
@@ -43,6 +44,7 @@ const App = () => (
       <Route path="/profile/edit" element={<ProfileEdit />} />
       <Route path="/admin/members/:id/reset-password" element={<ResetPassword />} />
       <Route path="/member-stats" element={<MemberStatsDashboard />} />
+      <Route path="/change-password" element={<ChangePasswordPage />} />
     </CustomRoutes>
 
     {/* ✅ Resource cho quản trị viên */}
