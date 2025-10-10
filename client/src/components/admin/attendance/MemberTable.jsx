@@ -16,9 +16,6 @@ function MemberTable({ registrations, isOngoing, onToggle }) {
             </th>
             <th className="border px-3 py-2 text-center dark:border-gray-700">
               Attended
-              <div className="text-xs font-normal text-gray-500 dark:text-gray-300 mt-1">
-                (Requires deposit)
-              </div>
             </th>
           </tr>
         </thead>
@@ -65,15 +62,10 @@ function MemberTable({ registrations, isOngoing, onToggle }) {
                   <input
                     type="checkbox"
                     checked={reg.attended}
-                    disabled={!isOngoing || !reg.depositPaid}
+                    disabled={!isOngoing}
                     onChange={() => onToggle(reg.id, "attended")}
-                    className={`w-5 h-5 rounded focus:ring-2 ${
-                      !reg.depositPaid 
-                        ? "text-gray-400 cursor-not-allowed" 
-                        : "text-blue-600 focus:ring-blue-400"
-                    }`}
+                    className="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-400"
                     aria-label={`Mark ${reg.user?.fullName} as attended`}
-                    title={!reg.depositPaid ? "Deposit must be paid before marking attendance" : ""}
                   />
                 </td>
               </tr>

@@ -59,11 +59,9 @@ function AttendancePage() {
         if (reg.id !== regId) return reg;
         if (type === "attended") return { ...reg, attended: !reg.attended };
         if (type === "depositPaid") {
-          const newDepositPaid = !reg.depositPaid;
           return { 
             ...reg, 
-            depositPaid: newDepositPaid,
-            attended: newDepositPaid ? reg.attended : false
+            depositPaid: !reg.depositPaid
           };
         }
         return reg;
