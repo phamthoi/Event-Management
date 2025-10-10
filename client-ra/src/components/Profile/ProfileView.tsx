@@ -25,7 +25,7 @@ const ProfileActions = () => {
 
 const ProfileView = () => {
   return (
-    <Show resource="admin" id="profile" actions={<ProfileActions />}>
+    <Show resource="profile" id={1} actions={<ProfileActions />}>
       <SimpleShowLayout>
         <TextField source="fullName" label="Full Name" />
         <TextField source="email" label="Email" />

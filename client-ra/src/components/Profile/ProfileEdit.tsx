@@ -20,8 +20,8 @@ const ProfileEdit = () => {
 
   return (
     <Edit
-      resource="admin"
-      id="profile"
+      resource="profile"
+      id={1}
       mutationMode="pessimistic"
       mutationOptions={{ onSuccess: handleSuccess }}
     >

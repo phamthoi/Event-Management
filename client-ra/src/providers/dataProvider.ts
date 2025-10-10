@@ -1,380 +1,310 @@
 // src/providers/dataProvider.ts
+import { DataProvider } from "react-admin";
+import qs from "query-string";
 import api from "../services/axios";
-import {
-  DataProvider,
-  GetListParams,
-  GetOneParams,
-  UpdateParams,
-  UpdateManyParams,
-  CreateParams,
-  DeleteParams,
-  RaRecord,
-  Identifier,
-} from "react-admin";
 
-// -----------------------
-// Helpers
-// -----------------------
-const getUser = () => {
-  const user = localStorage.getItem("user");
-  return user ? JSON.parse(user) : null;
-};
+// === RESOURCE KHÔNG CẦN /list ===
+// Các resource này sẽ được gọi mà KHÔNG CÓ "/list" ở cuối URL.
+const LIST_ENDPOINT_RESOURCES = new Set([
+    "stats",
+    "member-stats",
+    "event",
+    "profile",
+    "upcoming-events",
+    "ongoing-events", 
+    "member-members",
+]);
 
-const toRaRecord = <T extends { id: number | string }>(obj: T) => ({
-  ...obj,
-  id: String(obj.id),
-});
-
-/**
- * Hàm buildQuery nhận một limit mặc định tùy chỉnh.
- * @param params Tham số GetListParams từ react-admin.
- * @param defaultLimit Giới hạn mặc định cho mỗi trang nếu không được cung cấp trong params.
- * @returns Chuỗi query string.
- */
-const buildQuery = (params: GetListParams, defaultLimit: number = 10) => {
-  const page = params.pagination?.page ?? 1;
-  const perPage = params.pagination?.perPage ?? defaultLimit;
-  const filter = params.filter ?? {};
-  
-  const searchParams = new URLSearchParams({ 
-    page: page.toString(), 
-    limit: perPage.toString() 
-  });
-  
-  Object.keys(filter).forEach(key => {
-      const value = filter[key];
-      if (value !== undefined && value !== null && typeof value !== 'object') {
-          searchParams.append(key, value.toString());
-      }
-  });
-
-  return searchParams.toString();
-};
-
-
-// role -> URL prefix mapping
-const rolePrefixMap: Record<string, string> = {
-  admin: "admin",
-  member: "member",
-}
-
-const getBaseUrlByRole = (resource: string) => {
-  const user = getUser();
-  const role = user?.role?.toLowerCase();
-  
-  const specialResources = ["upcoming-events", "member-events", "attendance-events", "registrations", "dashboardStats", "memberStats", "admin", "events", "members"]; 
-
-  if (role && rolePrefixMap[role] && !specialResources.includes(resource)) {
-    return `${rolePrefixMap[role]}/${resource}`; 
-  }
-
-  return `/${resource}`;
-}
-
-// -----------------------
-// Generic Handlers
-// -----------------------
-const genericGetList = async (resource: string, params: GetListParams) => {
-  // Sử dụng limit mặc định là 10 cho generic handler
-  const query = buildQuery(params, 10); 
-  const baseUrl = getBaseUrlByRole(resource);
-  const res = await api.get(`${baseUrl}?${query}`);
-  const data = (res.data[resource] || res.data || []).map(toRaRecord);
-  const total = res.data.total ?? res.data.count ?? data.length; 
-  return { data, total };
-};
-
-const genericGetOne = async (resource: string, params: GetOneParams) => {
-  const baseUrl = getBaseUrlByRole(resource);
-  const res = await api.get(`${baseUrl}/${params.id}`);
-  return { data: toRaRecord(res.data[resource] ?? res.data) };
-};
-
-const genericCreate = async (resource: string, params: CreateParams) => {
-  const baseUrl = getBaseUrlByRole(resource);
-  const res = await api.post(baseUrl, params.data);
-  return { data: toRaRecord(res.data[resource] ?? res.data) };
-};
-
-const genericUpdate = async (resource: string, params: UpdateParams) => {
-  const baseUrl = getBaseUrlByRole(resource);
-  const res = await api.put(`${baseUrl}/${params.id}`, params.data);
-  return { data: toRaRecord(res.data[resource] ?? res.data) };
-};
-
-const genericDelete = async (resource: string, params: any) => {
-  const baseUrl = getBaseUrlByRole(resource);
-  await api.delete(`${baseUrl}/${params.id}`);
-  return { data: params.ids ? params.ids : [params.id] };
-};
-
-// -----------------------
-// DataProvider
-// -----------------------
-const dataProvider: DataProvider & { changePassword?: Function } = {
-  // GET LIST
-  getList: async (resource, params) => {
+// === MAP RESOURCE → ENDPOINT ===
+const getEndpoint = (resource: string) => {
     switch (resource) {
-      case "upcoming-events": {
-        const page = params.pagination?.page ?? 1;
-        const perPage = params.pagination?.perPage ?? 10; 
-        const res = await api.get(`/event/upcoming?page=${page}&limit=${perPage}`);
-        const data = (res.data.events || []).map(toRaRecord);
-        return { data, total: res.data.total ?? data.length };
-      }
-      case "member-events": {
-        const res = await api.get(`/event`); 
-        const data = (res.data.events || res.data || []).map(toRaRecord);
-        return { data, total: res.data.total ?? data.length };
-      }
-      case "attendance-events": {
-        const res = await api.get("/admin/events/ongoing"); 
-        const data = (res.data.events || res.data || []).map(toRaRecord);
-        return { data, total: data.length };
-      }
-      case "registrations": {
-        const eventId = params.filter?.eventId;
-        if (!eventId) return { data: [], total: 0 };
-        const res = await api.get(`/admin/events/registrations/${eventId}`); 
-        const data = (res.data.registrations || res.data || []).map(toRaRecord);
-        return { data, total: data.length };
-      }
-      case "dashboardStats": {
-        const res = await api.get("/admin/stats/dashboard");
-        return { data: [{ id: 1, ...res.data }], total: 1 };
-      }
-      case "memberStats": {
-        const res = await api.get("/member/stats/dashboard");
-        return { data: [{ id: 1, ...res.data.data }], total: 1 };
-      }
-      // === ĐIỀU CHỈNH LIMIT VÀ ROUTE CHO EVENTS ===
-      case "events": { 
-          // Limit mặc định là 5
-          const query = buildQuery(params, 5); 
-          // Giả định backend gắn admin/event.routes.js ở /admin/events
-          const res = await api.get(`/admin/events/list?${query}`); 
-          const data = (res.data.events || res.data || []).map(toRaRecord);
-          const total = res.data.total ?? res.data.count ?? data.length;
-          return { data, total };
-      }
-      // === ĐIỀU CHỈNH LIMIT VÀ ROUTE CHO MEMBERS (SỬA LỖI 404) ===
-      case "members": { 
-          // Limit mặc định là 5
-          const query = buildQuery(params, 5); 
-          // Sửa '/admin/member/list' thành '/admin/members/list'
-          const res = await api.get(`/admin/members/list?${query}`); 
-          const data = (res.data.members || res.data || []).map(toRaRecord);
-          const total = res.data.total ?? res.data.count ?? data.length;
-          return { data, total };
-      }
+        case "events": return "/admin/events";
+        case "members": return "/admin/members";
+        case "stats": return "/admin/stats/dashboard";
+        
+        // ✅ ÁNH XẠ CHO ENDPOINT CUSTOM
+        case "ongoing-events": return "/admin/events/ongoing"; 
 
-      case "membersPublic": {
-          const defaultLimit = 5;
-          const page = params.pagination?.page ?? 1;
-          const perPage = params.pagination?.perPage ?? defaultLimit;
-          const { email = "", fullName = "" } = params.filter || {};
-          
-          // Tạo query string thủ công chỉ với filter email/fullName
-          const serviceQuery = new URLSearchParams({
-            page: page.toString(),
-            limit: perPage.toString(),
-            ...(email && { email: email.toString() }),
-            ...(fullName && { fullName: fullName.toString() }),
-          }).toString();
-          
-          // Endpoint: /member/members
-          const res = await api.get(`/member/members?${serviceQuery}`);
+        case "member-events": return "/member/events";
+        case "member-members": return "/member/members";
+        case "member-stats": return "/member/stats/dashboard";
 
-          const data = (res.data.members || res.data || []).map(toRaRecord);
-          const total = res.data.total ?? res.data.count ?? data.length;
-          return { data, total };
-      }
-      // ===========================================
-      default:
-        return genericGetList(resource, params);
-    }
-  },
+        case "profile": return "/profile";
+        case "event": return "/event";
+        case "upcoming-events": return "/event/upcoming";
 
-  // GET ONE
-  getOne: async (resource, params) => {
-    if (resource === "admin" && params.id === "profile") {
-      const res = await api.get("/profile");
-      return { data: { ...res.data, id: "profile" } };
+        default: return `/${resource}`;
     }
-    if (resource === "attendance-events") {
-      const res = await api.get("/admin/events/ongoing");
-      const event = res.data.events?.find((e: any) => e.id === params.id);
-      return { data: toRaRecord(event ?? { id: params.id }) };
-    }
-    if (["upcoming-events", "member-events", "events"].includes(resource)) {
-      const endpoint = resource === "events" ? `/admin/events/detail/${params.id}` : `/event/${params.id}`;
-      const res = await api.get(endpoint);
-      return { data: toRaRecord(res.data.event ?? res.data) };
-    }
-    // === SỬA LỖI ROUTE CHO MEMBERS ===
-    if (resource === "members") { 
-      // Sửa '/admin/member/:id' thành '/admin/members/:id'
-      const res = await api.get(`/admin/members/${params.id}`);
-      return { data: toRaRecord(res.data.member ?? res.data) };
-    }
-    // ===========================================
-    return genericGetOne(resource, params);
-  },
+};
 
-  // CREATE
-  create: async (resource, params) => {
-    if (resource === "registrations") {
-      const { memberId, eventId } = params.data;
-      // Giả định route này là đúng
-      const res = await api.post(`/admin/member/registrations/${memberId}/${eventId}`);
-      return { data: toRaRecord(res.data) };
-    }
-    if (resource === "events") {
-      const res = await api.post("/admin/events/create", params.data);
-      return { data: toRaRecord(res.data.event) };
-    }
-    // === SỬA LỖI ROUTE CHO MEMBERS ===
-    if (resource === "members") {
-      // Sửa '/admin/member/create' thành '/admin/members/create'
-      const res = await api.post("/admin/members/create", params.data);
-      return { data: toRaRecord(res.data.member ?? res.data) };
+// === CHUẨN HÓA DỮ LIỆU: PHẢI CÓ ID ===
+const mapDataWithId = (data: any[], resource: string) => {
+    return data.map((item) => ({
+        id:
+            item.id ??
+            item.eventId ??
+            item._id ??
+            item.event?._id ??
+            item.userId ??
+            item.memberId,
+        ...item,
+    }));
+};
+
+// === DATA PROVIDER CHÍNH ===
+const dataProvider: DataProvider & { changePassword?: Function } = {
+    /** ---------------- GET LIST ---------------- */
+    getList: async (resource, params) => {
+        const endpoint = getEndpoint(resource);
+        const page = params.pagination?.page || 1;
+        const perPage = params.pagination?.perPage || 10;
+
+        // Xác định có phải endpoint custom không cần /list hoặc query string
+        const isCustomEndpoint = ["ongoing-events"].includes(resource);
+
+        const query = isCustomEndpoint
+            ? ""
+            : qs.stringify({ page, limit: perPage, ...params.filter });
+
+        const url = LIST_ENDPOINT_RESOURCES.has(resource)
+            ? `${endpoint}${query ? '?' + query : ''}`
+            : `${endpoint}/list?${query}`;
+
+        const response = await api.get(url);
+
+        let rawData: any[] = [];
+        let total = 0;
+
+        // === Xử lý riêng cho từng resource ===
+        switch (resource) {
+            case "upcoming-events":
+            case "ongoing-events":
+                rawData = response.data.events ?? response.data ?? [];
+                total = response.data.total ?? rawData.length;
+                break;
+
+            case "member-members":
+                rawData = response.data.members ?? response.data.data ?? [];
+                total = response.data.total ?? rawData.length;
+                break;
+
+            default:
+                rawData = response.data[resource] ?? response.data.data ?? response.data ?? [];
+                total = response.data.total ?? rawData.length;
+                break;
+        }
+
+        if (!Array.isArray(rawData)) {
+            console.error(`Expected array for resource ${resource} but got:`, rawData);
+            rawData = [rawData];
+        }
+
+        const mapped = mapDataWithId(rawData, resource);
+
+        return { data: mapped, total };
+    },
+
+    // getOne
+    getOne: async (resource, params) => {
+        if (!params.id) throw new Error(`Missing ID for getOne(${resource})`);
+
+        const endpoint = getEndpoint(resource);
+
+        // Chỉnh URL chi tiết theo resource
+        const detailEndpoint =
+            resource === "upcoming-events" 
+                ? `${endpoint}/${params.id}`
+                : resource === "members" 
+                    ? `${endpoint}/${params.id}` 
+                    : resource === "profile"
+                        ? `${endpoint}`
+                        : `${endpoint}/detail/${params.id}`;
+
+        const response = await api.get(detailEndpoint);
+
+        // 🔹 Xử lý data cho từng resource
+        let record;
+        if (resource === "members") {
+            // Lấy trực tiếp member
+            record = response.data.member;
+        } else if (resource === "profile") {
+            record = response.data;
+            record.id = params.id; // ép id
+        } else {
+            // default các resource khác
+            record = response.data.data || response.data.event || response.data.result || response.data;
+        }
+
+        return { data: record };
+    },
+
+    /** ---------------- CREATE ---------------- */
+    create: async (resource, params) => {
+        // ✅ Đăng ký sự kiện (POST /event/:id/register)
+        if (resource === "event" && params.data.eventId) {
+            const eventId = params.data.eventId;
+            await api.post(`/event/${eventId}/register`, {});
+            return { data: { id: eventId, ...params.data, registered: true } };
+        }
+
+        // ❌ Ngăn tạo event sai luồng
+        if (resource === "event") {
+            throw new Error("Invalid CREATE operation for user events. Use 'events' for admin.");
+        }
+
+        // ✅ Các resource khác
+        const endpoint = getEndpoint(resource);
+        const response = await api.post(`${endpoint}/create`, params.data);
+
+        let resultData = response.data.data || response.data;
+        if (!Array.isArray(resultData)) resultData = [resultData];
+        const mapped = mapDataWithId(resultData, resource)[0];
+
+        return { data: mapped };
+    },
+
+    /** ---------------- UPDATE ---------------- */
+    update: async (resource, params) => {
+        const endpoint = getEndpoint(resource);
+
+        
+    // 🟢 Nếu là PROFILE → xử lý riêng
+    if (resource === "profile") {
+        // Không cần lấy dữ liệu cũ (vì /profile không có id)
+        const payload = params.data;
+
+        const response = await api.put(`${endpoint}`, payload);
+
+        // Chuẩn hoá dữ liệu trả về
+        let resultData = 
+            response.data.data || 
+            response.data.result || 
+            response.data;
+
+        // Ép id để React-Admin không lỗi
+        const mapped = { id: "profile", ...resultData };
+        return { data: mapped };
     }
 
-     // ---- Event ----
-    if (resource === "event-register") {
-      const { eventId } = params.data;
-      const res = await api.post(`/event/${eventId}/register`);
-      return { data: { id: eventId, ...res.data } };
-    }
-    // ===========================================
-    return genericCreate(resource, params);
-  },
 
-  // UPDATE
-  update: async (resource, params) => {
-    if (resource === "admin" && params.id === "profile") {
-      const res = await api.put("/profile", params.data);
-      return { data: { ...res.data, id: "profile" } };
-    }
-    if (resource === "registrations") {
-      await api.put("/admin/events/registrations/update-status", {
-        updates: [{ registrationId: params.id, ...params.data }],
-      });
-      return { data: { ...params.previousData, ...params.data, id: params.id } };
-    }
-    if (resource === "events") {
-      const res = await api.put(`/admin/events/edit/${params.id}`, params.data);
-      return { data: toRaRecord(res.data.event) };
-    }
-    // Thêm logic update cho members nếu cần, giả định endpoint là /admin/members/:id
-    /* if (resource === "members") {
-        const res = await api.put(`/admin/members/${params.id}`, params.data); 
-        return { data: toRaRecord(res.data.member ?? res.data) };
-    } */
+        // 🟢 Lấy dữ liệu cũ (nếu cần merge)
+        const existingResponse = await api.get(`${endpoint}/detail/${params.id}`);
+        const existing = 
+                    existingResponse.data.data || 
+                    existingResponse.data ||
+                    existingResponse.data.event;
 
-    return genericUpdate(resource, params);
-  },
+        // 🟢 Gộp dữ liệu cũ và mới lại
+        const merged = { ...existing, ...params.data };
 
-  // DELETE
-  delete: async (resource, params: DeleteParams) => {
-    const user = getUser();
-    if (resource === "registrations") {
-      const memberId = params.previousData?.memberId; 
-      const eventId = params.previousData?.eventId;
-      if (!memberId || !eventId) throw new Error("Missing memberId or eventId");
-      // Giả định route này là đúng
-      await api.delete(`/admin/member/registrations/${memberId}/${eventId}`); 
-      return { data: [params.id] };
-    }
-   if (
-      resource === "events" ||
-      resource === "upcoming-events" ||
-      resource === "member-events" ||
-      resource === "event-register"
-    ) {
-      if (resource === "events") {
-        if (!user || user.role !== "ADMIN") throw new Error("Only admin can delete events");
-        await api.delete(`/admin/events/delete/${params.id}`);
-        return { data: [params.id] };
-      }
-      await api.delete(`/event/${params.id}/register`);
-      return { data: [params.id] };
-    }
-    // Thêm logic delete cho members nếu cần, giả định endpoint là /admin/members/:id
-    /* if (resource === "members") {
-        await api.delete(`/admin/members/${params.id}`);
-        return { data: [params.id] };
-    } */
+        // 🟢 Chỉ giữ lại các field hợp lệ cho backend
+        //    (lọc ra những field mà form có thể chỉnh sửa)
+        const allowedFields = [
+            "title",
+            "description",
+            "location",
+            "minAttendees",
+            "maxAttendees",
+            "startAt",
+            "endAt",
+            "registrationStartAt",
+            "registrationEndAt",
+            "deposit",
+            "status"
+        ];
 
-    return genericDelete(resource, params);
-  },
-
-  // UPDATE MANY
-  updateMany: async (resource, params: UpdateManyParams) => {
-    if (resource === "registrations") {
-      const updates = params.ids.map((id) => ({ registrationId: id, ...params.data }));
-      await api.put("/admin/events/registrations/update-status", { updates });
-      return { data: params.ids };
-    }
-    throw new Error(`updateMany not implemented for resource: ${resource}`);
-  },
-
-  // DELETE MANY
-  deleteMany: async (resource, params: any) => {
-    const user = getUser();
-    if (resource === "events" && (!user || user.role !== "ADMIN")) {
-      throw new Error("Only admin can delete events");
-    }
-    if (resource === "registrations") {
-      await Promise.all(
-        params.ids.map(async (id: Identifier) => {
-          const registration = params.previousData?.find((item: any) => item.id === id);
-          if (!registration?.memberId || !registration?.eventId) {
-            throw new Error("Missing memberId or eventId");
-          }
-          await api.delete(`/admin/member/registrations/${registration.memberId}/${registration.eventId}`);
-        })
-      );
-      return { data: params.ids };
-    }
-    
-    if (resource === "events") {
-        await Promise.all(
-            params.ids.map((id: Identifier) => api.delete(`/admin/events/delete/${id.toString()}`))
+        const payload = Object.fromEntries(
+            Object.entries(merged).filter(([key]) => allowedFields.includes(key))
         );
-        return { data: params.ids };
-    }
-    
-    // Thêm logic deleteMany cho members nếu cần, giả định endpoint là /admin/members/:id
-    /* if (resource === "members") {
-        await Promise.all(
-            params.ids.map((id: Identifier) => api.delete(`/admin/members/${id.toString()}`))
+
+        // 🟢 Gửi PUT với dữ liệu đã lọc
+        const response = await api.put(`${endpoint}/edit/${params.id}`, payload);
+
+        let resultData = 
+                    response.data.data || 
+                    response.data ||
+                    response.data.event ||
+                    response.data.result;
+        if (!Array.isArray(resultData)) resultData = [resultData];
+        const mapped = mapDataWithId(resultData, resource)[0];
+
+        return { data: mapped };
+    },
+
+
+    /** ---------------- DELETE ---------------- */
+    delete: async (resource, params) => {
+        // ✅ Hủy đăng ký sự kiện (DELETE /event/:id/register)
+        if (resource === "event") {
+            const eventId = params.id;
+            await api.delete(`/event/${eventId}/register`);
+            return { data: { id: eventId } };
+        }
+
+        // ✅ Các resource khác dùng /delete/:id
+        const endpoint = getEndpoint(resource);
+        const response = await api.delete(`${endpoint}/delete/${params.id}`);
+        return { data: response.data.data || response.data };
+    },
+
+    /** ---------------- GET MANY ---------------- */
+    getMany: async (resource, params) => {
+        const results = await Promise.all(
+            params.ids.map((id) =>
+                dataProvider.getOne(resource, { id }).then((res) => res.data)
+            )
         );
-        return { data: params.ids };
-    } */
+        return { data: results };
+    },
 
-    const baseUrl = getBaseUrlByRole(resource);
-    await Promise.all(
-      params.ids.map((id: Identifier) => api.delete(`${baseUrl}/${id.toString()}`))
-    );
-    return { data: params.ids };
-  },
+    /** ---------------- GET MANY REF ---------------- */
+    getManyReference: async (resource, params) => {
+        const endpoint = getEndpoint(resource);
+        const page = params.pagination?.page || 1;
+        const perPage = params.pagination?.perPage || 10;
+        const { field = "id", order = "ASC" } = params.sort || {};
 
-  // GET MANY REFERENCE
-  getManyReference: async (resource, params) => {
-    if (resource === "registrations" && params.target === "memberId") {
-      const res = await api.get(`/admin/member/registrations/${params.id}`);
-      const data = (res.data.registrations || res.data || []).map(toRaRecord);
-      return { data, total: data.length };
-    }
-    throw new Error(`getManyReference not implemented for resource: ${resource}`);
-  },
+        const query = qs.stringify({
+            page,
+            limit: perPage,
+            sortField: field,
+            sortOrder: order,
+            ...params.filter,
+            [params.target]: params.id,
+        });
 
-  // GET MANY
-  getMany: async () => ({ data: [] }),
+        const response = await api.get(`${endpoint}/list?${query}`);
+        let resultData = response.data.data ?? [];
+        resultData = mapDataWithId(resultData, resource);
 
-  // Special method
-  changePassword: async (currentPassword: string, newPassword: string) => {
+        return {
+            data: resultData,
+            total: response.data.total ?? resultData.length ?? 0,
+        };
+    },
+
+    /** ---------------- UPDATE MANY ---------------- */
+    updateMany: async (resource, params) => {
+        const results = await Promise.all(
+            params.ids.map(async (id) => {
+                // Lấy previousData từ backend trước
+                const { data: previousData } = await dataProvider.getOne(resource, { id });
+                return dataProvider.update(resource, { id, data: params.data, previousData });
+            })
+        );
+        return { data: results.map((r) => r.data.id) };
+    },
+
+    /** ---------------- DELETE MANY ---------------- */
+    deleteMany: async (resource, params) => {
+        const results = await Promise.all(
+            params.ids.map((id) => dataProvider.delete(resource, { id }))
+        );
+        return { data: results.map((r) => r.data.id) };
+    },
+
+    // Special method
+    changePassword: async (currentPassword: string, newPassword: string) => {
     const res = await api.put("/profile/password", { currentPassword, newPassword });
     return res.data;
   },

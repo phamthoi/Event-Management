@@ -29,7 +29,7 @@ const CancelRegistrationButton = () => {
     }
     if (window.confirm("Are you sure you want to cancel this registration?")) {
       dataProvider
-        .delete('event-register', { id: record.id })
+        .delete('event', { id: record.id })
         .then(() => {
           alert("Registration cancelled successfully");
           refresh();
@@ -51,7 +51,7 @@ const CancelRegistrationButton = () => {
 };
 
 const MyEventsList = () => (
-  <List perPage={4}>
+  <List resource="event" perPage={4}>
     <Datagrid>
       <TextField source="title" label="Title" />
       <TextField source="location" label="Location" />

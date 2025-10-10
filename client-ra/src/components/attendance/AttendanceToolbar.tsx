@@ -26,7 +26,7 @@ const AttendanceToolbar: React.FC<AttendanceToolbarProps> = ({
     try {
       await Promise.all(
         registrations.map((r) =>
-          dataProvider.update("registrations", {
+          dataProvider.update("events", {
             id: r.id,
             data: { attended: true },
             previousData: r,
@@ -43,14 +43,14 @@ const AttendanceToolbar: React.FC<AttendanceToolbarProps> = ({
 
   return (
     <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
-      <Button
+      {/* <Button
         variant="contained"
         color="primary"
         onClick={markAllAsPresent}
         disabled={!eventId}
       >
         Điểm danh tất cả
-      </Button>
+      </Button> */}
       <Button variant="outlined" onClick={refresh} disabled={!eventId}>
         Làm mới danh sách
       </Button>

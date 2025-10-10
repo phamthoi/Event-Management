@@ -2,7 +2,7 @@
 import api from "../services/axios";
 
 // 3 phút không hoạt động = 180000 ms
-const TOKEN_EXPIRY_MS = 3 * 60 * 1000; 
+const TOKEN_EXPIRY_MS = 60 * 60 * 1000; 
 
 const authProvider = {
   /**

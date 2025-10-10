@@ -56,7 +56,7 @@ function App() {
             />
           }
         >
-          <Route path="profile" element={<AdminProfilePage/>}/>
+          <Route path="profile/update" element={<AdminProfilePage/>}/>
           <Route path="profile/change-password" element={<AdminChangePasswordPage/>}/>
 
           <Route path="events/create" element={<CreateEventPage />} />

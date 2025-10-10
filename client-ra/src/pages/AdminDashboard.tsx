@@ -31,7 +31,7 @@ const colorMap: Record<string, string> = {
 const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
 
-  const { data, isLoading } = useGetList("dashboardStats", {
+  const { data, isLoading } = useGetList("stats", {
     pagination: { page: 1, perPage: 1 },
   });
 

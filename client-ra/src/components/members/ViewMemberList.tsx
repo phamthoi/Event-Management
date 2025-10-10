@@ -10,7 +10,7 @@ import {
   useListContext,
 } from "react-admin";
 
-// Filter component
+// 🔍 Bộ lọc
 const MemberFilter = (props: any) => (
   <Filter {...props}>
     <TextInput label="Email" source="email" alwaysOn />
@@ -18,29 +18,37 @@ const MemberFilter = (props: any) => (
   </Filter>
 );
 
-// Custom pagination
-const MemberPagination = (props: any) => <Pagination rowsPerPageOptions={[5]} {...props} />;
+// 🔢 Phân trang (chỉ hiển thị 5 dòng/trang)
+const MemberPagination = (props: any) => (
+  <Pagination rowsPerPageOptions={[5]} {...props} />
+);
 
+// 🔢 Component riêng để hiển thị số thứ tự dòng
+const RowNumberField = ({ index }: { index: number }) => {
+  const { page, perPage } = useListContext(); // ✅ Hook này chỉ được gọi trong component
+  const rowNumber = (page - 1) * perPage + (Number(index) || 0) + 1;
+  return <span>{rowNumber}</span>;
+};
+
+// 🧾 Trang danh sách thành viên
 const ViewMemberList = () => {
   return (
     <List
-      resource="membersPublic"
+      resource="member-members"
       filters={<MemberFilter />}
       pagination={<MemberPagination />}
       perPage={5}
       sort={{ field: "id", order: "ASC" }}
-      actions={false} // tắt toolbar
+      actions={false} // tắt toolbar mặc định
     >
       <Datagrid rowClick="show" bulkActionButtons={false}>
-        {/* Số thứ tự # */}
+        {/* # Cột số thứ tự */}
         <FunctionField
           label="#"
-          render={(_record, _recordIndex) => {
-            const { page, perPage } = useListContext();
-            const index = Number(_recordIndex ?? 0); // ép kiểu number
-            return (page - 1) * perPage + index + 1;
-          }}
+          render={(_record, index) => <RowNumberField index={Number(index ?? 0)} />}
         />
+
+        {/* Các cột thông tin */}
         <TextField source="email" />
         <TextField source="fullName" label="Full Name" />
         <TextField source="phoneNumber" label="Phone" />

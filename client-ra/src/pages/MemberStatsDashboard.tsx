@@ -29,7 +29,7 @@ const colorMap: Record<string, string> = {
 };
 
 const MemberStatsDashboard: React.FC = () => {
-  const { data, isLoading } = useGetList("memberStats", {
+  const { data, isLoading } = useGetList("member-stats", {
     pagination: { page: 1, perPage: 1 },
   });
 

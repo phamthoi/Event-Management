@@ -13,9 +13,16 @@ const CustomUserMenu = (props: any) => {
 
   // 2. Hàm xử lý đăng xuất an toàn
   const handleLogout = () => {
-    // Gọi hàm logout của React-Admin. 
-    // Hàm này sẽ gọi authProvider.logout() và TỰ ĐỘNG chuyển hướng.
-    logout(); 
+    logout().then(() => {
+      // Xóa sạch token
+      localStorage.removeItem("token");
+      localStorage.removeItem("currentUser");
+      localStorage.removeItem("role");
+      localStorage.removeItem("expiryTime");
+
+      // Chuyển hướng về trang đăng nhập sau khi đăng xuất
+      window.location.href = '/login';
+    });
   };
 
   return (
