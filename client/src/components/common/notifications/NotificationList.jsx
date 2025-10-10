@@ -23,7 +23,7 @@ const NotificationList = () => {
         setPage(pageNum);
       }
     } catch (err) {
-      setError("Không thể tải thông báo");
+      setError("Cannot fetch notifications");
       console.error("Error fetching notifications:", err);
     } finally {
       setLoading(false);
