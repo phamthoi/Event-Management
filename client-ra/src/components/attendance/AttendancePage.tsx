@@ -6,6 +6,7 @@ import EventSelect from "./EventSelect";
 import MemberTable from "./MemberTable";
 import AttendanceToolbar from "./AttendanceToolbar";
 import api from "../../services/axios";
+import { useTranslate } from 'react-admin';
 
 // Typing chuẩn cho event
 interface Event {
@@ -17,6 +18,7 @@ interface Event {
 const AttendancePage: React.FC = () => {
   const dataProvider = useDataProvider();
   const notify = useNotify();
+  const translate = useTranslate();
 
   const [events, setEvents] = useState<Event[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<number | null>(null);
@@ -34,7 +36,7 @@ const AttendancePage: React.FC = () => {
       setEvents(data);
     } catch (error) {
       console.error("Error loading events:", error);
-      notify("❌ Lỗi khi tải danh sách sự kiện", { type: "error" });
+      notify("❌ error loading data", { type: "error" });
     }
   }, [dataProvider, notify]);
 
@@ -54,7 +56,7 @@ const AttendancePage: React.FC = () => {
         setCurrentEventStatus(event?.status || "");
       } catch (error) {
         console.error("Error loading registrations:", error);
-        notify("❌ Lỗi khi tải danh sách đăng ký", { type: "error" });
+        notify("❌ error loading subscription list ", { type: "error" });
       }
     },
     [events, notify]
@@ -88,10 +90,10 @@ const AttendancePage: React.FC = () => {
 
         console.log("Sending payload:", payload);
         await api.put(`/admin/events/registrations/update-status`, payload);
-        notify("✅ Cập nhật thành công", { type: "success" });
+        notify("✅ Update success", { type: "success" });
       } catch (error) {
         console.error("Error updating registration:", error);
-        notify("❌ Lỗi khi cập nhật trạng thái", { type: "error" });
+        notify("❌ Error update status", { type: "error" });
       }
     },
     [registrations, notify]
@@ -109,7 +111,7 @@ const AttendancePage: React.FC = () => {
     <Card sx={{ maxWidth: 1200, m: "auto", mt: 5 }}>
       <CardContent>
         <Typography variant="h5" gutterBottom>
-          Điểm danh sự kiện
+          {translate('custom.attendance.title')}
         </Typography>
 
         <EventSelect events={events} selectedEvent={selectedEvent} onChange={setSelectedEvent} />

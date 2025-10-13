@@ -4,9 +4,10 @@ import { AppBar, usePermissions } from "react-admin";
 import { Box, Typography } from "@mui/material";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import CustomUserMenu from "./CustomUserMenu";
+import LanguageSwitcher from "../i18n/LanguageSwitcher";
 
 const CustomAppBar: React.FC<any> = (props) => {
-  const { permissions } = usePermissions(); // "admin" hoặc "member"
+  const { permissions } = usePermissions(); // "admin" or "member"
   const title =
     permissions === "admin" ? "Admin Dashboard" : "Member Dashboard";
 
@@ -18,6 +19,11 @@ const CustomAppBar: React.FC<any> = (props) => {
         </Typography>
       </Box>
       <NotificationsIcon />
+
+       {/* 🔹 Nút đổi ngôn ngữ */}
+      <Box sx={{ ml: 1 }}>
+        <LanguageSwitcher />
+      </Box>
     </AppBar>
   );
 };

@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { TextInput, SimpleForm, SaveButton, Toolbar } from "react-admin";
 import { Box, Typography } from "@mui/material";
 import api from "../../services/axios"; // axios wrapper
+import { useTranslate } from 'react-admin';
 
 // Custom toolbar: chỉ có SaveButton (không còn DeleteButton)
 const ResetToolbar = () => (
@@ -14,6 +15,7 @@ const ResetToolbar = () => (
 const ResetPassword = () => {
   const { id } = useParams(); // lấy memberId từ URL
   const navigate = useNavigate();
+  const translate = useTranslate();
 
   const handleSubmit = async (values: any) => {
     try {
@@ -31,13 +33,13 @@ const ResetPassword = () => {
   return (
     <Box m={2}>
       <Typography variant="h5" gutterBottom>
-        Reset Password for Member #{id}
+        {translate('resources.members.fields.resetPassTittle')}{id}
       </Typography>
       <SimpleForm onSubmit={handleSubmit} toolbar={<ResetToolbar />}>
         <TextInput
           source="password"
           type="password"
-          label="New Password"
+          label={translate('resources.members.fields.newPassword')}
           fullWidth
         />
       </SimpleForm>

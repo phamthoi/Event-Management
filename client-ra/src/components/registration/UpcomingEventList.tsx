@@ -12,6 +12,7 @@ import {
     // Bỏ BooleanField
 } from "react-admin";
 import { Button } from "@mui/material";
+import { useTranslate } from 'react-admin';
 
 // 🔥 FIX: Import Axios instance trực tiếp
 import api from "../../services/axios"; 
@@ -28,6 +29,7 @@ const RegisterButton = ({ record }: { record: any }) => {
     const dataProvider = useDataProvider(); 
     const notify = useNotify();
     const refresh = useRefresh();
+    const translate = useTranslate();
 
     const handleClick = async () => {
        try {
@@ -63,12 +65,13 @@ const RegisterButton = ({ record }: { record: any }) => {
           onClick={handleClick}
           disabled={record.status === "CANCELLED"}
        >
-          {record.registered ? "❌ Cancel" : "🚀 Register"}
+          {record.registered ? translate("resources.upcoming.fields.CancelButton") : translate("resources.upcoming.fields.RegisterButton")}
        </Button>
     );
 };
 
 const UpcomingEventsList = () => {
+   const translate = useTranslate();
     return (
        <List
           resource="upcoming-events"
@@ -76,12 +79,12 @@ const UpcomingEventsList = () => {
           sort={{ field: "startAt", order: "ASC" }}
        >
           <Datagrid rowClick="show">
-             <TextField source="title" label="Event Title" />
-             <TextField source="location" label="Location" />
-             <DateField source="startAt" label="Start Time" showTime />
-             <DateField source="endAt" label="End Time" showTime />
+             <TextField source="title" label={translate("resources.upcoming.fields.title")} />
+             <TextField source="location" label={translate("resources.upcoming.fields.location")} />
+             <DateField source="startAt" label={translate("resources.upcoming.fields.startAt")} showTime />
+             <DateField source="endAt" label={translate("resources.upcoming.fields.endAt")} showTime />
              <FunctionField
-                 label="Status"
+                 label={translate("resources.upcoming.fields.status")}
                  render={(record: any) => (
                    <span
                        className={`px-2 py-1 rounded-full text-xs font-semibold ${
@@ -93,7 +96,7 @@ const UpcomingEventsList = () => {
                  )}
              />
              <FunctionField
-                 label="Slots"
+                 label={translate("resources.upcoming.fields.slots")}
                  render={(record: any) =>
                    `${record.registeredCount || 0} / ${record.maxAttendees} ${
                        record.maxAttendees - (record.registeredCount || 0) > 0
@@ -103,7 +106,7 @@ const UpcomingEventsList = () => {
                  }
              />
              <FunctionField
-                 label="Action"
+                 label={translate("resources.upcoming.fields.actions")}
                  render={(record: any) => <RegisterButton record={record} />}
              />
           </Datagrid>

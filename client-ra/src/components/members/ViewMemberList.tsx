@@ -9,14 +9,18 @@ import {
   FunctionField,
   useListContext,
 } from "react-admin";
+import { useTranslate } from "react-admin";
 
 // 🔍 Bộ lọc
-const MemberFilter = (props: any) => (
+const MemberFilter = (props: any) => {
+  const translate = useTranslate();
+  return(
   <Filter {...props}>
     <TextInput label="Email" source="email" alwaysOn />
-    <TextInput label="Full Name" source="fullName" />
+    <TextInput label={translate("resources.members.fields.name")} source="fullName" />
   </Filter>
-);
+  );
+};
 
 // 🔢 Phân trang (chỉ hiển thị 5 dòng/trang)
 const MemberPagination = (props: any) => (
@@ -32,6 +36,7 @@ const RowNumberField = ({ index }: { index: number }) => {
 
 // 🧾 Trang danh sách thành viên
 const ViewMemberList = () => {
+  const translate = useTranslate();
   return (
     <List
       resource="member-members"
@@ -50,8 +55,8 @@ const ViewMemberList = () => {
 
         {/* Các cột thông tin */}
         <TextField source="email" />
-        <TextField source="fullName" label="Full Name" />
-        <TextField source="phoneNumber" label="Phone" />
+        <TextField source="fullName" label={translate("resources.members.fields.name")} />
+        <TextField source="phoneNumber" label={translate("resources.members.fields.phonenumber")} />
       </Datagrid>
     </List>
   );

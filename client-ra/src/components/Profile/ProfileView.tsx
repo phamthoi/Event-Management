@@ -8,28 +8,31 @@ import {
 } from "react-admin";
 import { Button } from "@mui/material";
 import { useRedirect } from "react-admin";
+import { useTranslate } from "react-admin";
 
 const ProfileActions = () => {
   const redirect = useRedirect();
+  const translate = useTranslate();
   return (
     <TopToolbar>
       <Button
         variant="contained"
         onClick={() => redirect("/profile/edit")}
       >
-        Edit Profile
+        {translate("custom.profile.edit")}
       </Button>
     </TopToolbar>
   );
 };
 
 const ProfileView = () => {
+  const translate = useTranslate();
   return (
     <Show resource="profile" id={1} actions={<ProfileActions />}>
       <SimpleShowLayout>
-        <TextField source="fullName" label="Full Name" />
+        <TextField source="fullName" label={translate("custom.profile.fullName")} />
         <TextField source="email" label="Email" />
-        <TextField source="phoneNumber" label="Phone Number" />
+        <TextField source="phoneNumber" label={translate("custom.profile.phoneNumber")} />
       </SimpleShowLayout>
     </Show>
   );

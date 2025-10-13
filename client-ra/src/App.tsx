@@ -3,6 +3,7 @@ import * as React from "react";
 import { Admin, CustomRoutes, Resource } from "react-admin";
 import { Route } from "react-router-dom";
 
+import { i18nProvider } from "./i18nProvider";
 import authProvider from "./providers/authProvider";
 import dataProvider from "./providers/dataProvider";
 
@@ -37,6 +38,7 @@ const App = () => (
     dataProvider={dataProvider}
     dashboard={AppDashboard}
     layout={CustomLayout}
+    i18nProvider={i18nProvider}
   >
     {/* ✅ Các route tùy chỉnh ngoài CRUD */}
     <CustomRoutes>

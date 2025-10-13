@@ -8,6 +8,7 @@ import PeopleIcon from "@mui/icons-material/People";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn"; // 💡 Icon mới cho Attendance
 import ProfileIcon from "@mui/icons-material/AccountCircle"; // Icon cho Profile/Account
+import { useTranslate } from 'react-admin';
 
 interface CustomMenuProps {
    role: string;
@@ -15,6 +16,7 @@ interface CustomMenuProps {
 
 const CustomMenu: React.FC<CustomMenuProps> = ({ role, ...props }) => {
    const theme = useTheme();
+   const translate = useTranslate();
 
    // Màu nền tinh tế hơn cho active state
    const activeBgColor = theme.palette.mode === 'light' 
@@ -90,17 +92,17 @@ const CustomMenu: React.FC<CustomMenuProps> = ({ role, ...props }) => {
              {/* 2. Nhóm Quản lý (Management) */}
              {/* 💡 Không dùng ListSubheader. Dùng Divider để phân nhóm */}
              <Divider sx={{ my: 1 }} />
-             {renderMenuItem("/events", "Events Management", <EventIcon />)} {/* Tên dài hơn */}
-             {renderMenuItem("/members", "Members Management", <PeopleIcon />)}
+             {renderMenuItem("/events", translate("custom.menu.events"), <EventIcon />)}
+             {renderMenuItem("/members", translate("custom.menu.members"), <PeopleIcon />)}
 
              {/* 3. Nhóm Đăng ký & Điểm danh */}
              <Divider sx={{ my: 1 }} />
-             {renderMenuItem("/upcoming-events", "Upcoming Events", <AssignmentIcon />)}
-             {renderMenuItem("/member-events", "My Events", <EventIcon />)}
+             {renderMenuItem("/upcoming-events", translate("custom.menu.upcoming"), <AssignmentIcon />)}
+             {renderMenuItem("/member-events", translate("custom.menu.myEvents"), <EventIcon />)}
 
              {/* 💡 Mục Attendance làm riêng biệt */}
              <Divider sx={{ my: 1 }} />
-             {renderMenuItem("/registrations", "Event Attendance", <AssignmentTurnedInIcon />)}
+             {renderMenuItem("/registrations", translate("custom.menu.attendance"), <AssignmentTurnedInIcon />)}
 
           </>
         )}
@@ -109,12 +111,12 @@ const CustomMenu: React.FC<CustomMenuProps> = ({ role, ...props }) => {
           <>
              {/* 2. Nhóm Đăng ký */}
              <Divider sx={{ my: 1 }} />
-             {renderMenuItem("/upcoming-events", "Upcoming Events", <AssignmentIcon />)}
-             {renderMenuItem("/member-events", "My Events", <EventIcon />)}
+             {renderMenuItem("/upcoming-events", translate("custom.menu.upcoming"), <AssignmentIcon />)}
+             {renderMenuItem("/member-events", translate("custom.menu.myEvents"), <EventIcon />)}
 
              {/* 3. Nhóm Thành viên */}
              <Divider sx={{ my: 1 }} />
-             {renderMenuItem("/membersPublic", "Members Directory", <PeopleIcon />)}
+             {renderMenuItem("/membersPublic", translate("custom.menu.directory"), <PeopleIcon />)}
 
           </>
         )}

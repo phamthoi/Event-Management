@@ -7,10 +7,12 @@ import {
   useNotify,
   useRedirect,
 } from "react-admin";
+import { useTranslate } from "react-admin";
 
 const ProfileEdit = () => {
   const notify = useNotify();
   const redirect = useRedirect();
+  const translate = useTranslate();
 
   const handleSuccess = (data: any) => {
     notify("Profile updated successfully", { type: "success" });
@@ -26,9 +28,9 @@ const ProfileEdit = () => {
       mutationOptions={{ onSuccess: handleSuccess }}
     >
       <SimpleForm>
-        <TextInput source="fullName" label="Full Name" fullWidth />
+        <TextInput source="fullName" label={translate("custom.profile.fullName")} fullWidth />
         <TextInput source="email" label="Email" fullWidth disabled />
-        <TextInput source="phoneNumber" label="Phone Number" fullWidth />
+        <TextInput source="phoneNumber" label={translate("custom.profile.phoneNumber")} fullWidth />
       </SimpleForm>
     </Edit>
   );

@@ -10,22 +10,26 @@ import {
   minLength, // Thêm validator độ dài tối thiểu
 } from "react-admin";
 import { Grid } from "@mui/material"; // Sử dụng Grid từ MUI để chia cột
+import { useTranslate } from 'react-admin';
 
 // --- 1. Định nghĩa các quy tắc xác thực (Validation Rules) ---
-const validateRequired = required("Trường này không được để trống.");
+const validateRequired = required("This field is required.");
 const validateEmail = [
     validateRequired,
-    email("Email phải đúng định dạng."),
+    email("Must be a valid email."),
 ];
 const validatePassword = [
     validateRequired,
-    minLength(3, "Mật khẩu phải có ít nhất 3 ký tự."),
+    minLength(3, "password least 3 characters."),
 ];
 
 // --- 2. Component MemberCreate chuyên nghiệp ---
-const MemberCreate = () => (
+const MemberCreate = () => {
+  const translate = useTranslate();
+
+  return(
   // Thêm title cho trang
-  <Create title="Tạo Thành viên Mới">
+  <Create title="Create New Member">
     {/* SimpleForm vẫn được giữ để quản lý state và submit */}
     <SimpleForm>
       {/* Sử dụng Grid container để chia bố cục */}
@@ -35,19 +39,19 @@ const MemberCreate = () => (
         <Grid item xs={12} sm={6}>
             <TextInput 
                 source="email" 
-                label="Email (Đăng nhập)" 
+                label="Email" 
                 validate={validateEmail} // Áp dụng validation email
                 fullWidth 
                 autoFocus // Tự động focus vào trường này
-                helperText="Cần phải là một email hợp lệ."
+                helperText={translate('resources.members.fields.helppertextmail')}
             />
             <TextInput 
                 source="password" 
-                label="Mật khẩu" 
+                label={translate('resources.members.fields.password')} 
                 type="password" 
                 validate={validatePassword} // Áp dụng validation mật khẩu
                 fullWidth 
-                helperText="Mật khẩu phải chứa ít nhất 3 ký tự."
+                helperText={translate('resources.members.fields.helpertextpassword')}
             />
         </Grid>
 
@@ -55,13 +59,13 @@ const MemberCreate = () => (
         <Grid item xs={12} sm={6}>
             <TextInput 
                 source="fullName" 
-                label="Họ và Tên" 
+                label={translate('resources.members.fields.name')}
                 validate={validateRequired} // Áp dụng validation bắt buộc
                 fullWidth 
             />
             <TextInput 
                 source="phoneNumber" 
-                label="Số điện thoại" 
+                label={translate('resources.members.fields.phonenumber')}
                 fullWidth 
                 // Có thể thêm validation phone number ở đây nếu cần
             />
@@ -69,6 +73,7 @@ const MemberCreate = () => (
       </Grid>
     </SimpleForm>
   </Create>
-);
+  );
+};
 
 export default MemberCreate;

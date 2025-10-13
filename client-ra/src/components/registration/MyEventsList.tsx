@@ -12,6 +12,7 @@ import {
   useRecordContext,
   useDataProvider
 } from 'react-admin';
+import { useTranslate } from 'react-admin';
 
 // Custom button an toàn
 
@@ -19,6 +20,7 @@ const CancelRegistrationButton = () => {
   const record = useRecordContext();
   const refresh = useRefresh();
   const dataProvider = useDataProvider();
+  const translate = useTranslate();
 
   if (!record) return null;
 
@@ -31,48 +33,51 @@ const CancelRegistrationButton = () => {
       dataProvider
         .delete('event', { id: record.id })
         .then(() => {
-          alert("Registration cancelled successfully");
+          // alert("Registration cancelled successfully");
           refresh();
         })
         .catch(err => {
           console.error(err);
-          alert("Error cancelling registration");
+          // alert("Error cancelling registration");
         });
     }
   };
 
   return (
     <Button
-      label="Cancel"
+      label={translate("resources.upcoming.fields.CancelButton")}
       onClick={handleClick}
       disabled={record.status !== 'REGISTRATION' || new Date(record.registrationEndAt) < new Date()}
     />
   );
 };
 
-const MyEventsList = () => (
+const MyEventsList = () => {
+  const translate = useTranslate();
+  return(
   <List resource="event" perPage={4}>
     <Datagrid>
-      <TextField source="title" label="Title" />
-      <TextField source="location" label="Location" />
-      <DateField source="startAt" label="Start Time" showTime />
-      <DateField source="endAt" label="End Time" showTime />
-      <NumberField source="registeredCount" label="Registered" />
+      <TextField source="title" label={translate("resources.myEvents.fields.title")} />
+      <TextField source="location" label={translate("resources.myEvents.fields.location")} />
+      <DateField source="startAt" label={translate("resources.myEvents.fields.startAt")} showTime />
+      <DateField source="endAt" label={translate("resources.myEvents.fields.endAt")} showTime />
+      <NumberField source="registeredCount" label={translate("resources.myEvents.fields.registered")} />
       <FunctionField
-        label="Status"
+        label={translate("resources.myEvents.fields.status")}
         render={record =>
           record.status === 'CANCELLED'
-            ? 'Cancelled'
+            ? translate("resources.myEvents.status.CANCELLED")
             : record.status === 'COMPLETED'
-            ? 'Completed'
+            ? translate("resources.myEvents.status.COMPLETED")
             : record.status === 'ONGOING'
-            ? 'Ongoing'
-            : 'Registered'
+            ? translate("resources.myEvents.status.ONGOING")
+            : translate("resources.myEvents.status.REGISTRATION")
         }
       />
       <CancelRegistrationButton />
     </Datagrid>
   </List>
 );
+};
 
 export default MyEventsList;

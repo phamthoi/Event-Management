@@ -3,6 +3,7 @@ import * as React from "react";
 import { Button, Stack } from "@mui/material";
 import { useDataProvider, useNotify } from "react-admin";
 import { Registration } from "../../types";
+import { useTranslate } from 'react-admin';
 
 interface AttendanceToolbarProps {
   eventId: number | null;
@@ -19,9 +20,10 @@ const AttendanceToolbar: React.FC<AttendanceToolbarProps> = ({
 }) => {
   const dataProvider = useDataProvider();
   const notify = useNotify();
+  const translate = useTranslate();
 
   const markAllAsPresent = async () => {
-    if (!eventId) return notify("Vui lòng chọn sự kiện trước", { type: "warning" });
+    if (!eventId) return notify("Please choose event", { type: "warning" });
 
     try {
       await Promise.all(
@@ -52,7 +54,7 @@ const AttendanceToolbar: React.FC<AttendanceToolbarProps> = ({
         Điểm danh tất cả
       </Button> */}
       <Button variant="outlined" onClick={refresh} disabled={!eventId}>
-        Làm mới danh sách
+        {translate('custom.attendance.refresh')}
       </Button>
     </Stack>
   );

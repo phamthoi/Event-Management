@@ -6,10 +6,12 @@ import ListItemText from '@mui/material/ListItemText';
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import LockResetIcon from '@mui/icons-material/LockReset';
 import LogoutIcon from "@mui/icons-material/Logout";
+import { useTranslate } from "react-admin";
 
 const CustomUserMenu = (props: any) => {
   // 1. Lấy hook useLogout
   const logout = useLogout(); 
+  const translate = useTranslate();
 
   // 2. Hàm xử lý đăng xuất an toàn
   const handleLogout = () => {
@@ -30,14 +32,14 @@ const CustomUserMenu = (props: any) => {
       {/* Link tới Profile - Vẫn dùng MenuItemLink chuẩn */}
       <MenuItemLink
         to="/profile"
-        primaryText="My Profile"
+        primaryText={translate("custom.menu.profile")}
         leftIcon={<AccountCircleIcon />}
       />
 
       {/* Trang đổi mật khẩu */}
       <MenuItemLink
         to="/change-password"
-        primaryText="Change Password"
+        primaryText={translate("custom.menu.changePassword")}
         leftIcon={<LockResetIcon />}
       />
       
@@ -54,7 +56,7 @@ const CustomUserMenu = (props: any) => {
         <ListItemIcon sx={{ minWidth: '36px' }}>
           <LogoutIcon fontSize="small" />
         </ListItemIcon>
-        <ListItemText>{'Logout'}</ListItemText>
+        <ListItemText>{translate("custom.menu.logout")}</ListItemText>
       </MenuItem>
     </UserMenu>
   );

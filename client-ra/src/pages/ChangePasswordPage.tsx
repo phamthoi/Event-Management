@@ -12,11 +12,13 @@ import {
   Button,
   CircularProgress,
 } from "@mui/material";
+import { useTranslate } from "react-admin";
 
 const ChangePasswordPage = () => {
   const notify = useNotify();
   const redirect = useRedirect();
   const dataProvider = useDataProvider();
+  const translate = useTranslate();
 
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -25,6 +27,7 @@ const ChangePasswordPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const translate = useTranslate();
 
     if (newPassword !== confirmPassword) {
       notify("❌ New password and confirmation do not match", { type: "warning" });
@@ -34,7 +37,7 @@ const ChangePasswordPage = () => {
     try {
       setLoading(true);
       await dataProvider.changePassword(currentPassword, newPassword);
-      notify("✅ Password updated successfully!", { type: "success" });
+      notify(translate("custom.profile.resetPassword.success"), { type: "success" });
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
@@ -55,10 +58,10 @@ const ChangePasswordPage = () => {
         <CardContent>
           <Box textAlign="center" mb={2}>
             <Typography variant="h5" fontWeight="bold">
-              🔒 Change Password
+              {translate("custom.resetPassword.title")}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Keep your account secure
+              {translate("custom.resetPassword.secure")}
             </Typography>
           </Box>
 
@@ -66,7 +69,7 @@ const ChangePasswordPage = () => {
             <Box mb={2}>
               <TextField
                 fullWidth
-                label="Current Password"
+                label={translate("custom.resetPassword.currentPass")}
                 type="password"
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
@@ -77,7 +80,7 @@ const ChangePasswordPage = () => {
             <Box mb={2}>
               <TextField
                 fullWidth
-                label="New Password"
+                label={translate("custom.resetPassword.newPassword")}
                 type="password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
@@ -88,7 +91,7 @@ const ChangePasswordPage = () => {
             <Box mb={2}>
               <TextField
                 fullWidth
-                label="Confirm New Password"
+                label={translate("custom.resetPassword.confirmNewPassword")}
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
@@ -104,7 +107,7 @@ const ChangePasswordPage = () => {
                 disabled={loading}
                 startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
               >
-                {loading ? "Changing..." : "Change Password"}
+                {loading ? "Changing..." : translate("custom.resetPassword.save")}
               </Button>
             </CardActions>
           </form>

@@ -7,6 +7,7 @@ import PeopleIcon from "@mui/icons-material/People";
 import DirectionsRunIcon from "@mui/icons-material/DirectionsRun";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import { useNavigate } from "react-router-dom";
+import { useTranslate } from "react-admin";
 
 interface Stat {
   label: string;
@@ -30,6 +31,7 @@ const colorMap: Record<string, string> = {
 
 const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
+  const translate = useTranslate();
 
   const { data, isLoading } = useGetList("stats", {
     pagination: { page: 1, perPage: 1 },
@@ -42,13 +44,13 @@ const AdminDashboard: React.FC = () => {
 
     return [
       {
-        label: "Total Events",
+        label: translate("resources.dashboard.fields.totalEvents"),
         value: statData.totalEvents?.toString() || "0",
         icon: iconMap.totalEvents,
         color: colorMap.totalEvents,
       },
       {
-        label: "Active Members",
+        label: translate("resources.dashboard.fields.activeMembers"),
         value: statData.totalMembers?.toString() || "0",
         icon: iconMap.totalMembers,
         color: colorMap.totalMembers,

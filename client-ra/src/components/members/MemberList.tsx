@@ -20,6 +20,7 @@ import LockIcon from "@mui/icons-material/Lock";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import { useNavigate } from "react-router-dom";
 import api from "../../services/axios";
+import { useTranslate } from 'react-admin';
 
 interface MemberRecord {
   id: string;
@@ -31,12 +32,13 @@ interface MemberRecord {
 
 /* ✅ Custom field hiển thị trạng thái */
 const ActiveField = (props: FieldProps<MemberRecord>) => {
+  const translate = useTranslate();
   const record = useRecordContext<MemberRecord>(props);
   if (!record) return null;
 
   return (
     <Chip
-      label={record.isActive ? "Active" : "Locked"}
+      label={record.isActive ?  translate("resources.members.fields.active") : translate("resources.members.fields.locked")}
       color={record.isActive ? "success" : "error"}
       size="small"
     />
@@ -45,6 +47,7 @@ const ActiveField = (props: FieldProps<MemberRecord>) => {
 
 /* ✅ Nút Reset Password (gọi route riêng) */
 const ResetPasswordButton = () => {
+  const translate = useTranslate();
   const record = useRecordContext<MemberRecord>();
   const navigate = useNavigate();
   if (!record) return null;
@@ -61,13 +64,14 @@ const ResetPasswordButton = () => {
       onClick={handleClick}
       startIcon={<VpnKeyIcon />}
     >
-      Reset Pass
+      {translate('resources.members.fields.ResetPassword')}
     </Button>
   );
 };
 
 /* ✅ Nút Lock / Unlock Member */
 const LockUnlockButton = () => {
+  const translate = useTranslate();
   const record = useRecordContext<MemberRecord>();
   const notify = useNotify();
   const refresh = useRefresh();
@@ -90,36 +94,42 @@ const LockUnlockButton = () => {
   };
 
   return (
+    
     <Button
       size="small"
       color={record.isActive ? "error" : "success"}
       onClick={handleToggle}
       startIcon={record.isActive ? <LockIcon /> : <LockOpenIcon />}
     >
-      {record.isActive ? "Lock" : "Unlock"}
+      {record.isActive ? translate("resources.members.fields.lock") : translate("resources.members.fields.unlock")}
     </Button>
   );
 };
 
 /* ✅ Bộ lọc Member */
-const MemberFilter = (props: any) => (
+const MemberFilter = (props: any) => {
+  const translate = useTranslate();
+  return (
   <Filter {...props}>
     <TextInput label="Email" source="email" alwaysOn />
-    <TextInput label="Full Name" source="fullName" alwaysOn/>
+    <TextInput label={translate("resources.members.fields.name")} source="fullName" alwaysOn/>
     <SelectInput
-      label="Status"
+      label={translate("resources.members.fields.status")}
       source="isActive"
       choices={[
-        { id: true, name: "Active" },
-        { id: false, name: "Locked" },
+        { id: true, name: translate("resources.members.status.ACTIVE") },
+        { id: false, name: translate("resources.members.status.LOCKED") },
       ]}
       alwaysOn
     />
   </Filter>
 );
+};
 
 /* ✅ Danh sách Member */
-const MemberList = () => (
+const MemberList = () => {
+  const translate = useTranslate();
+  return (
   <List
     resource="members"
     filters={<MemberFilter />}
@@ -130,9 +140,9 @@ const MemberList = () => (
     <Datagrid bulkActionButtons={false}>
       <TextField source="id" label="ID" />
       <EmailField source="email" />
-      <TextField source="fullName" label="Full Name" />
-      <TextField source="phoneNumber" label="Phone" />
-      <ActiveField source="isActive" label="Status" />
+      <TextField source="fullName" label={translate("resources.members.fields.name")} />
+      <TextField source="phoneNumber" label={translate("resources.members.fields.phonenumber")} />
+      <ActiveField source="isActive" label={translate("resources.members.fields.status")} />
 
       {/* ✅ Cột hành động */}
       <Box
@@ -146,5 +156,6 @@ const MemberList = () => (
     </Datagrid>
   </List>
 );
+};  
 
 export default MemberList;

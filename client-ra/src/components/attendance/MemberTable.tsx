@@ -1,6 +1,7 @@
 // src/components/attendance/MemberTable.tsx
 import React from "react";
 import { Registration } from "../../types";
+import { useTranslate } from 'react-admin';
 
 interface MemberTableProps {
   registrations: Registration[];
@@ -13,9 +14,10 @@ const MemberTable: React.FC<MemberTableProps> = ({
   onToggle,
   currentEventStatus,
 }) => {
+  const translate = useTranslate();
   if (registrations.length === 0)
     return (
-      <div className="mt-4 p-4 bg-gray-100 rounded">Không có thành viên nào</div>
+      <div className="mt-4 p-4 bg-gray-100 rounded">{translate("custom.attendance.noMembers")}</div>
     );
 
   return (
@@ -24,10 +26,10 @@ const MemberTable: React.FC<MemberTableProps> = ({
         <thead className="bg-gray-200">
           <tr>
             <th className="border px-2 py-1">#</th>
-            <th className="border px-2 py-1">Tên</th>
-            <th className="border px-2 py-1">Email</th>
-            <th className="border px-2 py-1">Đặt cọc</th>
-            <th className="border px-2 py-1">Điểm danh</th>
+            <th className="border px-2 py-1">{translate("custom.attendance.name")}</th>
+            <th className="border px-2 py-1">{translate("custom.attendance.email")}</th>
+            <th className="border px-2 py-1">{translate("custom.attendance.deposit")}</th>
+            <th className="border px-2 py-1">{translate("custom.attendance.attendance")}</th>
           </tr>
         </thead>
         <tbody>
@@ -47,7 +49,7 @@ const MemberTable: React.FC<MemberTableProps> = ({
                 <input
                   type="checkbox"
                   checked={reg.attended}
-                  disabled={!reg.depositPaid || currentEventStatus !== "ONGOING"}
+                  disabled={ currentEventStatus !== "ONGOING"}
                   onChange={() => onToggle(reg.id, "attended")}
                 />
               </td>

@@ -22,6 +22,7 @@ import {
 } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
 import SettingsIcon from "@mui/icons-material/Settings";
+import { useTranslate } from 'react-admin';
 
 // --- CUSTOM FIELDS ---
 const RoleField = () => {
@@ -37,11 +38,12 @@ const RoleField = () => {
 };
 
 const StatusField = () => {
+  const translate = useTranslate();
   const record = useRecordContext();
   if (!record) return null;
   return (
     <Chip
-      label={record.isActive ? "Active" : "Locked"}
+      label={record.isActive ? translate("resources.members.fields.active") : translate("resources.members.fields.locked")}
       color={record.isActive ? "success" : "error"}
       size="medium"
     />
@@ -51,6 +53,7 @@ const StatusField = () => {
 // --- HEADER COMPONENT ---
 const MemberShowHeader = () => {
   const { record } = useShowController();
+  const translate = useTranslate();
   if (!record) return null;
 
   return (
@@ -71,10 +74,10 @@ const MemberShowHeader = () => {
           {record.fullName}
         </Typography>
         <Stack direction="row" spacing={1} alignItems="center">
-          <Labeled label="Vai trò">
+          <Labeled label={translate("resources.members.fields.role")}>
             <RoleField />
           </Labeled>
-          <Labeled label="Trạng thái">
+          <Labeled label={translate("resources.members.fields.status")}>
             <StatusField />
           </Labeled>
         </Stack>
@@ -87,24 +90,26 @@ const MemberShowHeader = () => {
 };
 
 // --- MEMBER SHOW ---
-const MemberShow = () => (
-  <Show title="Chi tiết Thành viên">
+const MemberShow = () => {
+  const translate = useTranslate();
+  return (
+  <Show title="member detail">
     {/* Custom Header */}
     <MemberShowHeader />
 
     <TabbedShowLayout>
-      <Tab label="Thông tin Cơ bản" path="details" icon={<PersonIcon />}>
+      <Tab label={translate("resources.members.fields.info")} path="details" icon={<PersonIcon />}>
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6}>
             <Card variant="outlined" sx={{ height: "100%" }}>
               <CardContent>
                 <Typography variant="h6" gutterBottom color="primary">
-                  Thông tin Liên hệ
+                  {translate("resources.members.fields.personalInfo")}
                 </Typography>
                 <Stack spacing={1}>
-                  <TextField source="fullName" label="Họ và Tên" />
+                  <TextField source="fullName" label="Full name" />
                   <EmailField source="email" />
-                  <TextField source="phoneNumber" label="Điện thoại" />
+                  <TextField source="phoneNumber" label="Phone number" />
                 </Stack>
               </CardContent>
             </Card>
@@ -114,11 +119,11 @@ const MemberShow = () => (
             <Card variant="outlined" sx={{ height: "100%" }}>
               <CardContent>
                 <Typography variant="h6" gutterBottom color="primary">
-                  Thông tin Tổ chức
+                  {translate("resources.members.fields.organizationInfo")}
                 </Typography>
                 <Stack spacing={1}>
-                  <TextField source="organization.name" label="Tên Tổ chức" />
-                  <TextField source="organizationId" label="ID Tổ chức" />
+                  <TextField source="organization.name" label="Organization name" />
+                  <TextField source="organizationId" label="Organization ID" />
                 </Stack>
               </CardContent>
             </Card>
@@ -126,19 +131,19 @@ const MemberShow = () => (
         </Grid>
       </Tab>
 
-      <Tab label="Thông tin Hệ thống" path="system" icon={<SettingsIcon />}>
+      <Tab label={translate("resources.members.fields.systemInfo")} path="system" icon={<SettingsIcon />}>
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6}>
             <Card variant="outlined" sx={{ height: "100%" }}>
               <CardContent>
                 <Typography variant="h6" gutterBottom color="secondary">
-                  Dữ liệu Hệ thống (Audit)
+                  {translate("resources.members.fields.timestamps")}
                 </Typography>
                 <Stack spacing={1}>
                   <DateField
                     source="createdAt"
                     showTime
-                    label="Ngày Tạo"
+                    label="Created At"
                     options={{
                       year: "numeric",
                       month: "long",
@@ -150,7 +155,7 @@ const MemberShow = () => (
                   <DateField
                     source="updatedAt"
                     showTime
-                    label="Cập nhật Lần cuối"
+                    label="Updated At"
                     options={{
                       year: "numeric",
                       month: "long",
@@ -168,7 +173,7 @@ const MemberShow = () => (
             <Card variant="outlined" sx={{ height: "100%" }}>
               <CardContent>
                 <Typography variant="h6" gutterBottom color="secondary">
-                  Cấu hình Khác
+                  {translate("resources.members.fields.otherInfo")}
                 </Typography>
                 <Stack spacing={1}>
                   <TextField source="lastLoginIp" label="IP Đăng nhập Cuối" />
@@ -181,5 +186,6 @@ const MemberShow = () => (
     </TabbedShowLayout>
   </Show>
 );
+};
 
 export default MemberShow;

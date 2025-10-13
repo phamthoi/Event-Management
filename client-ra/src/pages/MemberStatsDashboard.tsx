@@ -6,6 +6,7 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
 import { useGetList } from "react-admin";
+import { useTranslate } from "react-admin"
 
 interface Stat {
   label: string;
@@ -29,6 +30,7 @@ const colorMap: Record<string, string> = {
 };
 
 const MemberStatsDashboard: React.FC = () => {
+  const translate = useTranslate();
   const { data, isLoading } = useGetList("member-stats", {
     pagination: { page: 1, perPage: 1 },
   });
@@ -40,25 +42,25 @@ const MemberStatsDashboard: React.FC = () => {
 
     return [
       {
-        label: "Registrations",
+        label: translate("resources.dashboard.fields.registrations"),
         value: statData.totalRegistrations?.toString() || "0",
         icon: iconMap.totalRegistrations,
         color: colorMap.totalRegistrations,
       },
       {
-        label: "Ready",
+        label: translate("resources.dashboard.fields.ready"),
         value: statData.ready?.toString() || "0",
         icon: iconMap.ready,
         color: colorMap.ready,
       },
       {
-        label: "Ongoing",
+        label: translate("resources.dashboard.fields.ongoing"),
         value: statData.ongoing?.toString() || "0",
         icon: iconMap.ongoing,
         color: colorMap.ongoing,
       },
       {
-        label: "Completed",
+        label: translate("resources.dashboard.fields.completed"),
         value: statData.completed?.toString() || "0",
         icon: iconMap.completed,
         color: colorMap.completed,
