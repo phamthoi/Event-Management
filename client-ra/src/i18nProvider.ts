@@ -112,12 +112,15 @@ const customVi: TranslationMessages = {
         endAt: "Thời gian kết thúc",
         registrationStartAt: "Mở đăng ký",
         registrationEndAt: "Kết thúc đăng ký",
-        minAttendees: "Số người tối thiểu",
-        maxAttendees: "Số người tối đa",
-        registeredCount: "Số người đã đăng ký",
+        minAttendees: "Tối thiểu",
+        maxAttendees: "Tối đa",
+        registeredCount: "Đã đăng ký",
         deposit: "Tiền cọc (VND)",
         status: "Trạng thái",
         description: "Mô tả",
+        basicInfo: "Thông tin cơ bản",
+        time: "Thời gian",
+        setting: "Cài đặt",
       },
       status: {
         DRAFT: "Bản nháp",
@@ -195,7 +198,8 @@ const customVi: TranslationMessages = {
         CANCELLED: "Đã hủy",
         COMPLETED: "Đã hoàn thành",
         ONGOING: "Đang diễn ra",
-        REGISTRATION: "Đang mở đăng ký",  
+        REGISTRATION: "Đang mở đăng ký", 
+        READY: "Sắp diễn ra", 
       }
     },
 
@@ -275,10 +279,13 @@ const customEn: TranslationMessages = {
         registrationEndAt: "Registration end",
         minAttendees: "Min attendees",
         maxAttendees: "Max attendees",
-        registeredCount: "Registered count",
+        registeredCount: "Registered",
         deposit: "Deposit (VND)",
         status: "Status",
         description: "Description",
+        basicInfo: "Basic Information",
+        time: "Time",
+        setting: "Setting",
       },
       status: {
         DRAFT: "Draft",
@@ -357,6 +364,7 @@ const customEn: TranslationMessages = {
         COMPLETED: "Completed",
         ONGOING: "Ongoing",
         REGISTRATION: "Registration",
+        READY: "Ready",
       }
     },
     dashboard: {

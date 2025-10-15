@@ -1,3 +1,4 @@
+// src/resources/events/EventList.tsx
 import * as React from "react";
 import {
   List,
@@ -12,14 +13,32 @@ import {
   useGetIdentity,
   useTranslate,
 } from "react-admin";
+import { Flex, Badge, Box, Text } from "@radix-ui/themes";
 import EventFilter from "./EventFilter";
 
 const EventListActions = () => {
   const translate = useTranslate();
   return (
     <TopToolbar>
-      <CreateButton label={translate("ra.action.create")} />
+      <Flex justify="end" p="2">
+        <CreateButton label={translate("ra.action.create")} />
+      </Flex>
     </TopToolbar>
+  );
+};
+
+const StatusBadge = ({ status }: { status: string }) => {
+  const colorMap: Record<string, "green" | "amber" | "red" | "gray"> = {
+    OPEN: "green",
+    UPCOMING: "amber",
+    CLOSED: "red",
+  };
+
+  const color = colorMap[status?.toUpperCase()] || "gray";
+  return (
+    <Badge color={color} variant="soft" radius="full">
+      {status}
+    </Badge>
   );
 };
 
@@ -28,10 +47,10 @@ const EventRowActions = () => {
   if (isLoading) return null;
 
   return (
-    <div style={{ display: "flex", gap: "0.5rem" }}>
+    <Flex gap="2" justify="end" align="center">
       <EditButton />
       {identity?.role === "ADMIN" && <DeleteButton />}
-    </div>
+    </Flex>
   );
 };
 
@@ -47,25 +66,71 @@ const EventList = () => {
       sort={{ field: "startAt", order: "DESC" }}
       actions={<EventListActions />}
     >
-      <Datagrid>
-        <TextField source="title" label={translate("resources.events.fields.title")} />
-        <TextField source="location" label={translate("resources.events.fields.location")} />
-        <DateField source="startAt" label={translate("resources.events.fields.startAt")} showTime />
-        <DateField source="endAt" label={translate("resources.events.fields.endAt")} showTime />
+      <Datagrid
+        rowClick="show"
+        bulkActionButtons={false}
+        sx={{
+          "& .column-title": { fontWeight: 600 },
+          "& .column-deposit, & .column-actions": {
+            textAlign: "right",
+            justifyContent: "flex-end",
+          },
+          "& .RaDatagrid-row": {
+            verticalAlign: "middle",
+          },
+        }}
+      >
+        <TextField
+          source="title"
+          label={translate("resources.events.fields.title")}
+          className="column-title"
+        />
+        <TextField
+          source="location"
+          label={translate("resources.events.fields.location")}
+        />
+        <DateField
+          source="startAt"
+          label={translate("resources.events.fields.startAt")}
+          showTime
+        />
+        <DateField
+          source="endAt"
+          label={translate("resources.events.fields.endAt")}
+          showTime
+        />
 
         <FunctionField
           label={translate("resources.events.fields.registeredCount")}
-          render={(record: any) => `${record.registeredCount || 0} / ${record.maxAttendees || 0}`}
+          render={(record: any) =>
+            `${record.registeredCount || 0} / ${record.maxAttendees || 0}`
+          }
         />
-
-        <TextField source="status" label={translate("resources.events.fields.status")} />
 
         <FunctionField
-          label={translate("resources.events.fields.deposit")}
-          render={(record: any) => (Number(record.deposit) || 0).toLocaleString("vi-VN")}
+          source="status"
+          label={translate("resources.events.fields.status")}
+          render={(record: any) => <StatusBadge status={record.status} />}
         />
 
-        <EventRowActions />
+        <FunctionField
+          source="deposit"
+          label={translate("resources.events.fields.deposit")}
+          render={(record: any) => (
+            <Box style={{ textAlign: "right" }}>
+              <Text weight="medium">
+                {(Number(record.deposit) || 0).toLocaleString("vi-VN")}
+              </Text>
+            </Box>
+          )}
+          className="column-deposit"
+        />
+
+        <FunctionField
+          label={translate("resources.upcoming.fields.actions")}
+          render={() => <EventRowActions />}
+          className="column-actions"
+        />
       </Datagrid>
     </List>
   );

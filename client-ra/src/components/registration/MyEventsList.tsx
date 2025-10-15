@@ -71,6 +71,8 @@ const MyEventsList = () => {
             ? translate("resources.myEvents.status.COMPLETED")
             : record.status === 'ONGOING'
             ? translate("resources.myEvents.status.ONGOING")
+            : record.status === 'READY'
+            ? translate("resources.myEvents.status.READY")
             : translate("resources.myEvents.status.REGISTRATION")
         }
       />

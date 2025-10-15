@@ -4,7 +4,6 @@ import { useDataProvider, useNotify } from "react-admin";
 import { Registration } from "../../types";
 import EventSelect from "./EventSelect";
 import MemberTable from "./MemberTable";
-import AttendanceToolbar from "./AttendanceToolbar";
 import api from "../../services/axios";
 import { useTranslate } from 'react-admin';
 
@@ -99,12 +98,6 @@ const AttendancePage: React.FC = () => {
     [registrations, notify]
   );
 
-  // ================= Refresh =================
-  const refresh = useCallback(async () => {
-    if (selectedEvent !== null) {
-      await loadRegistrations(selectedEvent);
-    }
-  }, [selectedEvent, loadRegistrations]);
 
   // ================= Render =================
   return (
@@ -120,13 +113,6 @@ const AttendancePage: React.FC = () => {
           registrations={registrations}
           onToggle={handleToggle}
           currentEventStatus={currentEventStatus}
-        />
-
-        <AttendanceToolbar
-          eventId={selectedEvent}
-          registrations={registrations}
-          setRegistrations={setRegistrations}
-          refresh={refresh}
         />
       </CardContent>
     </Card>
