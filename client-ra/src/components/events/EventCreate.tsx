@@ -73,6 +73,7 @@ const EventCreate: React.FC = () => {
             <TextInput
               source="location"
               label={translate("resources.events.fields.location")}
+              validate={validateRequired}
               fullWidth
             />
           </Grid>
